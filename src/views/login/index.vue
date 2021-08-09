@@ -29,21 +29,22 @@
                         <form>
                            <div class="row">
                               <div class="col-lg-12">
-                                 <div class="form-group">
+                                <div class="form-group">
                                     <label class="text-secondary">用户名</label>
-                                    <input class="form-control" type="email" placeholder="请输入用户名">
-                                 </div>
+                                    <!-- type="email" -->
+                                    <input class="form-control" type="text" v-model="loginForm.userName" placeholder="请输入用户名">
+                                </div>
                               </div>
                               <div class="col-lg-12 mt-2">
-                                 <div class="form-group">
-                                     <div class="d-flex justify-content-between align-items-center">
-                                         <label class="text-secondary">密码</label>
-                                     </div>
-                                    <input class="form-control" type="password" placeholder="请输入密码">
-                                 </div>
+                                <div class="form-group">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <label class="text-secondary">密码</label>
+                                    </div>
+                                    <input class="form-control" type="password" v-model="loginForm.password" placeholder="请输入密码">
+                                </div>
                               </div>
                            </div>
-                           <button type="submit" class="btn btn-primary btn-block mt-2" @click="submit()">登 录</button>
+                           <button type="submit" class="btn btn-primary btn-block mt-2" @click="handleLogin()">登 录</button>
                            <!-- <div class="col-lg-12 mt-3">
                                 <p class="mb-0 text-center">Don't have an account? <a href="auth-sign-up.html">Sign Up</a></p>
                            </div> -->
@@ -72,28 +73,12 @@ export default {
         callback()
       }
     }
-    const validatePhone = (rule, value, callback) => {
-      if (!/^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\d{8}$/.test(value)) {
-        callback(new Error("请输入正确的手机号"))
-      } else {
-        callback()
-      }
-    }
     return {
       loginForm: {
         userName: "",
         password: "",
-        tryCode: null,
-        jpgKey: null
-      },
-      loginRules: {
-        userName: [
-          { required: true, trigger: "blur", message: "请输入派发的登录账号！" }
-        ],
-        password: [
-          { required: true, trigger: "blur", validator: validatePassword }
-        ],
-        tryCode: [{ required: false, trigger: "blur", message: "请输入验证码" }]
+        // tryCode: null,
+        // jpgKey: null
       },
       loading: false,
       passwordType: "password",
@@ -115,17 +100,6 @@ export default {
     // this.getIdentifyImgCode()
   },
   methods: {
-    submit() {
-      this.$router.push('/order')
-    },
-    // 忘记密码
-    routerLinkToForgetPwd() {
-      if (!this.showFindPwd) {
-        this.showFindPwd = true
-      } else {
-        this.showFindPwd = false
-      }
-    },
     isEmptyString(val) {
       if (val === '' || val === null) {
         return true
@@ -157,29 +131,6 @@ export default {
         }
       })
     },
-    getSmsCode() {
-      /* 【发送完短信验证码】后调整为【倒计时状态】 */
-      this.isShowCode = false
-      this.timer = setInterval(() => {
-        if (this.codeCount > 0 && this.codeCount <= 60) {
-          this.codeCount--
-        } else {
-          /* 【倒计时结束】后调整为【可点击状态】 */
-          clearInterval(this.timer)
-          this.timer = null
-          this.codeCount = 60
-          this.isShowCode = true
-        }
-      }, 1000)
-
-      API.getSmsCode({
-        telephone: this.loginForm.phone
-      }).then(res => {
-        if (res.datas.status !== 200) {
-          this.$message.error(res.data.datas)
-        }
-      })
-    },
     showPwd() {
       if (this.passwordType === "password") {
         this.passwordType = ""
@@ -204,28 +155,34 @@ export default {
     },
     // 登录
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store
-            .dispatch("LoginByUsername", this.loginForm)
-            .then(res => {
-              if (res.data.status === 200) {
-                this.$router.push("/home")
-                this.dialogVisible = true
-              } else {
-                this.$message.error(res.data.cause)
-                this.loading = false
-                this.getIdentifyImgCode()
-              }
-            })
-            .catch(() => {
-              this.loading = false
-            })
-        } else {
-          return false
-        }
-      })
+      if (this.isEmptyString(this.loginForm.userName)) {
+        this.$message.warning("请输入账号")
+        return false
+      }
+      if (this.isEmptyString(this.loginForm.password)) {
+        this.$message.warning("请输入密码")
+        return false
+      }
+      if (this.loginForm.password.length < 6) {
+        this.$message.error("密码不能小于6位")
+        return false
+      }
+      console.log('form ', this.loginForm)
+      this.loading = true
+      this.$store.dispatch("LoginByUsername", this.loginForm)
+        .then(res => {
+          if (res.data.status === 200) {
+            this.$router.push("/order")
+            this.dialogVisible = true
+          } else {
+            this.$message.error(res.data.cause)
+            this.loading = false
+            // this.getIdentifyImgCode()
+          }
+        })
+        .catch(() => {
+          this.loading = false
+        })
     }
   }
 }
@@ -254,6 +211,5 @@ $font_color: #4d4d4d;
   width: 100%;
   height: 100%;
   overflow: hidden;
-  // background: url("../../assets/images/bg.png") no-repeat center center fixed;
 }
 </style>

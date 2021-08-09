@@ -14,8 +14,6 @@ service.interceptors.request.use(
     if (getToken()) {
       config.url += "?AccessToken=" + getToken();
     } else {
-      next()
-      console.log(22222)
       // if (
       //   config.url.indexOf("/user/login") !== -1 ||
       //   config.url.indexOf("/user-api/getCode") !== -1 ||

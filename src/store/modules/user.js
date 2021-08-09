@@ -31,14 +31,15 @@ const user = {
 
   actions: {
     LoginByUsername({ commit }, userInfo) {
-      const { userName, password, tryCode, jpgKey } = userInfo;
+      console.log(2222)
+      const { userName, password } = userInfo;
+      console.log(userInfo)
       return new Promise((resolve, reject) => {
         LoginByUsername({
           userName: userName.trim(),
-          password: password.trim(),
-          tryCode,
-          jpgKey
+          password: password.trim()
         }).then(res => {
+          console.log('res', res)
           if (res.data.status === 200) {
             const tmpData = res.data.datas;
             AUTH.setName(tmpData.userName);
@@ -64,6 +65,7 @@ const user = {
             resolve(res);
           }
         }).catch(error => {
+          console.log('err: ', error)
           reject(error);
         });
       });
