@@ -1,0 +1,78 @@
+cache:
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+    - node_modules/
+
+stages:
+  - install_deps
+  - test
+  - build
+  - deploy_test
+  - deploy_production
+
+# 安装依赖阶段
+install_deps:
+  stage: install_deps
+  tags:
+    - build
+  only:
+    - master
+    - develop
+  script:
+    - echo 'install all depends'
+    - npm install
+
+# 运行测试阶段
+test:
+  stage: test
+  tags:
+    - build
+  only:
+    - master
+    - develop
+  script:
+    - echo 'not test case,skip!'
+
+# 打包编译
+build:
+  stage: build
+  tags:
+    - build
+  only:
+    - master
+    - develop
+  script:
+    - echo 'start to build!'
+    - npm run build:prod
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - ./dist/
+# 部署测试服务器
+deploy_test:
+  stage: deploy_test
+  tags:
+    - build
+  only:
+    - master
+    - develop
+  dependencies:
+    - build
+  script:
+    - echo 'msg:deploy to test env'
+    - rm -rf /var/www/test/*
+    - cp -rf ./dist/* /var/www/test/
+
+# 部署生产服务器
+deploy_production:
+  stage: deploy_production
+  tags:
+    - build
+  only:
+    - master
+  dependencies:
+    - build
+  script:
+    - echo 'msg:deploy production.'
+    - echo 'bash scripts/deploy/deploy.sh'
+  when: manual
