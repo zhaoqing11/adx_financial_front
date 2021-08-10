@@ -172,7 +172,7 @@ export default {
       this.$store.dispatch("LoginByUsername", this.loginForm)
         .then(res => {
           if (res.data.status === 200) {
-            this.$router.push("/order")
+            this.$router.push("/home")
             this.dialogVisible = true
           } else {
             this.$message.error(res.data.cause)

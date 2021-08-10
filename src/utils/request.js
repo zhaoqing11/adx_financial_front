@@ -14,23 +14,23 @@ service.interceptors.request.use(
     if (getToken()) {
       config.url += "?AccessToken=" + getToken();
     } else {
-      // if (
-      //   config.url.indexOf("/user/login") !== -1 ||
-      //   config.url.indexOf("/user-api/getCode") !== -1 ||
-      //   config.url.indexOf("/user/getSmsCode") !== -1
-      // ) {
-      // } else {
-      //   MessageBox.confirm("用户未登录，请先登录", "登录", {
-      //     confirmButtonText: "登录",
-      //     cancelButtonText: "取消",
-      //     type: "warning"
-      //   }).then(() => {
-      //     removeToken();
-      //     router.push({
-      //       path: "/login"
-      //     });
-      //   });
-      // }
+      if (
+        config.url.indexOf("/user/login") !== -1 ||
+        config.url.indexOf("/user-api/getCode") !== -1 ||
+        config.url.indexOf("/user/getSmsCode") !== -1
+      ) {
+      } else {
+        MessageBox.confirm("用户未登录，请先登录", "登录", {
+          confirmButtonText: "登录",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(() => {
+          removeToken();
+          router.push({
+            path: "/login"
+          });
+        });
+      }
     }
     if (config.url.indexOf("quotedPrice/insertQuotedPrice") !== -1) {
       if (config.data.idQuotedPrice) {

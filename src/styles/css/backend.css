@@ -2839,7 +2839,7 @@ textarea.form-control.is-invalid {
   top: 100%;
   left: 0;
   z-index: 1000;
-  display: none;
+  /* display: none; */
   float: left;
   min-width: 10rem;
   padding: .5rem 0;
@@ -12900,9 +12900,9 @@ body.sidebar-main .iq-top-navbar {
 }
 
 .navbar-list li>a>img {
-  width: 50px;
-  height: 50px;
-  min-width: 50px
+  width: 35px;
+  height: 35px;
+  min-width: 35px
 }
 
 .navbar-list li a:hover {
@@ -22345,7 +22345,7 @@ g[aria-describedby=id-22-description] {
 .content-page {
   overflow: hidden;
   margin-left: 260px;
-  padding: 100px 15px 0;
+  padding: 50px 0;
   min-height: 100vh;
   transition: all .3s ease-in-out
 }

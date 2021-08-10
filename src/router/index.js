@@ -23,11 +23,6 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: "/order",
-    component: () => import("@/views/order"),
-    hidden: true
-  },
-  {
     path: "/",
     component: Layout,
     redirect: "/login",
@@ -40,51 +35,26 @@ export const constantRoutes = [
       }
     ]
   },
-  // {
-  //   path: "/customerManagement",
-  //   component: Layout,
-  //   redirect: "/customerManagement",
-  //   name: "CustomerManagement",
-  //   meta: { title: "客户管理", icon: "customers", requireAuth: true },
-  //   children: [
-  //     {
-  //       path: "customers",
-  //       name: "Customers",
-  //       component: () => import("@/views/customerManagement/customers"),
-  //       meta: { title: "客户池", icon: "customList", requireAuth: true }
-  //     },
-  //     {
-  //       path: "editCustomer",
-  //       name: "EditCustomer",
-  //       component: () => import("@/views/customerManagement/editCustomer"),
-  //       meta: { title: "编辑客户", icon: "edit", requireAuth: true }
-  //     },
-  //     {
-  //       path: "auditCustomers",
-  //       name: "AuditCustomers",
-  //       component: () => import("@/views/customerManagement/auditCustomers/index"),
-  //       meta: { title: "审批列表", icon: "auditCustomers", requireAuth: true }
-  //     },
-  //     {
-  //       path: "approvalDetail",
-  //       name: "ApprovalDetail",
-  //       component: () => import("@/views/customerManagement/auditCustomers/approvalDetail"),
-  //       meta: { title: "审批详情", icon: "approval", requireAuth: true }
-  //     },
-  //     {
-  //       path: "customerDetail",
-  //       name: "CustomerDetail",
-  //       component: () => import("@/views/customerManagement/customer/index"),
-  //       meta: { title: "查看客户详情", icon: "list", requireAuth: true }
-  //     },
-  //     {
-  //       path: "approvalRecord",
-  //       name: "ApprovalRecord",
-  //       component: () => import("@/views/customerManagement/approvalRecord/index"),
-  //       meta: { title: "审批记录", icon: "list", requireAuth: true }
-  //     }
-  //   ]
-  // }
+  {
+    path: "/order",
+    component: () => import("@/views/order"),
+    hidden: true
+  },
+  {
+    path: "/order",
+    component: Layout,
+    redirect: "/order",
+    name: "Order",
+    meta: { title: "请款列表", icon: "paymentForm", requireAuth: true },
+    children: [
+      {
+        path: "index",
+        name: "Index",
+        component: () => import("@/views/order"),
+        meta: { title: "请款列表", icon: "paymentForm", requireAuth: true }
+      }
+    ]
+  }
 ];
 
 /**

@@ -31,7 +31,6 @@ const user = {
 
   actions: {
     LoginByUsername({ commit }, userInfo) {
-      console.log(2222)
       const { userName, password } = userInfo;
       console.log(userInfo)
       return new Promise((resolve, reject) => {
@@ -39,9 +38,9 @@ const user = {
           userName: userName.trim(),
           password: password.trim()
         }).then(res => {
-          console.log('res', res)
           if (res.data.status === 200) {
             const tmpData = res.data.datas;
+            console.log('tmpdata', tmpData)
             AUTH.setName(tmpData.userName);
             AUTH.setRole(tmpData.idRole);
             AUTH.setUserId(tmpData.idUser);

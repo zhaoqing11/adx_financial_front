@@ -20,9 +20,8 @@ export default {
 <style scoped>
 .app-main {
   width: 100%;
-  height: calc(100vh - 125px);
+  height: calc(100vh - 60px);
   overflow-y: scroll;
-  /* background: #fff; */
 }
 .fixed-header + .app-main {
   padding-top: 50px;

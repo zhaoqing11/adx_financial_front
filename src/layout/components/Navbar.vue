@@ -1,26 +1,39 @@
 <template>
-  <div class="navbar space-between">
-    <div class="br-header">
-      <div class="br-header-left">
-        <div class="navicon-left hidden-md-down"><a id="btnLeftMenu" href=""><i class="icon ion-navicon-round"></i></a></div>
-        <div class="navicon-left hidden-lg-up"><a id="btnLeftMenuMobile" href=""><i class="icon ion-navicon-round"></i></a></div>
-      </div>
-      <div class="br-header-right">
-        <nav class="nav">
-          <div class="dropdown">
-            <a href="javascript:void(0);" class="nav-link nav-link-profile" data-toggle="dropdown" @click="logout()" >
-              <span class="logged-name hidden-md-down">{{userName}}</span>
-              <!-- <img src="@/assets/images/user.png" class="wd-32 rounded-circle" alt=""> -->
-              <span class="square-10 bg-success"></span>
-            </a>
-            <!-- <div class="dropdown-menu dropdown-menu-header wd-250" >
-              <ul class="list-unstyled user-profile-nav">
-                <li><a href=""><i class="icon ion-power"></i>退出</a></li>
-              </ul>
-            </div> -->
-          </div>
-        </nav>
-      </div>
+  <div class="iq-top-navbar">
+    <div class="iq-navbar-custom">
+      <nav class="navbar navbar-expand-lg navbar-light p-0">
+        <div class="side-menu-bt-sidebar">
+            <svg xmlns="http://www.w3.org/2000/svg" class="text-secondary wrapper-menu" width="30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </div>
+        <div class="d-flex align-items-center">
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto navbar-list align-items-center">
+                    <li class="nav-item nav-icon dropdown">
+                        <a href="#" class="nav-item nav-icon dropdown-toggle pr-0 search-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+                            <img src="@/assets/images/home/user.png" class="img-fluid avatar-rounded" alt="user" @click="clickShowCard()">
+                            <span class="mb-0 ml-2 user-name">John Doe</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton" v-if="showUser">
+                            <li class="dropdown-item d-flex svg-icon">
+                                <svg class="svg-icon mr-0 text-secondary" id="h-01-p" width="20" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <a href="javaScript:void(0);">个人中心</a>
+                            </li>
+                            <li class="dropdown-item  d-flex svg-icon border-top" @click="logout()">
+                                <svg class="svg-icon mr-0 text-secondary" id="h-05-p" width="20" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                                <a href="javaScript:void(0);">退 出</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>                     
+            </div> 
+        </div>
+      </nav>
     </div>
   </div>
 </template>
@@ -32,10 +45,18 @@ import * as API from "@/api/user";
 export default {
   data() {
     return {
+      showUser: false,
       userName: getName()
     };
   },
   methods: {
+    clickShowCard() {
+      if (this.showUser) {
+        this.showUser = false
+      } else {
+        this.showUser = true
+      }
+    },
     // 退出登录
     logout() {
       this.$confirm("确定退出系统吗？", "提示", {

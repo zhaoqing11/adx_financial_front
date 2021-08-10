@@ -1,16 +1,10 @@
 <template>
   <div>
+    
     <!-- ########## START: MAIN PANEL ########## -->
-    <div class="br-mainpanel">
-      <div class="br-pagetitle">
-        <i class="icon ion-ios-home-outline"></i>
-        <div>
-          <!-- <h4>Dashboard</h4>
-          <p class="mg-b-0">Do bigger things with Bracket plus, the responsive bootstrap 4 admin template.</p> -->
-        </div>
-      </div>
+    <!-- <div class="br-mainpanel"> -->
 
-      <div class="br-pagebody">
+      <!-- <div class="br-pagebody">
         <div class="row row-sm">
           <div class="col-sm-6 col-xl-3 mg-t-20 mg-xl-t-0" v-if="checkPerimission('approvalProjectEdit')" @click="clickApprovalProject()">
             <div class="bg-teal rounded overflow-hidden">
@@ -91,12 +85,10 @@
             <div class="card bd-0 mg-t-20"></div>
           </div>
         </div>
-      </div>
-      <footer class="br-footer">
-        <div class="footer-left">
-        </div>
-      </footer>
-    </div>
+      </div> -->
+
+    <!-- </div> -->
+
   </div>
 </template>
 
