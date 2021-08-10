@@ -21,10 +21,11 @@ export function LoginByUsername(data) {
  * @export
  * @returns
  */
-export function logout() {
+export function logout(data) {
   return request({
-    url: '/user-api/user/logout',
-    method: 'post'
+    url: '/user/logout',
+    method: 'post',
+    data
   });
 }
 

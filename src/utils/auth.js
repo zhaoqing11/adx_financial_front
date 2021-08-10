@@ -100,3 +100,15 @@ export function checkPerimission(checkKey) {
     return perimssions.hasOwnProperty(checkKey);
   }
 }
+
+export function setRealName(name) {
+  return Cookies.set('realName', name, 0);
+}
+
+export function getRealName() {
+  return Cookies.get('realName');
+}
+
+export function removeRealName() {
+  return Cookies.remove('realName');
+}

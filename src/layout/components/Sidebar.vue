@@ -29,7 +29,7 @@
               <li class="px-3 pt-3 pb-2 ">
               <span class="text-uppercase small font-weight-bold">Application</span>
               </li>
-              <li class="active sidebar-layout">
+              <li class="active sidebar-layout" v-if="idRole === 2">
                   <a href="order.html" class="svg-icon">
                       <i class="">
                           <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -39,7 +39,7 @@
                       <span class="ml-2">收款</span>
                   </a>
               </li>
-              <li class=" sidebar-layout" @click="routerLinkToOrder()">
+              <li class=" sidebar-layout" @click="routerLinkToPaymentForm()">
                   <a href="invoice.html" class="svg-icon">
                       <i class="">
                           <svg class="icon line" width="18" id="receipt" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor">
@@ -50,7 +50,7 @@
                       <span class="ml-2">请款列表</span>
                   </a>
               </li>
-              <li class=" sidebar-layout">
+              <li class=" sidebar-layout" v-if="idRole === 4">
               <a href="customer.html" class="svg-icon ">
                   <i class="">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -69,87 +69,20 @@
 </template>
 
 <script>
-import * as API from "@/api/role";
-import * as AUTH from "@/utils/auth";
+import { getRole  } from "@/utils/auth";
 
 export default {
   data() {
     return {
-      dataArray: [],
-      roleId: AUTH.getRole(),
-      activeIndex: 0
+      idRole: getRole()
     };
   },
-  computed: {
-  },
-  created() {
-  },
   mounted() {
-    this.getAuthByRole()
   },
   methods: {
-    routerLinkToOrder() {
-      this.$router.push('/order/index')
-    },
-    // 路由至对应菜单项
-    clickSubMenu(index, path) {
-      this.activeIndex = index
-      this.$router.push(path)
-    },
-    // 根据角色获取角色下的权限
-    getAuthByRole() {
-      const dataArray = [];
-      const dataChildrenArray = [];
-
-      let permission = AUTH.getPerimission()
-      // 判断在Cookies中是否已存在permission，存在则移除，防止调用后台方法header请求头过大导致400错误
-      if (permission) {
-        AUTH.removePerimission()
-      }
-
-      const param = {
-        idRole: this.roleId
-      }
-      API.getAuthByRole(param).then(res => {
-        if (res.data.status === 200) {
-          const tmpData = res.data.datas
-          AUTH.setPerimission(tmpData)
-          tmpData.forEach(item => {
-            // 创建一个新对象，并添加children属性
-            const objTemp = {
-              idAccessApi: item.idAccessApi,
-              name: item.name,
-              parenId: item.parenId,
-              level: item.level,
-              routerPath: item.routerPath,
-              icon: item.icon,
-              children: []
-            };
-            if (item.level === 1) {
-              dataArray.push(objTemp)
-            } else if (item.level === 2) {
-              dataChildrenArray.push(item)
-            }
-          });
-          for (const k in dataArray) {
-            for (const j in dataChildrenArray) {
-              if (dataChildrenArray[j].parentId === dataArray[k].idAccessApi) {
-                dataArray[k].children.push(dataChildrenArray[j])
-              }
-            }
-          }
-          this.dataArray = dataArray
-        }
-      }).catch(err => {
-        console.log(err)
-      });
+    routerLinkToPaymentForm() {
+      this.$router.push('/paymentForm/index')
     }
   }
 };
 </script>
-
-<style lang="scss" scoped>
-.hide-menu-sub {
-  display: none;
-}
-</style>

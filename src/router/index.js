@@ -36,21 +36,16 @@ export const constantRoutes = [
     ]
   },
   {
-    path: "/order",
-    component: () => import("@/views/order"),
-    hidden: true
-  },
-  {
-    path: "/order",
+    path: "/paymentForm",
     component: Layout,
-    redirect: "/order",
-    name: "Order",
+    redirect: "/paymentForm",
+    name: "PaymentForm",
     meta: { title: "请款列表", icon: "paymentForm", requireAuth: true },
     children: [
       {
         path: "index",
         name: "Index",
-        component: () => import("@/views/order"),
+        component: () => import("@/views/paymentForm"),
         meta: { title: "请款列表", icon: "paymentForm", requireAuth: true }
       }
     ]

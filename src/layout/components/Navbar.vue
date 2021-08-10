@@ -13,7 +13,7 @@
                     <li class="nav-item nav-icon dropdown">
                         <a href="#" class="nav-item nav-icon dropdown-toggle pr-0 search-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
                             <img src="@/assets/images/home/user.png" class="img-fluid avatar-rounded" alt="user" @click="clickShowCard()">
-                            <span class="mb-0 ml-2 user-name">John Doe</span>
+                            <span class="mb-0 ml-2 user-name">{{userName}}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton" v-if="showUser">
                             <li class="dropdown-item d-flex svg-icon">
@@ -39,14 +39,17 @@
 </template>
 
 <script>
-import { getName, getClientIpInfo } from "@/utils/auth";
-import * as API from "@/api/user";
+import { getRealName, getUserId, getToken  } from "@/utils/auth";
 
 export default {
   data() {
     return {
       showUser: false,
-      userName: getName()
+      userName: getRealName(),
+      userInfo: {
+        idUser: getUserId(),
+        token: getToken()
+      }
     };
   },
   methods: {
@@ -64,7 +67,7 @@ export default {
         cancelButtonText: "取消",
         type: "warning"
       }).then(() => {
-        this.$store.dispatch("logout").then(res => {
+        this.$store.dispatch("logout", this.userInfo).then(res => {
           if (res.data.status === 200) {
             this.$router.push("/login");
           }

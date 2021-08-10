@@ -1,6 +1,5 @@
-import { LoginByUsername, logout, getClientIpAddress } from "@/api/user";
+import { LoginByUsername, logout } from "@/api/user";
 import * as AUTH from "@/utils/auth";
-import * as API from "@/api/role";
 
 const user = {
   state: {
@@ -32,7 +31,6 @@ const user = {
   actions: {
     LoginByUsername({ commit }, userInfo) {
       const { userName, password } = userInfo;
-      console.log(userInfo)
       return new Promise((resolve, reject) => {
         LoginByUsername({
           userName: userName.trim(),
@@ -40,11 +38,11 @@ const user = {
         }).then(res => {
           if (res.data.status === 200) {
             const tmpData = res.data.datas;
-            console.log('tmpdata', tmpData)
             AUTH.setName(tmpData.userName);
             AUTH.setRole(tmpData.idRole);
             AUTH.setUserId(tmpData.idUser);
             AUTH.setToken(tmpData.accessToken);
+            AUTH.setRealName(tmpData.realName);
             
             resolve(res);
             // const param = {
@@ -71,15 +69,19 @@ const user = {
     },
 
     // user logout
-    logout({ commit, state }) {
+    logout({ commit }, userInfo) {
+      const { idUser, token } = userInfo;
       return new Promise((resolve, reject) => {
-        logout(state.token)
-          .then(res => {
+        logout({
+          userId: idUser,
+          token: token
+        }).then(res => {
             AUTH.removeName();
             AUTH.removeRole();
             AUTH.removeToken();
             AUTH.removeUserId();
             AUTH.removeClientIpInfo();
+            AUTH.removeRealName();
             resolve(res);
           })
           .catch(error => {
