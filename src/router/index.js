@@ -36,6 +36,36 @@ export const constantRoutes = [
     ]
   },
   {
+    path: "/myPaymentForm",
+    component: Layout,
+    redirect: "/myPaymentForm",
+    name: "MyPaymentForm",
+    meta: { title: "我的请款", icon: "myPaymentForm", requireAuth: true },
+    children: [
+      {
+        path: "index",
+        name: "Index",
+        component: () => import("@/views/myPaymentForm"),
+        meta: { title: "我的请款", icon: "myPaymentForm", requireAuth: true }
+      }
+    ]
+  },
+  {
+    path: "/approvalPaymentForm",
+    component: Layout,
+    redirect: "/approvalPaymentForm",
+    name: "ApprovalPaymentForm",
+    meta: { title: "审批列表", icon: "approvalPaymentForm", requireAuth: true },
+    children: [
+      {
+        path: "index",
+        name: "Index",
+        component: () => import("@/views/approvalPaymentForm"),
+        meta: { title: "审批列表", icon: "approvalPaymentForm", requireAuth: true }
+      }
+    ]
+  },
+  {
     path: "/paymentForm",
     component: Layout,
     redirect: "/paymentForm",
@@ -47,6 +77,21 @@ export const constantRoutes = [
         name: "Index",
         component: () => import("@/views/paymentForm"),
         meta: { title: "请款列表", icon: "paymentForm", requireAuth: true }
+      }
+    ]
+  },
+  {
+    path: "/collectionRecord",
+    component: Layout,
+    redirect: "/collectionRecord",
+    name: "CollectionRecord",
+    meta: { title: "收款", icon: "collectionRecord", requireAuth: true },
+    children: [
+      {
+        path: "index",
+        name: "Index",
+        component: () => import("@/views/collectionRecord"),
+        meta: { title: "收款列表", icon: "collectionRecord", requireAuth: true }
       }
     ]
   }

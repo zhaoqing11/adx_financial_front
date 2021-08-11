@@ -1,5 +1,52 @@
 import request from '@/utils/request';
 
+
+/**
+ * 获取待审批请款数
+ *
+ * @export
+ * @param {*} data
+ * @returns
+ */
+export function queryApprovalPaymentCount(data) {
+  return request({
+    url: '/paymentForm/queryApprovalPaymentCount',
+    method: 'post',
+    data
+  });
+}
+
+
+/**
+ * 分页条件查询全部请款列表
+ *
+ * @export
+ * @param {*} data
+ * @returns
+ */
+export function queryAllPaymentForm(data) {
+  return request({
+    url: '/paymentForm/queryAllPaymentForm',
+    method: 'post',
+    data
+  });
+}
+
+/**
+ *分页（条件）查询审批列表
+ *
+ * @export
+ * @param {*} data
+ * @returns
+ */
+export function getApprovalPaymentForm(data) {
+  return request({
+    url: '/paymentForm/selectApprovalPaymentFormByPage',
+    method: 'post',
+    data
+  });
+}
+
 /**
  *创建请款单
  *

@@ -15,51 +15,73 @@
       <div class="data-scrollbar" data-scroll="1">
         <nav class="iq-sidebar-menu">
           <ul id="iq-sidebar-toggle" class="side-menu">
-              <li class=" sidebar-layout">
-              <a href="index.html" class="svg-icon">
-              <i class="">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-              </svg>
-              </i>
-              <span class="ml-2">Dashboard</span>
-              <p class="mb-0 w-10 badge badge-pill badge-primary">6</p>
-              </a>
-              </li>
-              <li class="px-3 pt-3 pb-2 ">
-              <span class="text-uppercase small font-weight-bold">Application</span>
-              </li>
-              <li class="active sidebar-layout" v-if="idRole === 2">
-                  <a href="order.html" class="svg-icon">
-                      <i class="">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                          </svg>
-                      </i>
-                      <span class="ml-2">收款</span>
-                  </a>
-              </li>
-              <li class=" sidebar-layout" @click="routerLinkToPaymentForm()">
-                  <a href="invoice.html" class="svg-icon">
-                      <i class="">
-                          <svg class="icon line" width="18" id="receipt" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor">
-                              <path d="M17,16V3L13,5,10,3,7,5,3,3V17.83A3.13,3.13,0,0,0,5.84,21,3,3,0,0,0,9,18V17a1,1,0,0,1,1-1H20a1,1,0,0,1,1,1v1a3,3,0,0,1-3,3H6" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
-                              <line x1="8" y1="10" x2="12" y2="10" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></line>
-                          </svg> 
-                      </i>
-                      <span class="ml-2">请款列表</span>
-                  </a>
-              </li>
-              <li class=" sidebar-layout" v-if="idRole === 4">
-              <a href="customer.html" class="svg-icon ">
-                  <i class="">
+            <li class=" sidebar-layout" @click="goHome()">
+              <a href="javaScript:void(0);" class="svg-icon">
+                <i class="">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                   </svg>
-                  </i>
-                  <span class="ml-2">月报统计</span>
+                </i>
+                <span class="ml-2">Home</span>
+                <!-- <p class="mb-0 w-10 badge badge-pill badge-primary">6</p> -->
               </a>
-              </li>
+            </li>
+            <li class="px-3 pt-3 pb-2 ">
+              <span class="text-uppercase small font-weight-bold">Application</span>
+            </li>
+            <li class="active sidebar-layout" @click="routerLinkToMyPaymentForm()">
+              <a href="javaScript:void(0);" class="svg-icon">
+                <i class="">
+                  <svg class="icon line" width="18" id="receipt" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor">
+                    <path d="M17,16V3L13,5,10,3,7,5,3,3V17.83A3.13,3.13,0,0,0,5.84,21,3,3,0,0,0,9,18V17a1,1,0,0,1,1-1H20a1,1,0,0,1,1,1v1a3,3,0,0,1-3,3H6" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
+                    <line x1="8" y1="10" x2="12" y2="10" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></line>
+                  </svg> 
+                </i>
+                <span class="ml-2">我的请款</span>
+              </a>
+            </li>
+            <li class="sidebar-layout" v-if="idRole === '2'" @click="routerLinkToCollectionRecord()">
+              <a href="javaScript:void(0);" class="svg-icon">
+                <i class="">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </i>
+                <span class="ml-2">收款</span>
+              </a>
+            </li>
+            <li class=" sidebar-layout" v-if="idRole === '2'" @click="routerLinkToPaymentFormList()">
+              <a href="javaScript:void(0);" class="svg-icon">
+                <i class="">
+                  <svg class="icon line" width="18" id="receipt" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor">
+                    <path d="M17,16V3L13,5,10,3,7,5,3,3V17.83A3.13,3.13,0,0,0,5.84,21,3,3,0,0,0,9,18V17a1,1,0,0,1,1-1H20a1,1,0,0,1,1,1v1a3,3,0,0,1-3,3H6" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
+                    <line x1="8" y1="10" x2="12" y2="10" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></line>
+                  </svg> 
+                </i>
+                <span class="ml-2">请款列表</span>
+              </a>
+            </li>
+            <li class=" sidebar-layout" v-if="idRole === '2'" @click="routerLinkToPaymentApproval()">
+              <a href="javaScript:void(0);" class="svg-icon">
+                <i class="">
+                  <svg class="icon line" width="18" id="receipt" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor">
+                    <path d="M17,16V3L13,5,10,3,7,5,3,3V17.83A3.13,3.13,0,0,0,5.84,21,3,3,0,0,0,9,18V17a1,1,0,0,1,1-1H20a1,1,0,0,1,1,1v1a3,3,0,0,1-3,3H6" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
+                    <line x1="8" y1="10" x2="12" y2="10" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></line>
+                  </svg> 
+                </i>
+                <span class="ml-2">审批列表</span>
+              </a>
+            </li>
+            <li class=" sidebar-layout" v-if="idRole === '4'">
+              <a href="customer.html" class="svg-icon ">
+                <i class="">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                </i>
+                <span class="ml-2">月报统计</span>
+              </a>
+            </li>
           </ul>
         </nav>
         <div class="pt-5 pb-5"></div>
@@ -80,8 +102,24 @@ export default {
   mounted() {
   },
   methods: {
-    routerLinkToPaymentForm() {
+    goHome() {
+      this.$router.push('/home')
+    },
+    // 路由至收款列表
+    routerLinkToCollectionRecord() {
+      this.$router.push('/collectionRecord/index')
+    },
+    // 路由至请款列表
+    routerLinkToPaymentFormList() {
       this.$router.push('/paymentForm/index')
+    },
+    // 路由至审批列表
+    routerLinkToPaymentApproval() {
+      this.$router.push('/approvalPaymentForm/index')
+    },
+    // 路由至我的请款
+    routerLinkToMyPaymentForm() {
+      this.$router.push('/myPaymentForm/index')
     }
   }
 };

@@ -7,7 +7,7 @@
             <div class="col-lg-12">
               <div class="d-flex flex-wrap align-items-center justify-content-between my-schedule mb-4">
                 <div class="d-flex align-items-center justify-content-between">
-                  <h4 class="font-weight-bold">请款列表</h4>
+                  <h4 class="font-weight-bold">申请列表</h4>
                 </div>  
                 <div class="create-workform">
                   <div class="d-flex flex-wrap align-items-center justify-content-between">
@@ -22,28 +22,49 @@
                           </a>
                         </div>
                       </form>
-                      <!-- <a href="javaScript:void(0);" class="btn btn-primary position-relative d-flex align-items-center justify-content-between" @click="dialogFormVisible = true">
+                      <a href="javaScript:void(0);" class="btn btn-primary position-relative d-flex align-items-center justify-content-between" @click="dialogFormVisible = true">
                         <svg xmlns="http://www.w3.org/2000/svg" class="mr-2" width="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
                           添加申请
-                      </a> -->
+                      </a>
                     </div>
                   </div>
                 </div>                    
               </div>
+              <el-dialog title="创建申请单" :visible.sync="dialogFormVisible">
+                <el-form :model="paymentForm" ref="paymentForm" :rules="rules">
+                  <el-form-item label="申请事由" :label-width="formLabelWidth" prop="reasonApplication">
+                    <el-input type="textarea" v-model="paymentForm.reasonApplication" autocomplete="off"></el-input>
+                  </el-form-item>
+                  <el-form-item label="申请金额" :label-width="formLabelWidth" prop="amount">
+                    <!-- oninput="value=value.replace(/[^0-9.]/g,'')" -->
+                    <el-input v-model="paymentForm.amount" type="number" autocomplete="off"></el-input>
+                  </el-form-item>
+                  <el-form-item label="付款名称" :label-width="formLabelWidth" prop="paymentName">
+                    <el-input v-model="paymentForm.paymentName" autocomplete="off"></el-input>
+                  </el-form-item>
+                  <el-form-item label="付款账号" :label-width="formLabelWidth" prop="paymentAccount">
+                    <el-input v-model="paymentForm.paymentAccount" autocomplete="off"></el-input>
+                  </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                  <el-button @click="dialogFormVisible = false">取 消</el-button>
+                  <el-button type="primary" @click="addPaymentForm('paymentForm')">确 定</el-button>
+                </div>
+              </el-dialog>
               <div class="row">
                 <div class="col-lg-12">
                   <div class="card card-block card-stretch">
                     <div class="card-body p-0">
                       <div class="d-flex justify-content-between align-items-center p-3">
-                        <h5 class="font-weight-bold">请款列表</h5>
-                        <!-- <button class="btn btn-secondary btn-sm">
+                        <h5 class="font-weight-bold">申请列表</h5>
+                        <button class="btn btn-secondary btn-sm">
                           <svg xmlns="http://www.w3.org/2000/svg" class="mr-1" width="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                           </svg>
                             导 出
-                        </button> -->
+                        </button>
                       </div>
                       <div class="table-responsive">
                         <table class="table data-table mb-0">
@@ -79,17 +100,11 @@
                                 <label class="text-muted mb-0" >申请人</label>
                               </th>
                               <th scope="col">
-                                <label class="text-muted mb-0" >审批状态</label>
+                                <label class="text-muted mb-0" >申请日期</label>
                               </th>
-                              <th scope="col">
-                                <label class="text-muted mb-0" >审批金额</label>
-                              </th>
-                              <th scope="col">
-                                <label class="text-muted mb-0" >审批人</label>
-                              </th>
-                              <!-- <th scope="col" class="text-right">
+                              <th scope="col" class="text-right">
                                 <span class="text-muted" >操作</span>
-                              </th> -->
+                              </th>
                             </tr>
                           </thead>
                           <tbody>
@@ -107,14 +122,17 @@
                               <td class="text-right">{{item.paymentName}}</td>
                               <td>{{item.paymentAccount}}</td>
                               <td>{{item.userName}}</td>
-                              <td :class="item.idPaymentFormState == 1 ? 'orange-cell' : 'green-cell'">{{item.idPaymentFormState == 1 ? '待审批' : '已审批'}}</td>
-                              <td>{{item.approvalAmount ? item.approvalAmount : '--'}}</td>
-                              <td>{{item.approvalUser ? item.approvalUser : '--'}}</td>
-                              <!-- <td>
+                              <td>{{item.createTime}}</td>
+                              <td>
                                 <div class="d-flex justify-content-end align-items-center">
                                   <i class="el-icon-delete" @click="deletePaymentForm(item.idPaymentForm)"></i>
+                                    <!-- <a class="" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit" href="#">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="text-secondary" width="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                    </a> -->
                                 </div>
-                              </td> -->
+                              </td>
                             </tr>
                           </tbody>
                         </table>
@@ -166,21 +184,88 @@ export default {
       totalPage: 1,
       totalRecord: 0,
       code: '',
-      tableData: []
+      tableData: [],
+      dialogFormVisible: false,
+      paymentForm: {
+        reasonApplication: null,
+        amount: null,
+        paymentName: null,
+        paymentAccount: null,
+        idUser: null
+      },
+      formLabelWidth: '120',
+      rules: {
+        reasonApplication: [
+            { required: true, message: '请填写申请事由', trigger: 'blur' },
+        ],
+        amount: [
+            { required: true, message: '请填写申请金额', trigger: 'blur' }
+        ],
+        paymentName: [
+            { required: true, message: '请填写付款名称', trigger: 'blur' }
+        ],
+        paymentAccount: [
+            { required: true, message: '请填写付款账号', trigger: 'blur' }
+        ]
+      }
     }
   },
   mounted() {
     this.getTableData()
   },
   methods: {
+    // 删除请款单
+    deletePaymentForm(id) {
+      this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        center: true
+      }).then(() => {
+        API.delPaymentForm({
+          idPaymentForm: id
+        }).then(res => {
+          if (res.data.status === 200) {
+            this.$message.success('删除成功');
+            this.getTableData();
+          }
+        })
+      }).catch(() => {
+        this.$message.info('已取消删除');
+      });
+    },
+    // 创建申请单
+    addPaymentForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          const param = {
+            reasonApplication: this.paymentForm.reasonApplication,
+            amount: this.paymentForm.amount,
+            paymentName: this.paymentForm.paymentName,
+            paymentAccount: this.paymentForm.paymentAccount,
+            idUser: this.idUser
+          }
+          API.addPaymentForm(param).then(res => {
+            if (res.data.status === 200) {
+              this.$message.success('创建成功')
+              this.dialogFormVisible = false
+              this.getTableData()
+            } else {
+              this.$message.error(res.data.cause)
+            }
+          })
+        }
+      })
+    },
     // 获取个人请款记录列表
     getTableData() {
       const params = {
         pageNum: this.pageNum,
         pageSize: this.pageSize,
-        code: this.code
+        code: this.code,
+        idUser: this.idUser
       } 
-      API.queryAllPaymentForm(params)
+      API.selectPaymentFormList(params)
       .then(res => {
         if (res.data.status === 200) {
           let tmpData = res.data.datas;
@@ -198,13 +283,5 @@ export default {
 .el-icon-delete:before {
   color: #8f9fbc !important;
   font-weight: 500;
-}
-.orange-cell {
-  color: orange;
-  font-weight: bold;
-}
-.green-cell {
-  color:green;
-  font-weight: bold;
 }
 </style>
