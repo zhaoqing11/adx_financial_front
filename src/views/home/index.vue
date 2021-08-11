@@ -7,6 +7,10 @@
             <label>待审批</label>
             <span>{{approvalPaymentCount}}</span>
           </div>
+          <div class="card" v-if="idRole === '3'" @click="routerLinkToApprocalPayment">
+            <label>待汇款</label>
+            <span>{{paymentRemittanceCount}}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -24,7 +28,8 @@ export default {
   data() {
     return {
       idRole: getRole(),
-      approvalPaymentCount: 0
+      approvalPaymentCount: 0,
+      paymentRemittanceCount: 0
     };
   },
   created() {
@@ -34,13 +39,15 @@ export default {
   },
   methods: {
     routerLinkToApprocalPayment() {
-      this.$router.push('/approvalPaymentForm/index')
+      this.$router.push('/paymentForm/index')
     },
     getDataInfo() {
-      API.queryApprovalPaymentCount()
+      API.getDataInfo()
       .then(res => {
         if (res.data.status === 200) {
-          this.approvalPaymentCount = res.data.datas
+          let tmpData = res.data.datas
+          this.approvalPaymentCount = tmpData.approvalCount
+          this.paymentRemittanceCount = tmpData.remittanceCount
         }
       })
     }

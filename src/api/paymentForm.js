@@ -8,9 +8,9 @@ import request from '@/utils/request';
  * @param {*} data
  * @returns
  */
-export function queryApprovalPaymentCount(data) {
+export function getDataInfo(data) {
   return request({
-    url: '/paymentForm/queryApprovalPaymentCount',
+    url: '/paymentForm/getDataInfo',
     method: 'post',
     data
   });

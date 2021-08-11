@@ -85,7 +85,16 @@
                                 <label class="text-muted mb-0" >审批金额</label>
                               </th>
                               <th scope="col">
-                                <label class="text-muted mb-0" >审批人</label>
+                                <label class="text-muted mb-0" >审批操作人</label>
+                              </th>
+                              <th scope="col">
+                                <label class="text-muted mb-0" >汇款金额</label>
+                              </th>
+                              <th scope="col">
+                                <label class="text-muted mb-0" >手续费</label>
+                              </th>
+                              <th scope="col">
+                                <label class="text-muted mb-0" >汇款操作人</label>
                               </th>
                               <!-- <th scope="col" class="text-right">
                                 <span class="text-muted" >操作</span>
@@ -108,13 +117,26 @@
                               <td>{{item.paymentAccount}}</td>
                               <td>{{item.userName}}</td>
                               <td :class="item.idPaymentFormState == 1 ? 'orange-cell' : 'green-cell'">{{item.idPaymentFormState == 1 ? '待审批' : '已审批'}}</td>
-                              <td>{{item.approvalAmount ? item.approvalAmount : '--'}}</td>
+                              <td>
+                                <span v-if="item.approvalAmount">{{item.approvalAmount}}</span>
+                                <span v-else>
+                                  <span v-if="idRole != '2'">--</span>
+                                  <i class="el-icon-edit" v-else @click="editPaymentForm(item)"></i>
+                                </span>
+                              </td>
                               <td>{{item.approvalUser ? item.approvalUser : '--'}}</td>
-                              <!-- <td>
-                                <div class="d-flex justify-content-end align-items-center">
-                                  <i class="el-icon-delete" @click="deletePaymentForm(item.idPaymentForm)"></i>
-                                </div>
-                              </td> -->
+                              <td>
+                                <span v-if="item.remittanceAmount">{{item.remittanceAmount}}</span>
+                                <span v-else>
+                                  <span v-if="idRole != '3'">--</span>
+                                  <span v-else>
+                                    <span v-if="item.idPaymentFormState === 1">--</span>
+                                    <i class="el-icon-edit" v-else @click="clickPaymentRemittance(item.idPaymentForm)"></i>
+                                  </span>
+                                </span>
+                              </td>
+                              <td>{{item.serviceCharge ? item.serviceCharge : '--'}}</td>
+                              <td>{{item.remittanceUser ? item.remittanceUser : '--'}}</td>
                             </tr>
                           </tbody>
                         </table>
@@ -141,38 +163,179 @@
         </div>
       </div>
     </footer>
+    <el-dialog title="审批" :visible.sync="dialogFormVisible">
+      <el-form :model="paymentForm" ref="paymentForm" :rules="rules" disabled>
+        <el-form-item label="申请事由" :label-width="formLabelWidth" prop="reasonApplication">
+          <el-input type="textarea" v-model="paymentForm.reasonApplication" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="申请金额" :label-width="formLabelWidth" prop="amount">
+          <!-- oninput="value=value.replace(/[^0-9.]/g,'')" -->
+          <el-input v-model="paymentForm.amount" type="number" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="付款名称" :label-width="formLabelWidth" prop="paymentName">
+          <el-input v-model="paymentForm.paymentName" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="付款账号" :label-width="formLabelWidth" prop="paymentAccount">
+          <el-input v-model="paymentForm.paymentAccount" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <el-divider content-position="left">审批操作</el-divider>
+      <el-form :model="paymentFormApproval" ref="paymentFormApproval" :rules="approvalRules">
+        <el-form-item label="审批金额" :label-width="formLabelWidth" prop="amount">
+          <el-input type="number" v-model="paymentFormApproval.amount" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="approvalPaymentForm('paymentFormApproval')">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="汇款" :visible.sync="remittanceDialogFormVisible">
+      <el-form :model="paymentRemittanceForm" ref="paymentRemittanceForm" :rules="remittanceRules">
+        <el-form-item label="汇款金额" :label-width="formLabelWidth" prop="amount">
+          <el-input v-model="paymentRemittanceForm.amount" type="number" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="手续费" :label-width="formLabelWidth" prop="serviceCharge">
+          <el-input type="number" min="0" v-model="paymentRemittanceForm.serviceCharge" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="remittanceDialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addPaymentRemittance('paymentRemittanceForm')">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import * as API from '@/api/paymentForm';
-import { getUserId } from '@/utils/auth';
-// import "@/utils/assets/js/demo.js";
-// import "@/utils/js/backend-bundle.min.js";
-// import "@/utils/js/sidebar.js";
-// import "@/utils/js/flex-tree.min.js";
-// import "@/utils/js/tree.js";
-// import "@/utils/js/table-treeview.js";
-// import "@/utils/js/slider.js";
-// import "@/utils/js/app.js";
+import * as APPROVAL from '@/api/approvalPayment';
+import * as REMITTANCE from '@/api/paymentRemittance';
+import { getUserId, getRole } from '@/utils/auth';
 
 export default {
   data() {
     return {
+      dialogFormVisible: false,
+      remittanceDialogFormVisible: false,
       idUser: getUserId(),
+      idRole: getRole(),
       showUser: false,
       pageNum: 1,
       pageSize: 10,
       totalPage: 1,
       totalRecord: 0,
       code: '',
-      tableData: []
+      tableData: [],
+
+      paymentForm: {
+        reasonApplication: null,
+        amount: null,
+        paymentName: null,
+        paymentAccount: null
+      },
+      formLabelWidth: '80',
+      rules: {
+        reasonApplication: [
+            { required: true, message: '请填写申请事由', trigger: 'blur' },
+        ],
+        amount: [
+            { required: true, message: '请填写申请金额', trigger: 'blur' }
+        ],
+        paymentName: [
+            { required: true, message: '请填写付款名称', trigger: 'blur' }
+        ],
+        paymentAccount: [
+            { required: true, message: '请填写付款账号', trigger: 'blur' }
+        ]
+      },
+      paymentFormApproval: {
+        idPaymentForm: null,
+        amount: null
+      },
+      approvalRules: {
+        amount: [
+            { required: true, message: '请填写审批金额', trigger: 'blur' }
+        ]
+      },
+      paymentRemittanceForm: {
+        idPaymentForm: null,
+        amount: null,
+        serviceCharge: 0
+      },
+      remittanceRules: {
+        amount: [
+            { required: true, message: '请填写审批金额', trigger: 'blur' }
+        ],
+        serviceCharge: [
+            { required: true, message: '请填写手续费', trigger: 'blur' }
+        ]
+      },
+      idPaymentFormState: 1
     }
   },
   mounted() {
     this.getTableData()
   },
   methods: {
+    clickPaymentRemittance(id) {
+      this.paymentRemittanceForm.idPaymentForm = id
+      this.remittanceDialogFormVisible = true
+    },
+    // 创建汇款记录
+    addPaymentRemittance(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          const param = {
+            idPaymentForm: this.paymentRemittanceForm.idPaymentForm,
+            amount: this.paymentRemittanceForm.amount,
+            serviceCharge: this.paymentRemittanceForm.serviceCharge,
+            idUser: this.idUser
+          }
+          REMITTANCE.addPaymentRemittance(param).then(res => {
+            if (res.data.status === 200) {
+              this.$message.success('操作成功')
+              this.remittanceDialogFormVisible = false
+              this.resetForm(formName)
+              this.getTableData()
+            } else {
+              this.$message.error(res.data.cause)
+            }
+          })
+        }
+      })
+    },
+    // 审批请款单
+    approvalPaymentForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          const param = {
+            idPaymentForm: this.paymentFormApproval.idPaymentForm,
+            amount: this.paymentFormApproval.amount,
+            idUser: this.idUser
+          }
+          APPROVAL.approvalPaymentForm(param).then(res => {
+            if (res.data.status === 200) {
+              this.$message.success('操作成功')
+              this.dialogFormVisible = false
+              this.resetForm(formName)
+              this.getTableData()
+            } else {
+              this.$message.error(res.data.cause)
+            }
+          })
+        }
+      })
+    },
+    editPaymentForm(data) {
+      this.paymentForm = data;
+      this.paymentFormApproval.idPaymentForm = data.idPaymentForm;
+      this.dialogFormVisible = true;
+    },
+    // 重置
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
     // 获取个人请款记录列表
     getTableData() {
       const params = {

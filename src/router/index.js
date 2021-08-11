@@ -51,21 +51,6 @@ export const constantRoutes = [
     ]
   },
   {
-    path: "/approvalPaymentForm",
-    component: Layout,
-    redirect: "/approvalPaymentForm",
-    name: "ApprovalPaymentForm",
-    meta: { title: "审批列表", icon: "approvalPaymentForm", requireAuth: true },
-    children: [
-      {
-        path: "index",
-        name: "Index",
-        component: () => import("@/views/approvalPaymentForm"),
-        meta: { title: "审批列表", icon: "approvalPaymentForm", requireAuth: true }
-      }
-    ]
-  },
-  {
     path: "/paymentForm",
     component: Layout,
     redirect: "/paymentForm",
