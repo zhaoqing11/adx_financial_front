@@ -2,6 +2,22 @@ import request from '@/utils/request';
 
 
 /**
+ * 获取收支流水列表
+ *
+ * @export
+ * @param {*} data
+ * @returns
+ */
+export function getFlowRecordDetail(data) {
+  return request({
+    url: '/paymentForm/queryFlowRecordDetail',
+    method: 'post',
+    data
+  });
+}
+
+
+/**
  * 获取待审批请款数
  *
  * @export

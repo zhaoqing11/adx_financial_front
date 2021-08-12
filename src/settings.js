@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: '客户跟踪管理系统',
+  title: '财务收支管理系统',
 
   /**
    * @type {boolean} true | false

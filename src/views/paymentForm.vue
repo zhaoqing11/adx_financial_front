@@ -198,6 +198,14 @@
         <el-form-item label="手续费" :label-width="formLabelWidth" prop="serviceCharge">
           <el-input type="number" min="0" v-model="paymentRemittanceForm.serviceCharge" autocomplete="off"></el-input>
         </el-form-item>
+        <el-form-item label="汇款日期" :label-width="formLabelWidth" prop="remittanceDate">
+          <el-date-picker
+            v-model="paymentRemittanceForm.remittanceDate"
+            type="datetime"
+            placeholder="选择日期"
+            style="width:100%">
+          </el-date-picker>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="remittanceDialogFormVisible = false">取 消</el-button>
@@ -212,6 +220,7 @@ import * as API from '@/api/paymentForm';
 import * as APPROVAL from '@/api/approvalPayment';
 import * as REMITTANCE from '@/api/paymentRemittance';
 import { getUserId, getRole } from '@/utils/auth';
+import { formatDate } from '@/utils/validate';
 
 export default {
   data() {
@@ -261,14 +270,18 @@ export default {
       paymentRemittanceForm: {
         idPaymentForm: null,
         amount: null,
-        serviceCharge: 0
+        serviceCharge: 0,
+        remittanceDate: ''
       },
       remittanceRules: {
         amount: [
-            { required: true, message: '请填写审批金额', trigger: 'blur' }
+          { required: true, message: '请填写汇款金额', trigger: 'blur' }
         ],
         serviceCharge: [
-            { required: true, message: '请填写手续费', trigger: 'blur' }
+          { required: true, message: '请填写手续费', trigger: 'blur' }
+        ],
+        remittanceDate: [
+          { required: true, message: '请选择汇款日期', trigger: 'change' }
         ]
       },
       idPaymentFormState: 1
@@ -286,10 +299,12 @@ export default {
     addPaymentRemittance(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+          let remittanceDate = formatDate(this.paymentRemittanceForm.remittanceDate)
           const param = {
             idPaymentForm: this.paymentRemittanceForm.idPaymentForm,
             amount: this.paymentRemittanceForm.amount,
             serviceCharge: this.paymentRemittanceForm.serviceCharge,
+            remittanceDate: remittanceDate,
             idUser: this.idUser
           }
           REMITTANCE.addPaymentRemittance(param).then(res => {

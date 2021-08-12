@@ -61,8 +61,18 @@
                 <span class="ml-2">请款列表</span>
               </a>
             </li>
+            <li class=" sidebar-layout" v-if="idRole === '4'" @click="routerLinkToFlowRecord()">
+              <a href="javaScript:void(0);" class="svg-icon ">
+                <i class="">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                </i>
+                <span class="ml-2">收支明细</span>
+              </a>
+            </li>
             <li class=" sidebar-layout" v-if="idRole === '4'">
-              <a href="customer.html" class="svg-icon ">
+              <a href="javaScript:void(0);" class="svg-icon ">
                 <i class="">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -93,6 +103,10 @@ export default {
   methods: {
     goHome() {
       this.$router.push('/home')
+    },
+    // 路由至收支明细
+    routerLinkToFlowRecord() {
+      this.$router.push('/flowRecord/index')
     },
     // 路由至收款列表
     routerLinkToCollectionRecord() {

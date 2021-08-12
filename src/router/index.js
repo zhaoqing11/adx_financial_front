@@ -79,6 +79,21 @@ export const constantRoutes = [
         meta: { title: "收款列表", icon: "collectionRecord", requireAuth: true }
       }
     ]
+  },
+  {
+    path: "/flowRecord",
+    component: Layout,
+    redirect: "/flowRecord",
+    name: "FlowRecord",
+    meta: { title: "收支明细", icon: "flowRecord", requireAuth: true },
+    children: [
+      {
+        path: "index",
+        name: "Index",
+        component: () => import("@/views/flowRecord"),
+        meta: { title: "收支明细", icon: "flowRecord", requireAuth: true }
+      }
+    ]
   }
 ];
 

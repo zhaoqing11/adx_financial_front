@@ -191,7 +191,7 @@ export default {
           { required: true, message: '请填写收款金额', trigger: 'blur' }
         ],
         collectionDate: [
-          { required: true, message: '请填写收款日期', trigger: 'blur' }
+          { required: true, message: '请选择收款日期', trigger: 'change' }
         ],
         collectionAccount: [
           { required: true, message: '请填写收款账号', trigger: 'blur' }
