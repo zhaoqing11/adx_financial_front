@@ -71,7 +71,7 @@
                 <span class="ml-2">收支明细</span>
               </a>
             </li>
-            <li class=" sidebar-layout" v-if="idRole === '4'">
+            <li class=" sidebar-layout" v-if="idRole === '4'" @click="routerLinkToReport()">
               <a href="javaScript:void(0);" class="svg-icon ">
                 <i class="">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -103,6 +103,9 @@ export default {
   methods: {
     goHome() {
       this.$router.push('/home')
+    },
+    routerLinkToReport() {
+      this.$router.push('/report/index')
     },
     // 路由至收支明细
     routerLinkToFlowRecord() {

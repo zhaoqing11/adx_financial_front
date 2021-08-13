@@ -94,6 +94,21 @@ export const constantRoutes = [
         meta: { title: "收支明细", icon: "flowRecord", requireAuth: true }
       }
     ]
+  },
+  {
+    path: "/report",
+    component: Layout,
+    redirect: "/report",
+    name: "Report",
+    meta: { title: "月报统计", icon: "report", requireAuth: true },
+    children: [
+      {
+        path: "index",
+        name: "Index",
+        component: () => import("@/views/report"),
+        meta: { title: "月报统计", icon: "report", requireAuth: true }
+      }
+    ]
   }
 ];
 

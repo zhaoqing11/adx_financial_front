@@ -14,32 +14,15 @@
                     <div class="modal-product-search d-flex">
                       <form class="mr-3 position-relative">
                         <div class="form-group mb-0">
-                          <!-- <input type="text" class="form-control" id="exampleInputText" v-model="code" placeholder="搜索申请单编号">
+                          <input type="text" class="form-control" id="exampleInputText" v-model="currentDate" placeholder="搜索年份或月份">
                           <a class="search-link" href="javaScript:void(0);" @click="getTableData">
                             <svg xmlns="http://www.w3.org/2000/svg" class="" width="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
-                          </a> -->
-                          &nbsp;&nbsp;
-                          <el-date-picker
-                            v-model="currentDate"
-                            type="daterange"
-                            align="right"
-                            unlink-panels
-                            range-separator="至"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                            :picker-options="pickerOptions">
-                          </el-date-picker>
-                          <el-button type="primary" icon="el-icon-search" @click="getTableData"></el-button>
+                          </a>
+                          <p class="confirm-text">* 提示：年分格式（2019 / 2020...），月份格式（1/2/...）</p>
                         </div>
                       </form>
-                      <!-- <a href="javaScript:void(0);" class="btn btn-primary position-relative d-flex align-items-center justify-content-between" @click="dialogFormVisible = true">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="mr-2" width="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                        </svg>
-                          添加申请
-                      </a> -->
                     </div>
                   </div>
                 </div>                    
@@ -138,92 +121,48 @@
                                 width="80">
                             </el-table-column>
                             <el-table-column
-                                prop="reasonApplication"
-                                label="申请事由"
-                                width="180">
-                                <template slot-scope="scoped">
-                                    {{scoped.row.reasonApplication ? scoped.row.reasonApplication : '--'}}
-                                </template>
+                                prop="year"
+                                label="年份">
                             </el-table-column>
                             <el-table-column
-                                prop="amount"
-                                label="申请金额">
-                                <template slot-scope="scoped">
-                                    {{scoped.row.amount ? scoped.row.amount : '--'}}
-                                </template>
+                                prop="month"
+                                label="月份">
                             </el-table-column>
                             <el-table-column
-                                prop="paymentName"
-                                label="付款名称"
-                                width="180">
-                                <template slot-scope="scoped">
-                                    {{scoped.row.paymentName ? scoped.row.paymentName : '--'}}
+                                prop="collectionAmount"
+                                label="本月收入">
+                                <template slot-scope="scope">
+                                    {{scope.row.collectionAmount ? scope.row.collectionAmount : '--'}}
                                 </template>
                                 </el-table-column>
                             <el-table-column
-                                prop="paymentAccount"
-                                label="付款账号"
-                                width="180">
-                                <template slot-scope="scoped">
-                                    {{scoped.row.paymentAccount ? scoped.row.paymentAccount : '--'}}
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                prop="code"
-                                label="申请单编号"
-                                sortable
-                                width="150">
-                                <template slot-scope="scoped">
-                                    {{scoped.row.code ? scoped.row.code : '--'}}
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                prop="approvalAmount"
-                                label="审批金额">
-                                <template slot-scope="scoped">
-                                    {{scoped.row.approvalAmount ? scoped.row.approvalAmount : '--'}}
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                prop="remittanceAmount"
-                                label="汇款金额">
-                                <template slot-scope="scoped">
-                                    {{scoped.row.remittanceAmount ? scoped.row.remittanceAmount : '--'}}
+                                prop="payAmount"
+                                label="本月支出">
+                                <template slot-scope="scope">
+                                    {{scope.row.payAmount ? scope.row.payAmount : '--'}}
                                 </template>
                             </el-table-column>
                             <el-table-column
                                 prop="serviceCharge"
-                                label="手续费">
-                                <template slot-scope="scoped">
-                                    {{scoped.row.serviceCharge ? scoped.row.serviceCharge : '--'}}
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                prop="idFlowType"
-                                label="操作类型">
-                                <template slot-scope="scoped">
-                                    {{scoped.row.idFlowType === 1? '收入' : '支出'}}
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                prop="collectionAmount"
-                                label="收款">
-                                <template slot-scope="scoped">
-                                    {{scoped.row.collectionAmount ? scoped.row.collectionAmount : '--'}}
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                prop="remainingSum"
-                                label="余额">
-                                <template slot-scope="scoped">
-                                    {{scoped.row.remainingSum ? scoped.row.remainingSum : '--'}}
+                                label="手续费"
+                                sortable>
+                                <template slot-scope="scope">
+                                    {{scope.row.serviceCharge ? scope.row.serviceCharge : '--'}}
                                 </template>
                             </el-table-column>
                             <el-table-column
                                 prop="createTime"
-                                label="汇款日期"
+                                label="创建日期"
                                 width="160"
                                 :formatter="formatter">
+                            </el-table-column>
+                            <el-table-column
+                                label="操作"
+                                width="120">
+                                <template slot-scope="scope">
+                                  <i class="el-icon-view"></i>&nbsp;&nbsp;
+                                  <i class="el-icon-delete" @click="deleteReport(scope.row.idReport)"></i>
+                                </template>
                             </el-table-column>
                         </el-table>
                       </div>
@@ -253,9 +192,8 @@
 </template>
 
 <script>
-import * as API from '@/api/paymentForm';
+import * as API from '@/api/report';
 import { getUserId, getRole } from '@/utils/auth';
-import { formatDate } from '@/utils/validate';
 
 export default {
   data() {
@@ -269,40 +207,33 @@ export default {
       totalRecord: 0,
       code: '',
       tableData: [],
-      pickerOptions: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-            picker.$emit('pick', [start, end]);
-          }
-        }]
-      },
-      currentDate: ''
+      currentDate: null
     }
   },
   mounted() {
     this.getTableData()
   },
   methods: {
+    // 删除月报
+    deleteReport(idReport) {
+      this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        center: true
+      }).then(() => {
+        API.deleteReport({
+          idReport: idReport
+        }).then(res => {
+          if (res.data.status === 200) {
+            this.$message.success('删除成功');
+            this.getTableData();
+          }
+        })
+      }).catch(() => {
+        this.$message.info('已取消删除');
+      });
+    },
     // 计算合计
     getSummaries(param) {
       const { columns, data } = param;
@@ -313,10 +244,8 @@ export default {
             sums[index] = '总计';
             return;
         }
-        if (index === 1 || index === 3 
-        || index === 4 || index === 5 
-        || index === 9 || index === 11
-        || index === 12) {
+        if (index === 1 || index === 2
+        || index === 6 || index === 7) {
             sums[index] = '';
             return;
         }
@@ -342,24 +271,18 @@ export default {
     },
     // 获取个人请款记录列表
     getTableData() {
-      let startTime = ''
-      let endTime = ''
-      if (this.currentDate != '' && this.currentDate != null) {
-        startTime = formatDate(this.currentDate[0]);
-        endTime = formatDate(this.currentDate[1]);
-      }
       const params = {
-        startTime: startTime,
-        endTime: endTime
-      } 
-      API.getFlowRecordDetail(params)
+        pageNum: this.pageNum,
+        pageSize: this.pageSize,
+        currentDate: this.currentDate
+      }
+      API.getReportList(params)
       .then(res => {
         if (res.data.status === 200) {
-            this.tableData = res.data.datas;
-        //   let tmpData = res.data.datas;
-        //   this.tableData = tmpData.list;
-        //   this.totalPage = tmpData.totalPage;
-        //   this.totalRecord = tmpData.totalRecord;
+          let tmpData = res.data.datas;
+          this.tableData = tmpData.list;
+          this.totalPage = tmpData.totalPage;
+          this.totalRecord = tmpData.totalRecord;
         }
       })
     }
@@ -379,5 +302,9 @@ export default {
 .green-cell {
   color:green;
   font-weight: bold;
+}
+.confirm-text {
+  color: red;
+  font-size: 12px;
 }
 </style>
