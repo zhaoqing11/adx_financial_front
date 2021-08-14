@@ -330,7 +330,7 @@ export default {
                     return prev;
                 }
             }, 0);
-            sums[index] += '￥';
+            sums[index];
         } else {
             sums[index] = 'N/A';
         }

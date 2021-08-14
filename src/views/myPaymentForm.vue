@@ -59,12 +59,12 @@
                     <div class="card-body p-0">
                       <div class="d-flex justify-content-between align-items-center p-3">
                         <h5 class="font-weight-bold">申请列表</h5>
-                        <button class="btn btn-secondary btn-sm">
+                        <!-- <button class="btn btn-secondary btn-sm">
                           <svg xmlns="http://www.w3.org/2000/svg" class="mr-1" width="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                           </svg>
                             导 出
-                        </button>
+                        </button> -->
                       </div>
                       <div class="table-responsive">
                         <table class="table data-table mb-0">

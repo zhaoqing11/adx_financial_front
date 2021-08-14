@@ -105,8 +105,14 @@ export const constantRoutes = [
       {
         path: "index",
         name: "Index",
-        component: () => import("@/views/report"),
+        component: () => import("@/views/report/index"),
         meta: { title: "月报统计", icon: "report", requireAuth: true }
+      },
+      {
+        path: "reportDetail",
+        name: "ReportDetail",
+        component: () => import("@/views/report/reportDetail"),
+        meta: { title: "查看月报详情", icon: "reportDetail", requireAuth: true }
       }
     ]
   }

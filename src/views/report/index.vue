@@ -33,86 +33,10 @@
                     <div class="card-body p-0">
                       <div class="d-flex justify-content-between align-items-center p-3">
                         <h5 class="font-weight-bold">收支明细</h5>
-                        <!-- <button class="btn btn-secondary btn-sm">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="mr-1" width="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                          </svg>
-                            导 出
-                        </button> -->
                       </div>
                       <div class="table-responsive">
-                        <!-- <table class="table data-table mb-0">
-                          <thead class="table-color-heading">
-                            <tr class="text-light">                                                
-                              <th scope="col" class="w-01 pr-0">
-                                <div class="d-flex justify-content-start align-items-end mb-1">
-                                  <div class="custom-control custom-checkbox custom-control-inline">
-                                    <input type="checkbox" class="custom-control-input m-0" id="customCheck">
-                                    <label class="custom-control-label" for="customCheck"></label>
-                                  </div>
-                                </div>
-                              </th>
-                              <th scope="col">
-                                <label class="text-muted m-0" >ID</label>
-                              </th>
-                              <th scope="col" class="dates">
-                                <label class="text-muted mb-0" >申请事由</label>
-                              </th>
-                              <th scope="col">
-                                <label class="text-muted mb-0">申请金额（元）</label>
-                              </th>
-                              <th scope="col" class="text-right">
-                                <label class="text-muted mb-0">付款名称</label>
-                              </th>
-                              <th scope="col">
-                                <label class="text-muted mb-0" >付款账号</label>
-                              </th>
-                              <th scope="col">
-                                <label class="text-muted mb-0" >申请单编号</label>
-                              </th>
-                              <th scope="col">
-                                <label class="text-muted mb-0" >审批金额</label>
-                              </th>
-                              <th scope="col">
-                                <label class="text-muted mb-0" >汇款金额</label>
-                              </th>
-                              <th scope="col">
-                                <label class="text-muted mb-0" >手续费</label>
-                              </th>
-                              <th scope="col">
-                                <label class="text-muted mb-0" >收入(元)</label>
-                              </th>
-                              <th scope="col">
-                                <label class="text-muted mb-0" >余额(元)</label>
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr class="white-space-no-wrap" v-for="(item,index) in tableData" :key="index">
-                              <td class="pr-0">
-                                <div class="custom-control custom-checkbox custom-control-inline">
-                                  <input type="checkbox" class="custom-control-input m-0" id="customCheck1">
-                                  <label class="custom-control-label" for="customCheck1"></label>
-                                </div>                                    
-                              </td>
-                              <td>{{index + 1}}</td>
-                              <td>{{item.reasonApplication ? item.reasonApplication : '--'}}</td>
-                              <td>{{item.amount ? item.amount : '--'}}</td>
-                              <td class="text-right">{{item.paymentName ? item.paymentName : '--'}}</td>
-                              <td>{{item.paymentAccount ? item.paymentAccount : '--'}}</td>
-                              <td>{{item.code ? item.code : '--'}}</td>
-                              <td>{{item.approvalAmount ? item.approvalAmount : '--'}}</td>
-                              <td>{{item.remittanceAmount ? item.remittanceAmount : '--'}}</td>
-                              <td>{{item.serviceCharge ? item.serviceCharge : '--'}}</td>
-                              <td>{{item.collectionAmount ? item.collectionAmount : '--'}}</td>
-                              <td>{{item.remainingSum ? item.remainingSum : '--'}}</td>
-                            </tr>
-                          </tbody>
-                        </table> -->
                         <el-table
                             :data="tableData"
-                            :summary-method="getSummaries"
-                            show-summary
                             style="width: 100%"
                             :default-sort = "{prop: 'createTime', order: 'descending'}"
                             >
@@ -123,10 +47,16 @@
                             <el-table-column
                                 prop="year"
                                 label="年份">
+                                <template scope="scope">
+                                  <span @click="routerLinkToReportDetail(scope.row)">{{scope.row.year}}</span>
+                                </template>
                             </el-table-column>
                             <el-table-column
                                 prop="month"
                                 label="月份">
+                                <template scope="scope">
+                                  <span @click="routerLinkToReportDetail(scope.row)">{{scope.row.month}}</span>
+                                </template>
                             </el-table-column>
                             <el-table-column
                                 prop="collectionAmount"
@@ -160,7 +90,7 @@
                                 label="操作"
                                 width="120">
                                 <template slot-scope="scope">
-                                  <i class="el-icon-view"></i>&nbsp;&nbsp;
+                                  <i class="el-icon-view" @click="routerLinkToReportDetail(scope.row)"></i>&nbsp;&nbsp;
                                   <i class="el-icon-delete" @click="deleteReport(scope.row.idReport)"></i>
                                 </template>
                             </el-table-column>
@@ -214,6 +144,16 @@ export default {
     this.getTableData()
   },
   methods: {
+    // 路由至月报详情页
+    routerLinkToReportDetail(data) {
+      this.$router.push({
+        path: '/report/reportDetail',
+        query: {
+          year: data.year,
+          month: data.month
+        }
+      })
+    },
     // 删除月报
     deleteReport(idReport) {
       this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
@@ -233,38 +173,6 @@ export default {
       }).catch(() => {
         this.$message.info('已取消删除');
       });
-    },
-    // 计算合计
-    getSummaries(param) {
-      const { columns, data } = param;
-
-      const sums = [];
-      columns.forEach((column, index) => {
-        if (index === 0) {
-            sums[index] = '总计';
-            return;
-        }
-        if (index === 1 || index === 2
-        || index === 6 || index === 7) {
-            sums[index] = '';
-            return;
-        }
-        const values = data.map(item => Number(item[column.property]));
-        if (!values.every(value => isNaN(value))) {
-            sums[index] = values.reduce((prev, curr) => {
-                const value = Number(curr);
-                if (!isNaN(value)) {
-                    return prev + curr;
-                } else {
-                    return prev;
-                }
-            }, 0);
-            sums[index] += '￥';
-        } else {
-            sums[index] = 'N/A';
-        }
-      });
-      return sums;
     },
     formatter(row, column) {
       return row.createTime;
