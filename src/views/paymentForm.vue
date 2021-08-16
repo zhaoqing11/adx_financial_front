@@ -7,7 +7,7 @@
             <div class="col-lg-12">
               <div class="d-flex flex-wrap align-items-center justify-content-between my-schedule mb-4">
                 <div class="d-flex align-items-center justify-content-between">
-                  <h4 class="font-weight-bold">请款列表</h4>
+                  <h4 class="font-weight-bold">申请列表</h4>
                 </div>  
                 <div class="create-workform">
                   <div class="d-flex flex-wrap align-items-center justify-content-between">
@@ -37,13 +37,7 @@
                   <div class="card card-block card-stretch">
                     <div class="card-body p-0">
                       <div class="d-flex justify-content-between align-items-center p-3">
-                        <h5 class="font-weight-bold">请款列表</h5>
-                        <!-- <button class="btn btn-secondary btn-sm">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="mr-1" width="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                          </svg>
-                            导 出
-                        </button> -->
+                        <h5 class="font-weight-bold">申请列表</h5>
                       </div>
                       <div class="table-responsive">
                         <table class="table data-table mb-0">
@@ -114,7 +108,7 @@
                               <td>{{item.reasonApplication}}</td>
                               <td>{{item.amount}}</td>
                               <td class="text-right">{{item.paymentName}}</td>
-                              <td>{{item.paymentAccount}}</td>
+                              <td>{{formatCardNum(item.paymentAccount)}}</td>
                               <td>{{item.userName}}</td>
                               <td :class="item.idPaymentFormState == 1 ? 'orange-cell' : 'green-cell'">{{item.idPaymentFormState == 1 ? '待审批' : '已审批'}}</td>
                               <td>
@@ -140,6 +134,16 @@
                             </tr>
                           </tbody>
                         </table>
+                      </div>
+                      <div class="pagination">
+                        <Pagination 
+                        v-show="totalPage > 0" 
+                        :total="totalPage" 
+                        :page.sync="pageNum" 
+                        :limit.sync="pageSize" 
+                        @pagination="getTableData" 
+                        :page-sizes="[10, 15, 20,30]"
+                        layout="total, sizes, prev, pager, next"/>
                       </div>
                     </div>
                   </div>
@@ -220,9 +224,11 @@ import * as API from '@/api/paymentForm';
 import * as APPROVAL from '@/api/approvalPayment';
 import * as REMITTANCE from '@/api/paymentRemittance';
 import { getUserId, getRole } from '@/utils/auth';
-import { formatDate } from '@/utils/validate';
+import { formatDate, formatCardNum } from '@/utils/validate';
+import Pagination from '@/components/Pagination';
 
 export default {
+  components: { Pagination },
   data() {
     return {
       dialogFormVisible: false,
@@ -236,7 +242,6 @@ export default {
       totalRecord: 0,
       code: '',
       tableData: [],
-
       paymentForm: {
         reasonApplication: null,
         amount: null,
@@ -284,7 +289,8 @@ export default {
           { required: true, message: '请选择汇款日期', trigger: 'change' }
         ]
       },
-      idPaymentFormState: 1
+      idPaymentFormState: 1,
+      formatCardNum: formatCardNum
     }
   },
   mounted() {
@@ -384,5 +390,9 @@ export default {
 .green-cell {
   color:green;
   font-weight: bold;
+}
+.pagination {
+  float: right;
+  margin: 20px 10px;
 }
 </style>

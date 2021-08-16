@@ -1,13 +1,11 @@
 <template>
   <div :class="{'hidden':hidden}" class="pagination-container align-justify">
     <el-pagination
-      :background="background"
       :current-page.sync="currentPage"
       :page-size.sync="pageSize"
       :layout="layout"
       :page-sizes="pageSizes"
       :total="total"
-      v-bind="$attrs"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
@@ -92,7 +90,7 @@ export default {
 
 <style scoped>
 .pagination-container {
-  width: calc(100% - 210px);
+  /* width: calc(100% - 210px); */
   /* padding: 20px 0 5px; */
   bottom:50px;
 }

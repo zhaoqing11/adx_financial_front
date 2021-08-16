@@ -40,13 +40,13 @@ export const constantRoutes = [
     component: Layout,
     redirect: "/myPaymentForm",
     name: "MyPaymentForm",
-    meta: { title: "我的请款", icon: "myPaymentForm", requireAuth: true },
+    meta: { title: "请款申请", icon: "myPaymentForm", requireAuth: true },
     children: [
       {
         path: "index",
         name: "Index",
         component: () => import("@/views/myPaymentForm"),
-        meta: { title: "我的请款", icon: "myPaymentForm", requireAuth: true }
+        meta: { title: "请款申请", icon: "myPaymentForm", requireAuth: true }
       }
     ]
   },
@@ -55,13 +55,13 @@ export const constantRoutes = [
     component: Layout,
     redirect: "/paymentForm",
     name: "PaymentForm",
-    meta: { title: "请款列表", icon: "paymentForm", requireAuth: true },
+    meta: { title: "申请列表", icon: "paymentForm", requireAuth: true },
     children: [
       {
         path: "index",
         name: "Index",
         component: () => import("@/views/paymentForm"),
-        meta: { title: "请款列表", icon: "paymentForm", requireAuth: true }
+        meta: { title: "申请列表", icon: "paymentForm", requireAuth: true }
       }
     ]
   },

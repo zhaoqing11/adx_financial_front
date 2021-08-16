@@ -117,18 +117,6 @@ export default {
 }
 </script>
 
-<style lang="scss">
-// $bg: #2d3a4b;
-// $light_gray: #fff;
-// $cursor: #fff;
-// $font_color: #4d4d4d;
-// @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
-//   .login-container .el-input input {
-//     color: $font_color;
-//   }
-// }
-</style>
-
 <style lang="scss" scoped>
 $bg: #0a1e39;
 $bgb: #061220;

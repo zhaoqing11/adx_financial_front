@@ -95,7 +95,7 @@
                               </td>
                               <td>{{index + 1}}</td>
                               <td>{{item.amount}}</td>
-                              <td>{{item.collectionAccount}}</td>
+                              <td>{{formatCardNum(item.collectionAccount)}}</td>
                               <td class="text-right">{{item.collectionDate}}</td>
                               <td>{{item.userName}}</td>
                               <td>{{item.createTime}}</td>
@@ -112,6 +112,16 @@
                             </tr>
                           </tbody>
                         </table>
+                      </div>
+                      <div class="pagination">
+                        <Pagination 
+                        v-show="totalPage > 0" 
+                        :total="totalPage" 
+                        :page.sync="pageNum" 
+                        :limit.sync="pageSize" 
+                        @pagination="getTableData" 
+                        :page-sizes="[10, 15, 20,30]"
+                        layout="total, sizes, prev, pager, next"/>
                       </div>
                     </div>
                   </div>
@@ -163,9 +173,12 @@
 <script>
 import * as API from '@/api/collectionRecord';
 import { getUserId } from '@/utils/auth';
-import { formatDate } from '@/utils/validate';
+import { formatDate, formatCardNum } from '@/utils/validate';
+import Pagination from '@/components/Pagination';
+
 
 export default {
+  components: { Pagination },
   data() {
     return {
       idUser: getUserId(),
@@ -224,7 +237,8 @@ export default {
           }
         }]
       },
-      type: null
+      type: null,
+      formatCardNum: formatCardNum
     }
   },
   mounted() {
@@ -357,5 +371,9 @@ export default {
 .el-button--primary {
   background-color: #3378ff;
   border-color: #3378ff;
+}
+.pagination {
+  float: right;
+  margin: 20px 10px;
 }
 </style>

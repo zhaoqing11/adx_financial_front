@@ -29,56 +29,14 @@
             <li class="px-3 pt-3 pb-2 ">
               <span class="text-uppercase small font-weight-bold">Application</span>
             </li>
-            <li class="active sidebar-layout" @click="routerLinkToMyPaymentForm()">
+            <li :class="active === item.id ? 'active sidebar-layout' : 'sidebar-layout'" v-for="(item,index) in meun" :key="index" @click="routerLinkToPage(item)">
               <a href="javaScript:void(0);" class="svg-icon">
                 <i class="">
-                  <svg class="icon line" width="18" id="receipt" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor">
-                    <path d="M17,16V3L13,5,10,3,7,5,3,3V17.83A3.13,3.13,0,0,0,5.84,21,3,3,0,0,0,9,18V17a1,1,0,0,1,1-1H20a1,1,0,0,1,1,1v1a3,3,0,0,1-3,3H6" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
-                    <line x1="8" y1="10" x2="12" y2="10" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></line>
-                  </svg> 
+                  <span class="svg-container">
+                    <svg-icon :icon-class="item.icon" />
+                  </span>
                 </i>
-                <span class="ml-2">我的请款</span>
-              </a>
-            </li>
-            <li class="sidebar-layout" v-if="idRole === '2'" @click="routerLinkToCollectionRecord()">
-              <a href="javaScript:void(0);" class="svg-icon">
-                <i class="">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                </i>
-                <span class="ml-2">收款</span>
-              </a>
-            </li>
-            <li class=" sidebar-layout" v-if="idRole === '2' || idRole === '3'" @click="routerLinkToPaymentFormList()">
-              <a href="javaScript:void(0);" class="svg-icon">
-                <i class="">
-                  <svg class="icon line" width="18" id="receipt" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor">
-                    <path d="M17,16V3L13,5,10,3,7,5,3,3V17.83A3.13,3.13,0,0,0,5.84,21,3,3,0,0,0,9,18V17a1,1,0,0,1,1-1H20a1,1,0,0,1,1,1v1a3,3,0,0,1-3,3H6" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
-                    <line x1="8" y1="10" x2="12" y2="10" style="fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></line>
-                  </svg> 
-                </i>
-                <span class="ml-2">请款列表</span>
-              </a>
-            </li>
-            <li class=" sidebar-layout" v-if="idRole === '4'" @click="routerLinkToFlowRecord()">
-              <a href="javaScript:void(0);" class="svg-icon ">
-                <i class="">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-                </i>
-                <span class="ml-2">收支明细</span>
-              </a>
-            </li>
-            <li class=" sidebar-layout" v-if="idRole === '4'" @click="routerLinkToReport()">
-              <a href="javaScript:void(0);" class="svg-icon ">
-                <i class="">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-                </i>
-                <span class="ml-2">月报统计</span>
+                <span class="ml-2">{{item.name}}</span>
               </a>
             </li>
           </ul>
@@ -95,33 +53,82 @@ import { getRole  } from "@/utils/auth";
 export default {
   data() {
     return {
-      idRole: getRole()
+      idRole: getRole(),
+      active: -1,
+      meun: [
+        {
+          id: 1,
+          name: '请款申请',
+          url: '/myPaymentForm/index',
+          icon: 'payment-form'
+        }, {
+          id: 2,
+          name: '收款',
+          url: '/collectionRecord/index',
+          icon: 'collection-amount'
+        }, {
+          id: 3,
+          name: '申请列表',
+          url: '/paymentForm/index',
+          icon: 'request-list'
+        }, {
+          id: 4,
+          name: '收支明细',
+          url: '/flowRecord/index',
+          icon: 'flow-record'
+        }, {
+          id: 5,
+          name: '月报统计',
+          url: '/report/index',
+          icon: 'report'
+        }
+      ]
     };
   },
   mounted() {
+    if (this.idRole === '4') {
+      let idx = [2,3]
+      idx.forEach(id => {
+        let findIdx = this.meun.findIndex(item => {
+          return item.id === id
+        })
+        this.meun.splice(findIdx, 1)
+      })
+    } else if (this.idRole === '3') {
+      let idx = [2,4,5]
+      idx.forEach(id => {
+        let findIdx = this.meun.findIndex(item => {
+          return item.id === id
+        })
+        this.meun.splice(findIdx, 1)
+      })
+    } else if (this.idRole === '2') {
+      let idx = [4,5]
+      idx.forEach(id => {
+        let findIdx = this.meun.findIndex(item => {
+          return item.id === id
+        })
+        this.meun.splice(findIdx, 1)
+      })
+    } else if (this.idRole === '1') {
+      let idx = [2,3,4,5]
+      idx.forEach(id => {
+        let findIdx = this.meun.findIndex(item => {
+          return item.id === id
+        })
+        this.meun.splice(findIdx, 1)
+      })
+    }
   },
   methods: {
+    // 路由至对应页面
+    routerLinkToPage(data) {
+      this.active = data.id
+      this.$router.push(data.url)
+    },
+    // 返回首页
     goHome() {
       this.$router.push('/home')
-    },
-    routerLinkToReport() {
-      this.$router.push('/report/index')
-    },
-    // 路由至收支明细
-    routerLinkToFlowRecord() {
-      this.$router.push('/flowRecord/index')
-    },
-    // 路由至收款列表
-    routerLinkToCollectionRecord() {
-      this.$router.push('/collectionRecord/index')
-    },
-    // 路由至请款列表
-    routerLinkToPaymentFormList() {
-      this.$router.push('/paymentForm/index')
-    },
-    // 路由至我的请款
-    routerLinkToMyPaymentForm() {
-      this.$router.push('/myPaymentForm/index')
     }
   }
 };

@@ -94,3 +94,10 @@ export function formatStr2Date(val) {
     return val.createTime.substring(0,19);
   }
 }
+
+export function formatCardNum(cardNum) {
+  const noLine = cardNum.replace(/-/g, '')
+  // 去除格式不对的字符并重新插入-的字符串
+  const newCardNum = noLine.replace(/\D+/g, '').replace(/(\d{4})/g, '$1-').replace(/-$/, '')
+  return newCardNum
+}

@@ -7,7 +7,7 @@
             <div class="col-lg-12">
               <div class="d-flex flex-wrap align-items-center justify-content-between my-schedule mb-4">
                 <div class="d-flex align-items-center justify-content-between">
-                  <h4 class="font-weight-bold">申请列表</h4>
+                  <h4 class="font-weight-bold">请款申请</h4>
                 </div>  
                 <div class="create-workform">
                   <div class="d-flex flex-wrap align-items-center justify-content-between">
@@ -45,7 +45,7 @@
                     <el-input v-model="paymentForm.paymentName" autocomplete="off"></el-input>
                   </el-form-item>
                   <el-form-item label="付款账号" :label-width="formLabelWidth" prop="paymentAccount">
-                    <el-input v-model="paymentForm.paymentAccount" autocomplete="off"></el-input>
+                    <el-input v-model="paymentForm.paymentAccount" autocomplete="off" ref="cardInput" @blur="blurFormatCardNumber(paymentForm.paymentAccount)"></el-input>
                   </el-form-item>
                 </el-form>
                 <div slot="footer" class="dialog-footer">
@@ -58,13 +58,7 @@
                   <div class="card card-block card-stretch">
                     <div class="card-body p-0">
                       <div class="d-flex justify-content-between align-items-center p-3">
-                        <h5 class="font-weight-bold">申请列表</h5>
-                        <!-- <button class="btn btn-secondary btn-sm">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="mr-1" width="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                          </svg>
-                            导 出
-                        </button> -->
+                        <h5 class="font-weight-bold">请款申请</h5>
                       </div>
                       <div class="table-responsive">
                         <table class="table data-table mb-0">
@@ -113,29 +107,34 @@
                                 <div class="custom-control custom-checkbox custom-control-inline">
                                   <input type="checkbox" class="custom-control-input m-0" id="customCheck1">
                                   <label class="custom-control-label" for="customCheck1"></label>
-                                </div>                                    
+                                </div>
                               </td>
                               <td>{{index + 1}}</td>
                               <td>{{item.code}}</td>
                               <td>{{item.reasonApplication}}</td>
                               <td>{{item.amount}}</td>
                               <td class="text-right">{{item.paymentName}}</td>
-                              <td>{{item.paymentAccount}}</td>
+                              <td>{{formatCardNum(item.paymentAccount)}}</td>
                               <td>{{item.userName}}</td>
                               <td>{{item.createTime}}</td>
                               <td>
                                 <div class="d-flex justify-content-end align-items-center">
                                   <i class="el-icon-delete" @click="deletePaymentForm(item.idPaymentForm)"></i>
-                                    <!-- <a class="" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit" href="#">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="text-secondary" width="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                        </svg>
-                                    </a> -->
                                 </div>
                               </td>
                             </tr>
                           </tbody>
                         </table>
+                      </div>
+                      <div class="pagination">
+                        <Pagination 
+                        v-show="totalPage > 0" 
+                        :total="totalPage" 
+                        :page.sync="pageNum" 
+                        :limit.sync="pageSize" 
+                        @pagination="getTableData" 
+                        :page-sizes="[10, 15, 20,30]"
+                        layout="total, sizes, prev, pager, next"/>
                       </div>
                     </div>
                   </div>
@@ -165,6 +164,8 @@
 <script>
 import * as API from '@/api/paymentForm';
 import { getUserId } from '@/utils/auth';
+import Pagination from '@/components/Pagination';
+import { formatCardNum } from '@/utils/validate';
 // import "@/utils/assets/js/demo.js";
 // import "@/utils/js/backend-bundle.min.js";
 // import "@/utils/js/sidebar.js";
@@ -175,6 +176,7 @@ import { getUserId } from '@/utils/auth';
 // import "@/utils/js/app.js";
 
 export default {
+  components: { Pagination },
   data() {
     return {
       idUser: getUserId(),
@@ -207,13 +209,46 @@ export default {
         paymentAccount: [
             { required: true, message: '请填写付款账号', trigger: 'blur' }
         ]
-      }
+      },
+      formatCardNum: formatCardNum
     }
   },
   mounted() {
     this.getTableData()
   },
   methods: {
+    // 格式化卡号显示，每4位加-
+    blurFormatCardNumber (cardNum) {
+      cardNum = cardNum.replaceAll('-', '')
+      if (cardNum.length < 16 || cardNum.length > 22) {
+        this.$message.warning('请输入正确卡号')
+        return false
+      }
+      // 获取input的dom对象，这里因为用的是element ui的input，所以需要这样拿到
+      const input = this.$refs.cardInput.$el.getElementsByTagName('input')[0]
+      // 获取当前光标的位置
+      const cursorIndex = input.selectionStart
+      // 字符串中光标之前-的个数
+      const lineNumOfCursorLeft = (cardNum.slice(0, cursorIndex).match(/-/g) || []).length
+      // 去掉所有-的字符串
+      const noLine = cardNum.replace(/-/g, '')
+      // 去除格式不对的字符并重新插入-的字符串
+      const newCardNum = noLine.replace(/\D+/g, '').replace(/(\d{4})/g, '$1-').replace(/-$/, '')
+      // 改后字符串中原光标之前-的个数
+      const newLineNumOfCursorLeft = (newCardNum.slice(0, cursorIndex).match(/-/g) || []).length
+      // 光标在改后字符串中应在的位置
+      const newCursorIndex = cursorIndex + newLineNumOfCursorLeft - lineNumOfCursorLeft
+      // 赋新值，nextTick保证-不能手动输入或删除，只能按照规则自动填入
+      this.$nextTick(() => {
+        this.paymentForm.paymentAccount = newCardNum
+        // 修正光标位置，nextTick保证在渲染新值后定位光标
+        this.$nextTick(() => {
+          // selectionStart、selectionEnd分别代表选择一段文本时的开头和结尾位置
+          input.selectionStart = newCursorIndex
+          input.selectionEnd = newCursorIndex
+        })
+      })
+    },
     // 删除请款单
     deletePaymentForm(id) {
       this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
@@ -238,6 +273,7 @@ export default {
     addPaymentForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+          this.paymentForm.paymentAccount = this.paymentForm.paymentAccount.replaceAll('-', '')
           const param = {
             reasonApplication: this.paymentForm.reasonApplication,
             amount: this.paymentForm.amount,
@@ -256,6 +292,9 @@ export default {
           })
         }
       })
+    },
+    currentChange() {
+      this.currentChange
     },
     // 获取个人请款记录列表
     getTableData() {
@@ -283,5 +322,9 @@ export default {
 .el-icon-delete:before {
   color: #8f9fbc !important;
   font-weight: 500;
+}
+.pagination {
+  float: right;
+  margin: 20px;
 }
 </style>

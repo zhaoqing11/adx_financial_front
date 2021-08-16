@@ -7,7 +7,7 @@
             <div class="col-lg-12">
               <div class="d-flex flex-wrap align-items-center justify-content-between my-schedule mb-4">
                 <div class="d-flex align-items-center justify-content-between">
-                  <h4 class="font-weight-bold">收支明细</h4>
+                  <h4 class="font-weight-bold">月报统计</h4>
                 </div>  
                 <div class="create-workform">
                   <div class="d-flex flex-wrap align-items-center justify-content-between">
@@ -32,7 +32,7 @@
                   <div class="card card-block card-stretch">
                     <div class="card-body p-0">
                       <div class="d-flex justify-content-between align-items-center p-3">
-                        <h5 class="font-weight-bold">收支明细</h5>
+                        <h5 class="font-weight-bold">月报统计</h5>
                       </div>
                       <div class="table-responsive">
                         <el-table
@@ -47,14 +47,14 @@
                             <el-table-column
                                 prop="year"
                                 label="年份">
-                                <template scope="scope">
+                                <template slot-scope="scope">
                                   <span @click="routerLinkToReportDetail(scope.row)">{{scope.row.year}}</span>
                                 </template>
                             </el-table-column>
                             <el-table-column
                                 prop="month"
                                 label="月份">
-                                <template scope="scope">
+                                <template slot-scope="scope">
                                   <span @click="routerLinkToReportDetail(scope.row)">{{scope.row.month}}</span>
                                 </template>
                             </el-table-column>
@@ -96,6 +96,16 @@
                             </el-table-column>
                         </el-table>
                       </div>
+                      <div class="pagination">
+                        <Pagination 
+                        v-show="totalPage > 0" 
+                        :total="totalPage" 
+                        :page.sync="pageNum" 
+                        :limit.sync="pageSize" 
+                        @pagination="getTableData" 
+                        :page-sizes="[10, 15, 20,30]"
+                        layout="total, sizes, prev, pager, next"/>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -124,8 +134,10 @@
 <script>
 import * as API from '@/api/report';
 import { getUserId, getRole } from '@/utils/auth';
+import Pagination from '@/components/Pagination';
 
 export default {
+  components: { Pagination },
   data() {
     return {
       idUser: getUserId(),
@@ -214,5 +226,9 @@ export default {
 .confirm-text {
   color: red;
   font-size: 12px;
+}
+.pagination {
+  float: right;
+  margin: 20px 10px;
 }
 </style>

@@ -165,7 +165,7 @@
                                 label="付款账号"
                                 width="180">
                                 <template slot-scope="scoped">
-                                    {{scoped.row.paymentAccount ? scoped.row.paymentAccount : '--'}}
+                                    {{scoped.row.paymentAccount ? formatCardNum(scoped.row.paymentAccount) : '--'}}
                                 </template>
                             </el-table-column>
                             <el-table-column
@@ -227,6 +227,16 @@
                             </el-table-column>
                         </el-table>
                       </div>
+                      <div class="pagination">
+                        <Pagination 
+                        v-show="totalPage > 0" 
+                        :total="totalPage" 
+                        :page.sync="pageNum" 
+                        :limit.sync="pageSize" 
+                        @pagination="getTableData" 
+                        :page-sizes="[10, 15, 20,30]"
+                        layout="total, sizes, prev, pager, next"/>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -256,8 +266,11 @@
 import * as API from '@/api/paymentForm';
 import { getUserId, getRole } from '@/utils/auth';
 import { formatDate } from '@/utils/validate';
+import Pagination from '@/components/Pagination';
+import { formatCardNum } from '@/utils/validate';
 
 export default {
+  components: { Pagination },
   data() {
     return {
       idUser: getUserId(),
@@ -296,7 +309,8 @@ export default {
           }
         }]
       },
-      currentDate: ''
+      currentDate: '',
+      formatCardNum: formatCardNum
     }
   },
   mounted() {
@@ -349,17 +363,18 @@ export default {
         endTime = formatDate(this.currentDate[1]);
       }
       const params = {
+        pageNum: this.pageNum,
+        pageSize: this.pageSize,
         startTime: startTime,
         endTime: endTime
-      } 
+      }
       API.getFlowRecordDetail(params)
       .then(res => {
         if (res.data.status === 200) {
-            this.tableData = res.data.datas;
-        //   let tmpData = res.data.datas;
-        //   this.tableData = tmpData.list;
-        //   this.totalPage = tmpData.totalPage;
-        //   this.totalRecord = tmpData.totalRecord;
+          let tmpData = res.data.datas;
+          this.tableData = tmpData.list;
+          this.totalPage = tmpData.totalPage;
+          this.totalRecord = tmpData.totalRecord;
         }
       })
     }
@@ -379,5 +394,9 @@ export default {
 .green-cell {
   color:green;
   font-weight: bold;
+}
+.pagination {
+  float: right;
+  margin: 20px 10px;
 }
 </style>
