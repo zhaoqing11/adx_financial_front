@@ -66,11 +66,14 @@
                                 <label class="text-muted m-0" >ID</label>
                               </th>
                               <th scope="col">
-                                <label class="text-muted mb-0">收款金额（元）</label>
+                                <label class="text-muted mb-0">账目类型</label>
                               </th>
                               <th scope="col">
-                                <label class="text-muted mb-0" >收款账号</label>
+                                <label class="text-muted mb-0">收款金额（元）</label>
                               </th>
+                              <!-- <th scope="col">
+                                <label class="text-muted mb-0" >收款账号</label>
+                              </th> -->
                               <th scope="col" class="text-right">
                                 <label class="text-muted mb-0">收款日期</label>
                               </th>
@@ -94,8 +97,9 @@
                                 </div>                                    
                               </td>
                               <td>{{index + 1}}</td>
+                              <td>{{item.idCardType}}</td>
                               <td>{{item.amount}}</td>
-                              <td>{{formatCardNum(item.collectionAccount)}}</td>
+                              <!-- <td>{{formatCardNum(item.collectionAccount)}}</td> -->
                               <td class="text-right">{{item.collectionDate}}</td>
                               <td>{{item.userName}}</td>
                               <td>{{item.createTime}}</td>
@@ -147,6 +151,17 @@
     </footer>
     <el-dialog :title="title" :visible.sync="dialogFormVisible">
       <el-form :model="collectionRecordForm" ref="collectionRecordForm" :rules="rules">
+        <el-form-item label="类型" :label-width="formLabelWidth" prop="idCardType">
+          <!-- <el-input v-model="collectionRecordForm.idCardType" type="number" autocomplete="off"></el-input> -->
+          <el-select v-model="collectionRecordForm.idCardType" placeholder="请选择" style="width:100%;" disabled>
+            <el-option
+              v-for="item in cardTypeData"
+              :key="item.idCardType"
+              :label="item.name"
+              :value="item.idCardType">
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="收款金额" :label-width="formLabelWidth" prop="amount">
           <el-input v-model="collectionRecordForm.amount" type="number" autocomplete="off"></el-input>
         </el-form-item>
@@ -172,6 +187,7 @@
 
 <script>
 import * as API from '@/api/collectionRecord';
+import * as CTYPE from '@/api/cardType';
 import { getUserId } from '@/utils/auth';
 import { formatDate, formatCardNum } from '@/utils/validate';
 import Pagination from '@/components/Pagination';
@@ -192,14 +208,17 @@ export default {
       tableData: [],
       dialogFormVisible: false,
       collectionRecordForm: {
+        idCardType: null,
         idCollectionRecord: null,
         amount: null,
         collectionDate: '',
-        collectionAccount: '',
         idUser: null
       },
       formLabelWidth: '120',
       rules: {
+        idCardType: [
+          { required: true, message: '请选择账目类型', trigger: 'change' }
+        ],
         amount: [
           { required: true, message: '请填写收款金额', trigger: 'blur' }
         ],
@@ -238,13 +257,23 @@ export default {
         }]
       },
       type: null,
-      formatCardNum: formatCardNum
+      formatCardNum: formatCardNum,
+      cardTypeData: []
     }
   },
   mounted() {
+    this.getCardTypeList()
     this.getTableData()
   },
   methods: {
+    // 获取账目类型列表
+    getCardTypeList() {
+      CTYPE.getCardType().then(res => {
+        if (res.data.status === 200) {
+          this.cardTypeData = res.data.datas
+        }
+      })
+    },
     // 编辑收款记录
     editCollectionRecord(formName) {
       this.$refs[formName].validate(valid => {
@@ -312,9 +341,9 @@ export default {
         if (valid) {
           let collectionDate = formatDate(this.collectionRecordForm.collectionDate)
           const param = {
+            idCardType: this.collectionRecordForm.idCardType,
             amount: this.collectionRecordForm.amount,
             collectionDate: collectionDate,
-            collectionAccount: this.collectionRecordForm.collectionAccount,
             idUser: this.idUser
           }
           API.addCollectionRecord(param).then(res => {

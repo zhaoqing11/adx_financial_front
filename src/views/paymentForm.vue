@@ -58,7 +58,7 @@
                                 <label class="text-muted mb-0" >申请单编号</label>
                               </th>
                               <th scope="col" class="dates">
-                                <label class="text-muted mb-0" >申请事由</label>
+                                <label class="text-muted mb-0" >事由</label>
                               </th>
                               <th scope="col">
                                 <label class="text-muted mb-0">申请金额（元）</label>
@@ -71,6 +71,9 @@
                               </th>
                               <th scope="col">
                                 <label class="text-muted mb-0" >申请人</label>
+                              </th>
+                              <th scope="col">
+                                <label class="text-muted mb-0" >账目类型</label>
                               </th>
                               <th scope="col">
                                 <label class="text-muted mb-0" >审批状态</label>
@@ -104,12 +107,13 @@
                                 </div>                                    
                               </td>
                               <td>{{index + 1}}</td>
-                              <td>{{item.code}}</td>
+                              <td>{{item.state ? item.code : '--'}}</td>
                               <td>{{item.reasonApplication}}</td>
                               <td>{{item.amount}}</td>
                               <td class="text-right">{{item.paymentName}}</td>
                               <td>{{formatCardNum(item.paymentAccount)}}</td>
                               <td>{{item.userName}}</td>
+                               <td>{{item.idCardType === 1 ? '公账' : '私账'}}</td>
                               <td :class="item.idPaymentFormState == 1 ? 'orange-cell' : 'green-cell'">{{item.idPaymentFormState == 1 ? '待审批' : '已审批'}}</td>
                               <td>
                                 <span v-if="item.approvalAmount">{{item.approvalAmount}}</span>
@@ -169,17 +173,27 @@
     </footer>
     <el-dialog title="审批" :visible.sync="dialogFormVisible">
       <el-form :model="paymentForm" ref="paymentForm" :rules="rules" disabled>
-        <el-form-item label="申请事由" :label-width="formLabelWidth" prop="reasonApplication">
+        <el-form-item label="类型" :label-width="formLabelWidth" prop="idCardType">
+          <el-select v-model="paymentForm.idCardType" placeholder="请选择" style="width:100%;" disabled>
+            <el-option
+              v-for="item in cardTypeData"
+              :key="item.idCardType"
+              :label="item.name"
+              :value="item.idCardType">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="申请事由" :label-width="formLabelWidth">
           <el-input type="textarea" v-model="paymentForm.reasonApplication" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="申请金额" :label-width="formLabelWidth" prop="amount">
+        <el-form-item label="申请金额" :label-width="formLabelWidth">
           <!-- oninput="value=value.replace(/[^0-9.]/g,'')" -->
           <el-input v-model="paymentForm.amount" type="number" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="付款名称" :label-width="formLabelWidth" prop="paymentName">
+        <el-form-item label="付款名称" :label-width="formLabelWidth">
           <el-input v-model="paymentForm.paymentName" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="付款账号" :label-width="formLabelWidth" prop="paymentAccount">
+        <el-form-item label="付款账号" :label-width="formLabelWidth">
           <el-input v-model="paymentForm.paymentAccount" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
@@ -221,6 +235,7 @@
 
 <script>
 import * as API from '@/api/paymentForm';
+import * as CTYPE from '@/api/cardType';
 import * as APPROVAL from '@/api/approvalPayment';
 import * as REMITTANCE from '@/api/paymentRemittance';
 import { getUserId, getRole } from '@/utils/auth';
@@ -243,6 +258,7 @@ export default {
       code: '',
       tableData: [],
       paymentForm: {
+        idCardType: null,
         reasonApplication: null,
         amount: null,
         paymentName: null,
@@ -290,13 +306,22 @@ export default {
         ]
       },
       idPaymentFormState: 1,
-      formatCardNum: formatCardNum
+      formatCardNum: formatCardNum,
+      cardTypeData: []
     }
   },
   mounted() {
     this.getTableData()
   },
   methods: {
+    // 获取账目类型
+    getCardTypeList() {
+      CTYPE.getCardType().then(res => {
+        if (res.data.status === 200) {
+          this.cardTypeData = res.data.datas
+        }
+      })
+    },
     clickPaymentRemittance(id) {
       this.paymentRemittanceForm.idPaymentForm = id
       this.remittanceDialogFormVisible = true
@@ -349,6 +374,7 @@ export default {
       })
     },
     editPaymentForm(data) {
+      this.getCardTypeList()
       this.paymentForm = data;
       this.paymentFormApproval.idPaymentForm = data.idPaymentForm;
       this.dialogFormVisible = true;

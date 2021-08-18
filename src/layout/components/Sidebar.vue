@@ -95,7 +95,7 @@ export default {
         this.meun.splice(findIdx, 1)
       })
     } else if (this.idRole === '3') {
-      let idx = [2,4,5]
+      let idx = [4,5]
       idx.forEach(id => {
         let findIdx = this.meun.findIndex(item => {
           return item.id === id
@@ -103,7 +103,7 @@ export default {
         this.meun.splice(findIdx, 1)
       })
     } else if (this.idRole === '2') {
-      let idx = [4,5]
+      let idx = [2,5]
       idx.forEach(id => {
         let findIdx = this.meun.findIndex(item => {
           return item.id === id
