@@ -12,10 +12,17 @@
             <span>{{paymentRemittanceCount}}</span>
           </div>
           <div class="card" v-if="idRole === '2'">
-            <label>上日余额</label>
+            <label>公账余额</label>
             <span>
-              <span v-if="remainingSum != null">{{remainingSum}}</span>
-              <span v-else><i class="el-icon-edit" @click="dialogFormVisible = true"></i></span>
+              <span v-if="publicRemainingSum != null">{{publicRemainingSum}}</span>
+              <span v-else><i class="el-icon-edit" @click="clickShowDialogForm(1)"></i></span>
+            </span>
+          </div>
+          <div class="card" v-if="idRole === '2'">
+            <label>私账余额</label>
+            <span>
+              <span v-if="privateRemainingSum != null">{{privateRemainingSum}}</span>
+              <span v-else><i class="el-icon-edit" @click="clickShowDialogForm(2)"></i></span>
             </span>
           </div>
         </div>
@@ -23,7 +30,17 @@
     </div>
     <el-dialog title="新增" :visible.sync="dialogFormVisible">
       <el-form :model="form" ref="form" :rules="rules">
-        <el-form-item label="上日余额" :label-width="formLabelWidth" prop="lastRemainingSum">
+        <el-form-item label="账目类型" :label-width="formLabelWidth" prop="idCardType">
+          <el-select v-model="form.idCardType" placeholder="请选择" style="width:100%;" disabled>
+            <el-option
+              v-for="item in cardTypeData"
+              :key="item.idCardType"
+              :label="item.name"
+              :value="item.idCardType">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="余额" :label-width="formLabelWidth" prop="lastRemainingSum">
           <el-input v-model="form.lastRemainingSum" type="number" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
@@ -37,6 +54,7 @@
 
 <script>
 import * as API from '@/api/paymentForm';
+import * as CTYPE from '@/api/cardType';
 import * as REMAINSUM from '@/api/remainingSum';
 import Pagination from "@/components/Pagination";
 import { getRole } from "@/utils/auth";
@@ -48,25 +66,43 @@ export default {
       idRole: getRole(),
       approvalPaymentCount: 0,
       paymentRemittanceCount: 0,
-      remainingSum: null,
+      publicRemainingSum: null,
+      privateRemainingSum: null,
       dialogFormVisible: false,
       form: {
+        idCardType: null,
         lastRemainingSum: null
       },
       rules: {
+        idCardType: [
+          { required: true, message: '请选择账目类型', trigger: 'change' }
+        ],
         lastRemainingSum: [
-          { required: true, message: '请填写上日余额', trigger: 'blur' }
+          { required: true, message: '请填写余额', trigger: 'blur' }
         ]
       },
-      formLabelWidth: '80'
+      formLabelWidth: '80',
+      cardTypeData: []
     };
   },
   created() {
   },
   mounted() {
+    this.getCardTypeList()
     this.getDataInfo()
   },
   methods: {
+    clickShowDialogForm(type) {
+      this.form.idCardType = type
+      this.dialogFormVisible = true
+    },
+    getCardTypeList() {
+      CTYPE.getCardType().then(res => {
+        if (res.data.status === 200) {
+          this.cardTypeData = res.data.datas
+        }
+      })
+    },
     routerLinkToApprocalPayment() {
       this.$router.push('/paymentForm/index')
     },
@@ -74,6 +110,7 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           const param = {
+            idCardType: this.form.idCardType,
             lastRemainingSum: this.form.lastRemainingSum
           }
           REMAINSUM.addRemainingSumRecord(param)
@@ -97,7 +134,9 @@ export default {
           let tmpData = res.data.datas
           this.approvalPaymentCount = tmpData.approvalCount
           this.paymentRemittanceCount = tmpData.remittanceCount
-          this.remainingSum = tmpData.remainingSum
+          this.publicRemainingSum = tmpData.publicRemainingSum
+          this.privateRemainingSum = tmpData.privateRemainingSum
+
         }
       })
     }

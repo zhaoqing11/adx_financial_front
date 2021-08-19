@@ -12,22 +12,21 @@
                 <div class="create-workform">
                   <div class="d-flex flex-wrap align-items-center justify-content-between">
                     <div class="modal-product-search d-flex">
+                      <el-select v-model="idCardType" clearable id="selectCardType" placeholder="请选择账目类型" style="width:100%;">
+                        <el-option
+                          v-for="item in cardTypeData"
+                          :key="item.idCardType"
+                          :label="item.name"
+                          :value="item.idCardType">
+                        </el-option>
+                      </el-select>
+                      &nbsp;&nbsp;
                       <form class="mr-3 position-relative">
                         <div class="form-group mb-0">
                           <input type="text" class="form-control" id="exampleInputText" v-model="code" placeholder="搜索申请单编号">
-                          <a class="search-link" href="javaScript:void(0);" @click="getTableData">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="" width="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                          </a>
                         </div>
                       </form>
-                      <!-- <a href="javaScript:void(0);" class="btn btn-primary position-relative d-flex align-items-center justify-content-between" @click="dialogFormVisible = true">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="mr-2" width="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                        </svg>
-                          添加申请
-                      </a> -->
+                      <el-button type="primary" icon="el-icon-search" @click="getTableData"></el-button>
                     </div>
                   </div>
                 </div>                    
@@ -256,6 +255,7 @@ export default {
       totalPage: 1,
       totalRecord: 0,
       code: '',
+      idCardType: null,
       tableData: [],
       paymentForm: {
         idCardType: null,
@@ -311,6 +311,7 @@ export default {
     }
   },
   mounted() {
+    this.getCardTypeList()
     this.getTableData()
   },
   methods: {
@@ -374,7 +375,6 @@ export default {
       })
     },
     editPaymentForm(data) {
-      this.getCardTypeList()
       this.paymentForm = data;
       this.paymentFormApproval.idPaymentForm = data.idPaymentForm;
       this.dialogFormVisible = true;
@@ -388,6 +388,7 @@ export default {
       const params = {
         pageNum: this.pageNum,
         pageSize: this.pageSize,
+        idCardType: this.idCardType,
         code: this.code
       } 
       API.queryAllPaymentForm(params)
@@ -420,5 +421,11 @@ export default {
 .pagination {
   float: right;
   margin: 20px 10px;
+}
+#selectCardType {
+  border: 1px solid #f1f1f1;
+}
+#selectCardType::-webkit-input-placeholder{
+  color: #6c757d;
 }
 </style>

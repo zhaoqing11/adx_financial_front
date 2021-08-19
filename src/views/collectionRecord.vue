@@ -83,9 +83,9 @@
                               <th scope="col">
                                 <label class="text-muted mb-0" >创建日期</label>
                               </th>
-                              <th scope="col" class="text-right">
+                              <!-- <th scope="col" class="text-right">
                                 <span class="text-muted" >操作</span>
-                              </th>
+                              </th> -->
                             </tr>
                           </thead>
                           <tbody>
@@ -97,13 +97,13 @@
                                 </div>                                    
                               </td>
                               <td>{{index + 1}}</td>
-                              <td>{{item.idCardType}}</td>
+                              <td>{{item.idCardType === 1 ? '公账' : '私账'}}</td>
                               <td>{{item.amount}}</td>
                               <!-- <td>{{formatCardNum(item.collectionAccount)}}</td> -->
                               <td class="text-right">{{item.collectionDate}}</td>
                               <td>{{item.userName}}</td>
                               <td>{{item.createTime}}</td>
-                              <td>
+                              <!-- <td>
                                 <div class="d-flex justify-content-end align-items-center">
                                   <a class="" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit" href="javaScript:void(0);" @click="clickEditCollectionRecord(item)">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="text-secondary" width="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -112,7 +112,7 @@
                                   </a>&nbsp;&nbsp;
                                   <i class="el-icon-delete" @click="deleteCollectionRecord(item.idCollectionRecord)"></i>
                                 </div>
-                              </td>
+                              </td> -->
                             </tr>
                           </tbody>
                         </table>
@@ -151,9 +151,8 @@
     </footer>
     <el-dialog :title="title" :visible.sync="dialogFormVisible">
       <el-form :model="collectionRecordForm" ref="collectionRecordForm" :rules="rules">
-        <el-form-item label="类型" :label-width="formLabelWidth" prop="idCardType">
-          <!-- <el-input v-model="collectionRecordForm.idCardType" type="number" autocomplete="off"></el-input> -->
-          <el-select v-model="collectionRecordForm.idCardType" placeholder="请选择" style="width:100%;" disabled>
+        <el-form-item label="账目类型" :label-width="formLabelWidth" prop="idCardType">
+          <el-select v-model="collectionRecordForm.idCardType" placeholder="请选择" style="width:100%;">
             <el-option
               v-for="item in cardTypeData"
               :key="item.idCardType"
@@ -173,9 +172,9 @@
             style="width:100%">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="收款账号" :label-width="formLabelWidth" prop="collectionAccount">
+        <!-- <el-form-item label="收款账号" :label-width="formLabelWidth" prop="collectionAccount">
           <el-input v-model="collectionRecordForm.collectionAccount" autocomplete="off"></el-input>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
