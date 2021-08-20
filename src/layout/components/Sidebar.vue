@@ -81,6 +81,11 @@ export default {
           name: '月报统计',
           url: '/report/index',
           icon: 'report'
+        }, {
+          id: 6,
+          name: '日报',
+          url: '/daily/index',
+          icon: 'daily'
         }
       ]
     };

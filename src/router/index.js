@@ -115,6 +115,21 @@ export const constantRoutes = [
         meta: { title: "查看月报详情", icon: "reportDetail", requireAuth: true }
       }
     ]
+  },
+  {
+    path: "/daily",
+    component: Layout,
+    redirect: "/daily",
+    name: "Daily",
+    meta: { title: "日报", icon: "daily", requireAuth: true },
+    children: [
+      {
+        path: "index",
+        name: "index",
+        component: () => import("@/views/daily/index"),
+        meta: { title: "日报", icon: "daily", requireAuth: true }
+      }
+    ]
   }
 ];
 

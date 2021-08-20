@@ -120,7 +120,8 @@
                                 </div>
                               </td>
                               <td>{{index + 1}}</td>
-                              <td>{{item.state ? item.code : '--'}}</td>
+                              <!-- {{item.state ? item.code : '--'}} -->
+                              <td>{{item.code ? item.code : '--'}}</td>
                               <td>{{item.reasonApplication}}</td>
                               <td>{{item.amount}}</td>
                               <td class="text-right">{{item.paymentName}}</td>

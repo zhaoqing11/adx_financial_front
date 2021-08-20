@@ -103,10 +103,11 @@
                                 <div class="custom-control custom-checkbox custom-control-inline">
                                   <input type="checkbox" class="custom-control-input m-0" id="customCheck1">
                                   <label class="custom-control-label" for="customCheck1"></label>
-                                </div>                                    
+                                </div>
                               </td>
                               <td>{{index + 1}}</td>
-                              <td>{{item.state ? item.code : '--'}}</td>
+                              <!-- {{item.state ? item.code : '--'}} -->
+                              <td>{{item.code ? item.code : '--'}}</td>
                               <td>{{item.reasonApplication}}</td>
                               <td>{{item.amount}}</td>
                               <td class="text-right">{{item.paymentName}}</td>
