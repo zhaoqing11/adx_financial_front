@@ -2792,7 +2792,7 @@ textarea.form-control.is-invalid {
 }
 
 .collapse:not(.show) {
-  display: none
+  /* display: none */
 }
 
 .collapsing {

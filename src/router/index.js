@@ -88,10 +88,16 @@ export const constantRoutes = [
     meta: { title: "收支明细", icon: "flowRecord", requireAuth: true },
     children: [
       {
-        path: "index",
-        name: "Index",
-        component: () => import("@/views/flowRecord"),
-        meta: { title: "收支明细", icon: "flowRecord", requireAuth: true }
+        path: "publicFlowRecord",
+        name: "PublicFlowRecord",
+        component: () => import("@/views/flowRecord/publicFlowRecord"),
+        meta: { title: "公账", icon: "publicFlowRcord", requireAuth: true }
+      },
+      {
+        path: "privateFlowRecord",
+        name: "PrivateFlowRecord",
+        component: () => import("@/views/flowRecord/privateFlowRecord"),
+        meta: { title: "私账", icon: "privateFlowRcord", requireAuth: true }
       }
     ]
   },
@@ -124,10 +130,31 @@ export const constantRoutes = [
     meta: { title: "日报", icon: "daily", requireAuth: true },
     children: [
       {
+        path: "publicDaily",
+        name: "PublicDaily",
+        component: () => import("@/views/daily/publicDaily"),
+        meta: { title: "公账", icon: "public-daily", requireAuth: true }
+      },
+      {
+        path: "privateDaily",
+        name: "PrivateDaily",
+        component: () => import("@/views/daily/privateDaily"),
+        meta: { title: "私账", icon: "private-daily", requireAuth: true }
+      }
+    ]
+  },
+  {
+    path: "/setting",
+    component: Layout,
+    redirect: "/setting",
+    name: "Setting",
+    meta: { title: "账户设置", icon: "setting", requireAuth: true },
+    children: [
+      {
         path: "index",
-        name: "index",
-        component: () => import("@/views/daily/index"),
-        meta: { title: "日报", icon: "daily", requireAuth: true }
+        name: "Index",
+        component: () => import("@/views/setting"),
+        meta: { title: "账户设置", icon: "setting", requireAuth: true }
       }
     ]
   }

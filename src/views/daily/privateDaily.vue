@@ -32,7 +32,7 @@
                   <div class="card card-block card-stretch">
                     <div class="card-body p-0">
                       <div class="d-flex justify-content-between align-items-center p-3">
-                        <h5 class="font-weight-bold">日报</h5>
+                        <!-- <h5 class="font-weight-bold">日报</h5> -->
                       </div>
                       <div class="table-responsive">
                         <el-table
@@ -75,7 +75,9 @@
                                 label="操作"
                                 width="120">
                                 <template slot-scope="scope">
-                                  <el-button  size="mini" icon="el-icon-edit" @click="routerLinkToReportDetail(scope.row)"></el-button>
+                                  <span v-if="scope.row.state === 1"><i class="el-icon-success"></i></span>
+                                  <span v-else-if="scope.row.state === 2"><i class="el-icon-error"></i></span>
+                                  <span v-else><i class="el-icon-edit" @click="showApprovalDaily(scope.row)"></i></span>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -112,13 +114,112 @@
         </div>
       </div>
     </footer>
+    <el-dialog title="收支明细" :visible.sync="dialogFormVisible">
+      <el-table
+        :data="flowRecordDta"
+        style="width: 100%"
+        :default-sort = "{prop: 'createTime', order: 'descending'}"
+        >
+        <el-table-column
+          type="index"
+          label="序号"
+          width="80">
+          《<template slot-scope="scope">
+            {{scope.$index + 1}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="reasonApplication"
+          label="事由">
+          <template slot-scope="scope">
+            {{scope.row.reasonApplication ? scope.row.reasonApplication : '--'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="amount"
+          label="申请金额">
+          <template slot-scope="scope">
+            {{scope.row.amount ? scope.row.amount : '--'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="paymentName"
+          label="付款名称">
+          <template slot-scope="scope">
+            {{scope.row.paymentName ? scope.row.paymentName : '--'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="paymentAccount"
+          label="付款账号"
+          width="260">
+          <template slot-scope="scope">
+            {{scope.row.paymentAccount ? formatCardNum(scope.row.paymentAccount) : '--'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="approvalAmount"
+          label="审批金额">
+          <template slot-scope="scope">
+            {{scope.row.approvalAmount ? scope.row.approvalAmount : '--'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="remittanceAmount"
+          label="汇款金额">
+          <template slot-scope="scope">
+            {{scope.row.remittanceAmount ? scope.row.remittanceAmount : '--'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="serviceCharge"
+          label="手续费"
+          sortable>
+          <template slot-scope="scope">
+            {{scope.row.serviceCharge ? scope.row.serviceCharge : '--'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="collectionAmount"
+          label="收款金额"
+          sortable>
+          <template slot-scope="scope">
+            {{scope.row.collectionAmount ? scope.row.collectionAmount : '--'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="remainingSum"
+          label="余额"
+          sortable>
+          <template slot-scope="scope">
+            {{scope.row.remainingSum ? scope.row.remainingSum : '--'}}
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-form :model="form" ref="form" :rules="rules">
+        <el-form-item label="审核结果" :label-width="formLabelWidth" prop="idResultType">
+          <el-radio-group v-model="form.idResultType">
+            <el-radio :label="1">通过</el-radio>
+            <el-radio :label="2">不通过</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="备注" :label-width="formLabelWidth" prop="remark">
+          <el-input type="textarea" v-model="form.remark" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="approvalDaily('form')">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import * as API from '@/api/daily';
+import * as APPROVAL from '@/api/approvalPrivateDaily';
 import { getUserId, getRole } from '@/utils/auth';
-import { formatDate2 } from '@/utils/validate';
+import { formatDate2, formatCardNum } from '@/utils/validate';
 import Pagination from '@/components/Pagination';
 
 export default {
@@ -134,42 +235,62 @@ export default {
       totalRecord: 0,
       code: '',
       tableData: [],
-      state: null
+      state: null,
+      formLabelWidth: '120',
+      dialogFormVisible: false,
+      form: {
+        idPrivateDaily: null,
+        idResultType: 2,
+        remark: null,
+        idUser: null
+      },
+      rules: {
+        idPrivateDaily: [
+          { required: true, message: '请选择审核结果', trigger: 'blur' },
+        ]
+      },
+      flowRecordDta: [],
+      formatCardNum: formatCardNum
     }
   },
   mounted() {
     this.getTableData()
   },
   methods: {
-    // 路由至月报详情页
-    routerLinkToReportDetail(data) {
-      this.$router.push({
-        path: '/report/reportDetail',
-        query: {
-          year: data.year,
-          month: data.month
+    // 审批
+    approvalDaily(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          const param = {
+            idPrivateDaily: this.form.idPrivateDaily,
+            idResultType: this.form.idResultType,
+            remark: this.form.remark,
+            idUser: getUserId()
+          }
+          APPROVAL.approvalPrivateDaily(param)
+          .then(res => {
+            if (res.data.status === 200) {
+              this.$message.success('审批成功')
+              this.dialogFormVisible = false
+              this.resetForm('form')
+              this.getTableData()
+            } else {
+              this.$message.error(res.data.cause)
+            }
+          })
         }
       })
     },
-    // 删除月报
-    deleteReport(idReport) {
-      this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-        center: true
-      }).then(() => {
-        API.deleteReport({
-          idReport: idReport
-        }).then(res => {
-          if (res.data.status === 200) {
-            this.$message.success('删除成功');
-            this.getTableData();
-          }
-        })
-      }).catch(() => {
-        this.$message.info('已取消删除');
-      });
+    showApprovalDaily(data) {
+      API.getPrivateDailyByDate({
+        date: formatDate2(data.createTime)
+      }).then(res => {
+        if (res.data.status === 200) {
+          this.flowRecordDta = res.data.datas
+          this.form.idPrivateDaily = data.idPrivateDaily
+          this.dialogFormVisible = true
+        }
+      })
     },
     formatter(row, column) {
       return formatDate2(row.createTime);
@@ -181,7 +302,7 @@ export default {
         pageSize: this.pageSize,
         state: this.state
       }
-      API.getDailyList(params)
+      API.getPrivateDailyByPage(params)
       .then(res => {
         if (res.data.status === 200) {
           let tmpData = res.data.datas;
@@ -190,6 +311,9 @@ export default {
           this.totalRecord = tmpData.totalRecord;
         }
       })
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
     }
   }
 }
@@ -199,6 +323,14 @@ export default {
 .el-icon-delete:before {
   color: #8f9fbc !important;
   font-weight: 500;
+}
+.el-icon-success:before {
+  color: #67C23A;
+  font-size: 20px;
+}
+.el-icon-error:before {
+  color: red;
+  font-size: 20px;
 }
 .orange-cell {
   color: orange;

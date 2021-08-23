@@ -29,8 +29,8 @@
             <li class="px-3 pt-3 pb-2 ">
               <span class="text-uppercase small font-weight-bold">Application</span>
             </li>
-            <li :class="active === item.id ? 'active sidebar-layout' : 'sidebar-layout'" v-for="(item,index) in meun" :key="index" @click="routerLinkToPage(item)">
-              <a href="javaScript:void(0);" class="svg-icon">
+            <li :class="active === item.id ? 'active sidebar-layout' : 'sidebar-layout'" v-for="(item,index) in meun" :key="index">
+              <a href="javaScript:void(0);" class="svg-icon" @click="routerLinkToPage(item)">
                 <i class="">
                   <span class="svg-container">
                     <svg-icon :icon-class="item.icon" />
@@ -38,6 +38,19 @@
                 </i>
                 <span class="ml-2">{{item.name}}</span>
               </a>
+              <ul id="app1" class="submenu collapse" data-parent="#iq-sidebar-toggle" v-if="active === item.id">                      
+                <li :class="active === childItem.id ? 'active sidebar-layout' : 'sidebar-layout'"
+                v-for="(childItem,idx) in item.childMeun" :key="idx" @click="routerLinkToPage(childItem)">
+                  <a href="javaScript:void(0);" class="svg-icon">
+                    <i class="">
+                      <span class="svg-container">
+                        <svg-icon :icon-class="childItem.icon" />
+                      </span>
+                    </i>
+                    <span class="">{{childItem.name}}</span>
+                  </a>
+                </li>
+              </ul>
             </li>
           </ul>
         </nav>
@@ -60,32 +73,64 @@ export default {
           id: 1,
           name: '请款申请',
           url: '/myPaymentForm/index',
-          icon: 'payment-form'
+          icon: 'payment-form',
+          childMeun: []
         }, {
           id: 2,
           name: '收款',
           url: '/collectionRecord/index',
-          icon: 'collection-amount'
+          icon: 'collection-amount',
+          childMeun: []
         }, {
           id: 3,
           name: '申请列表',
           url: '/paymentForm/index',
-          icon: 'request-list'
+          icon: 'request-list',
+          childMeun: []
         }, {
           id: 4,
           name: '收支明细',
-          url: '/flowRecord/index',
-          icon: 'flow-record'
+          url: '/flowRecord/publicFlowRecord',
+          icon: 'flow-record',
+          childMeun: [{
+            id: 7,
+            name: '公账',
+            url: '/flowRecord/publicFlowRecord',
+            icon: 'public-type'
+          }, {
+            id: 8,
+            name: '私账',
+            url: '/flowRecord/privateFlowRecord',
+            icon: 'private-type'
+          }]
         }, {
           id: 5,
           name: '月报统计',
           url: '/report/index',
-          icon: 'report'
+          icon: 'report',
+          childMeun: []
         }, {
           id: 6,
           name: '日报',
-          url: '/daily/index',
-          icon: 'daily'
+          url: '/daily/publicDaily',
+          icon: 'daily',
+          childMeun: [{
+            id: 9,
+            name: '公账',
+            url: '/daily/publicDaily',
+            icon: 'public-type'
+          }, {
+            id: 10,
+            name: '私账',
+            url: '/daily/privateDaily',
+            icon: 'private-type'
+          }]
+        }, {
+          id: 11,
+          name: '账户设置',
+          url: '/setting/index',
+          icon: 'setting',
+          childMeun: []
         }
       ]
     };
@@ -128,7 +173,13 @@ export default {
   methods: {
     // 路由至对应页面
     routerLinkToPage(data) {
-      this.active = data.id
+      if (data.id == 7 || data.id == 8) {
+        this.active = 4
+      } else if (data.id == 9 || data.id == 10) {
+        this.active = 6
+      } else {
+        this.active = data.id
+      }
       this.$router.push(data.url)
     },
     // 返回首页
