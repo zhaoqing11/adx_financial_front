@@ -162,7 +162,8 @@ export default {
         path: '/report/reportDetail',
         query: {
           year: data.year,
-          month: data.month
+          month: data.month,
+          idCardType: 1
         }
       })
     },
@@ -196,7 +197,7 @@ export default {
         pageSize: this.pageSize,
         currentDate: this.currentDate
       }
-      API.getReportList(params)
+      API.getPublicReportList(params)
       .then(res => {
         if (res.data.status === 200) {
           let tmpData = res.data.datas;

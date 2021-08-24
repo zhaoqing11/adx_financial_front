@@ -14,13 +14,14 @@
                     <div class="modal-product-search d-flex">
                       <form class="mr-3 position-relative">
                         <div class="form-group mb-0">
-                          <input type="text" class="form-control" id="exampleInputText" v-model="state" placeholder="搜索年份或月份">
-                          <a class="search-link" href="javaScript:void(0);" @click="getTableData">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="" width="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                          </a>
-                          <p class="confirm-text">* 提示：年分格式（2019 / 2020...），月份格式（1/2/...）</p>
+                          <el-date-picker
+                            v-model="currentDate"
+                            type="date"
+                            placeholder="选择日期"
+                            >
+                          </el-date-picker>
+                          <el-button type="primary" icon="el-icon-search" @click="getTableData"></el-button>
+                          <p class="confirm-text">* 提示：日期格式（2021-08-01）</p>
                         </div>
                       </form>
                     </div>
@@ -69,6 +70,14 @@
                                 sortable>
                                 <template slot-scope="scope">
                                     {{scope.row.serviceCharge ? scope.row.serviceCharge : '--'}}
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                prop="remainingSum"
+                                label="余额"
+                                sortable>
+                                <template slot-scope="scope">
+                                    {{scope.row.remainingSum ? scope.row.remainingSum : '--'}}
                                 </template>
                             </el-table-column>
                             <el-table-column
@@ -190,20 +199,27 @@
         <el-table-column
           prop="remainingSum"
           label="余额"
+          width="100"
           sortable>
           <template slot-scope="scope">
             {{scope.row.remainingSum ? scope.row.remainingSum : '--'}}
           </template>
         </el-table-column>
+        <el-table-column
+          prop="createTime"
+          label="操作日期"
+          width="180"
+          sortable>
+        </el-table-column>
       </el-table>
       <el-form :model="form" ref="form" :rules="rules">
-        <el-form-item label="审核结果" :label-width="formLabelWidth" prop="idResultType">
-          <el-radio-group v-model="form.idResultType">
+        <el-form-item label="审核结果：" :label-width="formLabelWidth" prop="idResultType">
+          <el-radio-group v-model="form.idResultType" style="width:100%;">
             <el-radio :label="1">通过</el-radio>
             <el-radio :label="2">不通过</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="备注" :label-width="formLabelWidth" prop="remark">
+        <el-form-item label="备注：" :label-width="formLabelWidth" prop="remark">
           <el-input type="textarea" v-model="form.remark" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
@@ -250,7 +266,8 @@ export default {
         ]
       },
       flowRecordDta: [],
-      formatCardNum: formatCardNum
+      formatCardNum: formatCardNum,
+      currentDate: null
     }
   },
   mounted() {
@@ -300,7 +317,7 @@ export default {
       const params = {
         pageNum: this.pageNum,
         pageSize: this.pageSize,
-        state: this.state
+        createTime: formatDate2(this.currentDate)
       }
       API.getPublicDailyByPage(params)
       .then(res => {

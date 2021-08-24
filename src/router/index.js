@@ -112,7 +112,13 @@ export const constantRoutes = [
         path: "index",
         name: "Index",
         component: () => import("@/views/report/index"),
-        meta: { title: "月报统计", icon: "report", requireAuth: true }
+        meta: { title: "公账", icon: "public-report", requireAuth: true }
+      },
+      {
+        path: "privateReport",
+        name: "PrivateReport",
+        component: () => import("@/views/report/privateReport"),
+        meta: { title: "私账", icon: "private-report", requireAuth: true }
       },
       {
         path: "reportDetail",
@@ -127,7 +133,7 @@ export const constantRoutes = [
     component: Layout,
     redirect: "/daily",
     name: "Daily",
-    meta: { title: "日报", icon: "daily", requireAuth: true },
+    meta: { title: "账单核对", icon: "daily", requireAuth: true },
     children: [
       {
         path: "publicDaily",

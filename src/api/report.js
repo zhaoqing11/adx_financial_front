@@ -8,9 +8,9 @@ import { getToken } from '@/utils/auth';
  * @param {*} data
  * @returns
  */
-export function exportToExcel(year, month) {
+export function exportToExcel(year, month, idCardType) {
   window.open(
-    `${process.env.VUE_APP_BASE_API}/report/exportToExcel?year=`+ year + `&month=` + month +`&AccessToken=${getToken()}`,
+    `${process.env.VUE_APP_BASE_API}/report/exportToExcel?year=`+ year + `&month=` + month + `&idCardType=` + idCardType +`&AccessToken=${getToken()}`,
     '_blank'
   );
 }
@@ -46,16 +46,31 @@ export function deleteReport(data) {
 }
 
 /**
- * 分页（条件）查询月报
+ * 分页（条件）查询（公账）月报
  *
  * @export
  * @param {*} data
  * @returns
  */
-export function getReportList(data) {
-    return request({
-      url: '/report/selectByPage',
-      method: 'post',
-      data
-    });
+export function getPublicReportList(data) {
+  return request({
+    url: '/report/selectPublicReportByPage',
+    method: 'post',
+    data
+  });
+}
+
+/**
+ * 分页（条件）查询（私账）月报
+ *
+ * @export
+ * @param {*} data
+ * @returns
+ */
+export function getPrivateReportList(data) {
+  return request({
+    url: '/report/selectPrivateReportByPage',
+    method: 'post',
+    data
+  });
 }

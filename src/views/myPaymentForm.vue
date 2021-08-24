@@ -33,9 +33,10 @@
                 </div>                    
               </div>
               <el-dialog title="创建申请单" :visible.sync="dialogFormVisible">
+                <span class="promptText" v-if="isDisabled">{{promptText}}</span>
                 <el-form :model="paymentForm" ref="paymentForm" :rules="rules">
                   <el-form-item label="类型" :label-width="formLabelWidth" prop="idCardType">
-                    <el-select v-model="paymentForm.idCardType" placeholder="请选择" style="width:100%;">
+                    <el-select v-model="paymentForm.idCardType" placeholder="请选择" style="width:100%;" @change="changeSelectOption">
                       <el-option
                         v-for="item in cardTypeData"
                         :key="item.idCardType"
@@ -45,17 +46,17 @@
                     </el-select>
                   </el-form-item>
                   <el-form-item label="事由" :label-width="formLabelWidth" prop="reasonApplication">
-                    <el-input type="textarea" v-model="paymentForm.reasonApplication" autocomplete="off"></el-input>
+                    <el-input type="textarea" v-model="paymentForm.reasonApplication" autocomplete="off" :disabled="isDisabled"></el-input>
                   </el-form-item>
                   <el-form-item label="申请金额" :label-width="formLabelWidth" prop="amount">
                     <!-- oninput="value=value.replace(/[^0-9.]/g,'')" -->
-                    <el-input v-model="paymentForm.amount" type="number" autocomplete="off"></el-input>
+                    <el-input v-model="paymentForm.amount" type="number" autocomplete="off" :disabled="isDisabled"></el-input>
                   </el-form-item>
                   <el-form-item label="付款名称" :label-width="formLabelWidth" prop="paymentName">
-                    <el-input v-model="paymentForm.paymentName" autocomplete="off"></el-input>
+                    <el-input v-model="paymentForm.paymentName" autocomplete="off" :disabled="isDisabled"></el-input>
                   </el-form-item>
                   <el-form-item label="付款账号" :label-width="formLabelWidth" prop="paymentAccount">
-                    <el-input v-model="paymentForm.paymentAccount" autocomplete="off" ref="cardInput" @blur="blurFormatCardNumber(paymentForm.paymentAccount)"></el-input>
+                    <el-input v-model="paymentForm.paymentAccount" autocomplete="off" :disabled="isDisabled" ref="cardInput" @blur="blurFormatCardNumber(paymentForm.paymentAccount)"></el-input>
                   </el-form-item>
                 </el-form>
                 <div slot="footer" class="dialog-footer">
@@ -175,6 +176,7 @@
 <script>
 import * as API from '@/api/paymentForm';
 import * as CTYPE from '@/api/cardType';
+import * as DAILY from '@/api/daily';
 import { getUserId } from '@/utils/auth';
 import Pagination from '@/components/Pagination';
 import { formatCardNum } from '@/utils/validate';
@@ -227,7 +229,9 @@ export default {
         ]
       },
       formatCardNum: formatCardNum,
-      cardTypeData: []
+      cardTypeData: [],
+      isDisabled: false,
+      promptText: '上日账单尚未通过审核，暂时无法创建请款申请'
     }
   },
   mounted() {
@@ -235,6 +239,19 @@ export default {
     this.getTableData()
   },
   methods: {
+    changeSelectOption() {
+      DAILY.selectIsExitUnApprovalDaily({
+        idCardType: this.paymentForm.idCardType
+      }).then(res => {
+        if (res.data.status === 200) {
+          if (res.data.datas >= 1) {
+            this.isDisabled = true
+          } else {
+            this.isDisabled = false
+          }
+        }
+      })
+    },
     // 获取账目类型
     getCardTypeList() {
       CTYPE.getCardType().then(res => {
@@ -353,5 +370,9 @@ export default {
 .pagination {
   float: right;
   margin: 20px;
+}
+.promptText {
+  color: red;
+  font-size: 22px;
 }
 </style>

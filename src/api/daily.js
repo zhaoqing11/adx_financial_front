@@ -1,5 +1,21 @@
 import request from '@/utils/request';
 
+
+/**
+ * 查询上一天账单核对信息
+ *
+ * @export
+ * @param {*} 
+ * @returns
+*/
+export function selectIsExitUnApprovalDaily(data) {
+  return request({
+    url: '/daily/selectIsExitUnApprovalDaily',
+    method: 'post',
+    data
+  });
+}
+
 /**
  * 根据指定日期获取（私账）收支明细
  *
@@ -79,10 +95,11 @@ export function insertDaily() {
  * @param {*} 
  * @returns
  */
-export function getPublicDailyByPage() {
+export function getPublicDailyByPage(data) {
   return request({
     url: '/daily/selectPublicDailyByPage',
-    method: 'post'
+    method: 'post',
+    data
   });
 }
 
@@ -93,9 +110,10 @@ export function getPublicDailyByPage() {
  * @param {*} 
  * @returns
 */
-export function getPrivateDailyByPage() {
+export function getPrivateDailyByPage(data) {
   return request({
     url: '/daily/selectPrivateDailyByPage',
-    method: 'post'
+    method: 'post',
+    data
   });
 }

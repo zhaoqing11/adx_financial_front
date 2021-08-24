@@ -47,6 +47,9 @@ export function validPhone(str) {
 }
 
 export function formatDate2(time) {
+  if (Object.isEmpty(time)) {
+    return time;
+  }
   var date = new Date(time);
   var len = time.toString().length;
   if (len < 13) {

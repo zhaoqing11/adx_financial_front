@@ -108,10 +108,20 @@ export default {
           name: '月报统计',
           url: '/report/index',
           icon: 'report',
-          childMeun: []
+          childMeun: [{
+            id: 12,
+            name: '公账',
+            url: '/report/index',
+            icon: 'public-type'
+          }, {
+            id: 13,
+            name: '私账',
+            url: '/report/privateReport',
+            icon: 'private-type'
+          }]
         }, {
           id: 6,
-          name: '日报',
+          name: '账单核对',
           url: '/daily/publicDaily',
           icon: 'daily',
           childMeun: [{
@@ -137,7 +147,7 @@ export default {
   },
   mounted() {
     if (this.idRole === '4') {
-      let idx = [2,3]
+      let idx = [2,3,11]
       idx.forEach(id => {
         let findIdx = this.meun.findIndex(item => {
           return item.id === id
@@ -145,7 +155,7 @@ export default {
         this.meun.splice(findIdx, 1)
       })
     } else if (this.idRole === '3') {
-      let idx = [4,5]
+      let idx = [4,5,6,11]
       idx.forEach(id => {
         let findIdx = this.meun.findIndex(item => {
           return item.id === id
@@ -161,7 +171,7 @@ export default {
         this.meun.splice(findIdx, 1)
       })
     } else if (this.idRole === '1') {
-      let idx = [2,3,4,5]
+      let idx = [2,3,4,5,6,11]
       idx.forEach(id => {
         let findIdx = this.meun.findIndex(item => {
           return item.id === id
@@ -177,6 +187,8 @@ export default {
         this.active = 4
       } else if (data.id == 9 || data.id == 10) {
         this.active = 6
+      } else if (data.id == 12 || data.id == 13) {
+        this.active = 5
       } else {
         this.active = data.id
       }

@@ -14,7 +14,7 @@
                            </div>
                         </div>
                         <div class="board-scrollbar board-scrollbar-0">
-                           <div id="draggable-item-1" @click="clickShowDialog(1)">
+                           <div id="draggable-item-1">
                                <div class="draggable-item todo-board-card border-color-left-blue">
                                    <div class="item-body">
                                        <div>
@@ -25,7 +25,9 @@
                                        <div>
                                          <div class="rounded">
                                             <a href="javaScript:void(0);" data-toggle="tooltip" data-placement="top" title="Assign To">
-                                                <i class="el-icon-edit"></i>
+                                                <span class="svg-container" @click="clickShowDialog(1)">
+                                                  <svg-icon icon-class="edit" />
+                                                </span>
                                             </a>
                                          </div>
                                        </div>
@@ -41,7 +43,7 @@
                            </div>
                         </div>
                         <div class="board-scrollbar board-scrollbar-1">
-                           <div id="draggable-item-7" @click="clickShowDialog(2)">
+                           <div id="draggable-item-7">
                                <div class="draggable-item todo-board-card ">
                                    <div class="item-body">
                                        <div>
@@ -52,7 +54,9 @@
                                        <div>
                                          <div class="rounded">
                                             <a href="javaScript:void(0);" data-toggle="tooltip" data-placement="top" title="Assign To">
-                                                <i class="el-icon-edit"></i>
+                                                <span class="svg-container" @click="clickShowDialog(2)">
+                                                  <svg-icon icon-class="edit" />
+                                                </span>
                                             </a>
                                          </div>
                                        </div>
@@ -152,6 +156,7 @@ export default {
             this.$message.success('编辑成功')
             this.dialogFormVisible = false
             this.resetForm('form')
+            this.getTableData()
         } else {
             this.$message.error(res.data.cause)
         }
@@ -190,3 +195,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.svg-icon {
+  font-size: 22px;
+}
+</style>
