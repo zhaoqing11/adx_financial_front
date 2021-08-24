@@ -166,7 +166,7 @@
             </ul>
           </div>
           <div class="col-lg-6 text-right">
-            <span class="mr-1">Copyright © 2021.</span>
+            <span class="mr-1">财务管理平台系统 版权所有 | <a href="https://beian.miit.gov.cn/">粤ICP备12030444号</a></span>
           </div>
         </div>
       </div>

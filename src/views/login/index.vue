@@ -46,6 +46,7 @@
          </div>
       </section>
     </div>
+    <div class="footer"><span class="mr-1">财务管理平台系统 版权所有 | <a href="https://beian.miit.gov.cn/">粤ICP备12030444号</a></span></div>
   </div>
 </template>
 
@@ -128,5 +129,16 @@ $font_color: #4d4d4d;
   width: 100%;
   height: 100%;
   overflow: hidden;
+}
+.footer {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  text-align: center;
+  padding: 5px 0;
+}
+a, .footer {
+  color: #C0C4CC;
+  font-size: 12px;
 }
 </style>
