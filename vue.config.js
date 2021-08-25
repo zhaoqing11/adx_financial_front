@@ -24,7 +24,7 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  publicPath: '/adx_financial/',
+  publicPath: './',
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: false,
@@ -40,8 +40,8 @@ module.exports = {
     proxy: {
       [process.env.VUE_APP_BASE_API]: {
          //target: 'http://120.76.142.146:8804',
-        target: 'https://www.ai-jymq.com/adx-financial',
-        // target: 'http://127.0.0.1:8807',
+        // target: 'http://www.ai-jymq.com/adx-financial',
+        target: 'http://127.0.0.1:8807',
         ngeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: '',
