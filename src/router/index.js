@@ -159,8 +159,20 @@ export const constantRoutes = [
       {
         path: "index",
         name: "Index",
-        component: () => import("@/views/setting"),
+        component: () => import("@/views/setting/index"),
         meta: { title: "账户设置", icon: "setting", requireAuth: true }
+      },
+      {
+        path: "user",
+        name: "User",
+        component: () => import("@/views/setting/user"),
+        meta: { title: "用户设置", icon: "user-setting", requireAuth: true }
+      },
+      {
+        path: "department",
+        name: "Department",
+        component: () => import("@/views/setting/department"),
+        meta: { title: "部门管理", icon: "department-setting", requireAuth: true }
       }
     ]
   }

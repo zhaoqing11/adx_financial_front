@@ -141,13 +141,33 @@ export default {
           url: '/setting/index',
           icon: 'setting',
           childMeun: []
+        }, {
+          id: 14,
+          name: '用户设置',
+          url: '/setting/user',
+          icon: 'user-setting',
+          childMeun: []
+        }, {
+          id: 15,
+          name: '部门管理',
+          url: '/setting/department',
+          icon: 'department-setting',
+          childMeun: []
         }
       ]
     };
   },
   mounted() {
-    if (this.idRole === '4') {
-      let idx = [2,3,11]
+    if (this.idRole === '5') {
+      let idx = [1,2,3,4,5,6,11]
+      idx.forEach(id => {
+        let findIdx = this.meun.findIndex(item => {
+          return item.id === id
+        })
+        this.meun.splice(findIdx, 1)
+      })
+    } else if (this.idRole === '4') {
+      let idx = [2,3,11,14,15]
       idx.forEach(id => {
         let findIdx = this.meun.findIndex(item => {
           return item.id === id
@@ -155,7 +175,7 @@ export default {
         this.meun.splice(findIdx, 1)
       })
     } else if (this.idRole === '3') {
-      let idx = [4,5,6,11]
+      let idx = [4,5,6,11,14,15]
       idx.forEach(id => {
         let findIdx = this.meun.findIndex(item => {
           return item.id === id
@@ -163,7 +183,7 @@ export default {
         this.meun.splice(findIdx, 1)
       })
     } else if (this.idRole === '2') {
-      let idx = [2,5]
+      let idx = [2,5,14,15]
       idx.forEach(id => {
         let findIdx = this.meun.findIndex(item => {
           return item.id === id
@@ -171,7 +191,7 @@ export default {
         this.meun.splice(findIdx, 1)
       })
     } else if (this.idRole === '1') {
-      let idx = [2,3,4,5,6,11]
+      let idx = [2,3,4,5,6,11,14,15]
       idx.forEach(id => {
         let findIdx = this.meun.findIndex(item => {
           return item.id === id
