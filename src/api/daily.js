@@ -53,10 +53,11 @@ export function getPublicDailyByDate(data) {
  * @param {*} 
  * @returns
 */
-export function updatePublicDaily() {
+export function updatePublicDaily(data) {
   return request({
     url: '/daily/updatePublicDaily',
-    method: 'post'
+    method: 'post',
+    data
   });
 }
 
@@ -67,10 +68,11 @@ export function updatePublicDaily() {
  * @param {*} 
  * @returns
 */
-export function updatePrivateDaily() {
+export function updatePrivateDaily(data) {
   return request({
     url: '/daily/updatePrivateDaily',
-    method: 'post'
+    method: 'post',
+    data
   });
 }
 

@@ -175,6 +175,21 @@ export const constantRoutes = [
         meta: { title: "部门管理", icon: "department-setting", requireAuth: true }
       }
     ]
+  },
+  {
+    path: "/statistics",
+    component: Layout,
+    redirect: "/statistics",
+    name: "Statistics",
+    meta: { title: "统计分析", icon: "statistics", requireAuth: true },
+    children: [
+      {
+        path: "index",
+        name: "Index",
+        component: () => import("@/views/statistics/index"),
+        meta: { title: "统计分析", icon: "setting", requireAuth: true }
+      },
+    ]
   }
 ];
 

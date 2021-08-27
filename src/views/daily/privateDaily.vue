@@ -91,8 +91,12 @@
                                 width="120">
                                 <template slot-scope="scope">
                                   <span v-if="scope.row.state === 1"><i class="el-icon-success"></i></span>
-                                  <span v-else-if="scope.row.state === 2"><i class="el-icon-error"></i></span>
-                                  <span v-else><i class="el-icon-edit" @click="showApprovalDaily(scope.row)"></i></span>
+                                  <span v-else-if="scope.row.state === 2">
+                                    <i class="el-icon-error"></i>
+                                    &nbsp;&nbsp;
+                                    <el-button type="text" v-if="idRole == 3" @click="showEditDaily(scope.row)">修改</el-button>
+                                  </span>
+                                  <span v-else><i class="el-icon-edit" v-if="idRole == 2" @click="showApprovalDaily(scope.row)"></i></span>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -129,7 +133,7 @@
         </div>
       </div>
     </footer>
-    <el-dialog title="收支明细" :visible.sync="dialogFormVisible">
+    <el-dialog title="审核" :visible.sync="dialogFormVisible">
       <el-table
         :data="flowRecordDta"
         style="width: 100%"
@@ -235,14 +239,140 @@
         <el-button type="primary" @click="approvalDaily('form')">确 定</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="收支明细" :visible.sync="editDialogFormVisible">
+      <el-table
+        :data="flowRecordDta"
+        style="width: 100%"
+        :default-sort = "{prop: 'createTime', order: 'descending'}"
+        >
+        <el-table-column
+          type="index"
+          label="序号"
+          width="80">
+          《<template slot-scope="scope">
+            {{scope.$index + 1}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="reasonApplication"
+          label="事由">
+          <template slot-scope="scope">
+            {{scope.row.reasonApplication ? scope.row.reasonApplication : '--'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="amount"
+          label="申请金额">
+          <template slot-scope="scope">
+            {{scope.row.amount ? scope.row.amount : '--'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="paymentName"
+          label="付款名称">
+          <template slot-scope="scope">
+            {{scope.row.paymentName ? scope.row.paymentName : '--'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="paymentAccount"
+          label="付款账号"
+          width="260">
+          <template slot-scope="scope">
+            {{scope.row.paymentAccount ? formatCardNum(scope.row.paymentAccount) : '--'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="approvalAmount"
+          label="审批金额">
+          <template slot-scope="scope">
+            {{scope.row.approvalAmount ? scope.row.approvalAmount : '--'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="remittanceAmount"
+          label="汇款金额">
+          <template slot-scope="scope">
+            {{scope.row.remittanceAmount ? scope.row.remittanceAmount : '--'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="serviceCharge"
+          label="手续费"
+          sortable>
+          <template slot-scope="scope">
+            {{scope.row.serviceCharge ? scope.row.serviceCharge : '--'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="collectionAmount"
+          label="收款金额"
+          sortable>
+          <template slot-scope="scope">
+            {{scope.row.collectionAmount ? scope.row.collectionAmount : '--'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="remark"
+          label="备注"
+          sortable>
+          <template slot-scope="scope">
+            {{scope.row.remark ? scope.row.remark : '--'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="remainingSum"
+          label="余额"
+          width="100"
+          sortable>
+          <template slot-scope="scope">
+            {{scope.row.remainingSum ? scope.row.remainingSum : '--'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="createTime"
+          label="操作日期"
+          width="180"
+          sortable>
+        </el-table-column>
+      </el-table>
+      <br/>
+      <div class="footer-btn">
+        <el-button type="text" @click="showUpdateValue = true">添加收款</el-button>
+        <el-button type="text" @click="clickAddPayment">添加支出</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="收款" :visible.sync="showUpdateValue">
+      <el-form :model="collectionRecordForm" ref="collectionRecordForm" :rules="collectionRules">
+        <el-form-item label="收款金额" :label-width="formLabelWidth" prop="amount">
+          <el-input v-model="collectionRecordForm.amount" type="number" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="收款日期" :label-width="formLabelWidth" prop="collectionDate">
+          <el-date-picker
+            v-model="collectionRecordForm.collectionDate"
+            type="datetime"
+            placeholder="选择日期"
+            style="width:100%">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="备注" :label-width="formLabelWidth" prop="remark">
+          <el-input type="textarea" v-model="collectionRecordForm.remark" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="showUpdateValue = false">取 消</el-button>
+        <el-button type="primary" @click="addCollectionRecord('collectionRecordForm')">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import * as API from '@/api/daily';
 import * as APPROVAL from '@/api/approvalPrivateDaily';
+import * as COLLECTIONAPI from '@/api/collectionRecord';
 import { getUserId, getRole } from '@/utils/auth';
-import { formatDate2, formatCardNum } from '@/utils/validate';
+import { formatDate, formatDate2, formatCardNum } from '@/utils/validate';
 import Pagination from '@/components/Pagination';
 
 export default {
@@ -261,6 +391,8 @@ export default {
       state: null,
       formLabelWidth: '120',
       dialogFormVisible: false,
+      editDialogFormVisible: false,
+      showUpdateValue: false,
       form: {
         idPrivateDaily: null,
         idResultType: 2,
@@ -274,13 +406,78 @@ export default {
       },
       flowRecordDta: [],
       formatCardNum: formatCardNum,
-      currentDate: null
+      currentDate: null,
+
+      collectionRecordForm: {
+        idCardType: 1,
+        idCollectionRecord: null,
+        amount: null,
+        collectionDate: '',
+        remark: null,
+        idUser: null
+      },
+      collectionRules: {
+        amount: [
+          { required: true, message: '请填写收款金额', trigger: 'blur' }
+        ],
+        collectionDate: [
+          { required: true, message: '请选择收款日期', trigger: 'change' }
+        ],
+        collectionAccount: [
+          { required: true, message: '请填写收款账号', trigger: 'blur' }
+        ]
+      },
+      idDaily: null,
+      idCardType: 2
     }
   },
   mounted() {
     this.getTableData()
   },
   methods: {
+    // 路由至申请请款页面
+    clickAddPayment() {
+      this.$router.push({
+        path: '/myPaymentForm/index',
+        query: {
+          idCardType: this.idCardType,
+          idDaily: this.idDaily
+        }
+      })
+    },
+    showEditDaily(data) {
+      this.idDaily = data.idPrivateDaily
+      this.getPrivateDailyByDate(data)
+      this.editDialogFormVisible = true
+    },
+    // 添加收款
+    addCollectionRecord(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          let collectionDate = formatDate(this.collectionRecordForm.collectionDate)
+          const param = {
+            idCardType: this.collectionRecordForm.idCardType,
+            amount: this.collectionRecordForm.amount,
+            collectionDate: collectionDate,
+            remark: this.collectionRecordForm.remark,
+            idUser: this.idUser,
+            idDaily: this.idDaily,
+            idCardType: this.idCardType
+          }
+          COLLECTIONAPI.addCollectionByApproval(param).then(res => {
+            if (res.data.status === 200) {
+              this.$message.success('修改成功')
+              this.showUpdateValue = false
+              this.editDialogFormVisible = false
+              this.resetForm('collectionRecordForm')
+              this.getTableData()
+            } else {
+              this.$message.error(res.data.cause)
+            }
+          })
+        }
+      })
+    },
     // 审批
     approvalDaily(formName) {
       this.$refs[formName].validate(valid => {
@@ -306,16 +503,19 @@ export default {
       })
     },
     showApprovalDaily(data) {
+      this.getPrivateDailyByDate(data)
+      this.dialogFormVisible = true
+    },
+    getPrivateDailyByDate(data) {
       API.getPrivateDailyByDate({
         date: formatDate2(data.createTime)
       }).then(res => {
         if (res.data.status === 200) {
           this.flowRecordDta = res.data.datas
           this.form.idPrivateDaily = data.idPrivateDaily
-          this.dialogFormVisible = true
         }
       })
-    },
+    }, 
     formatter(row, column) {
       return formatDate2(row.createTime);
     },
@@ -372,4 +572,12 @@ export default {
   float: right;
   margin: 20px 10px;
 }
+.footer-btn button {
+  display: block;
+  padding: 5px 0;
+}
+.el-button+.el-button {
+  margin-left: 0;
+}
+</style>
 </style>

@@ -71,11 +71,11 @@
                               <th scope="col">
                                 <label class="text-muted mb-0">收款金额（元）</label>
                               </th>
-                              <!-- <th scope="col">
-                                <label class="text-muted mb-0" >收款账号</label>
-                              </th> -->
                               <th scope="col" class="text-right">
                                 <label class="text-muted mb-0">收款日期</label>
+                              </th>
+                              <th scope="col" class="text-right">
+                                <label class="text-muted mb-0">备注</label>
                               </th>
                               <th scope="col">
                                 <label class="text-muted mb-0" >操作人</label>
@@ -83,9 +83,6 @@
                               <th scope="col">
                                 <label class="text-muted mb-0" >创建日期</label>
                               </th>
-                              <!-- <th scope="col" class="text-right">
-                                <span class="text-muted" >操作</span>
-                              </th> -->
                             </tr>
                           </thead>
                           <tbody>
@@ -99,8 +96,8 @@
                               <td>{{index + 1}}</td>
                               <td>{{item.idCardType === 1 ? '公账' : '私账'}}</td>
                               <td>{{item.amount}}</td>
-                              <!-- <td>{{formatCardNum(item.collectionAccount)}}</td> -->
                               <td class="text-right">{{item.collectionDate}}</td>
+                              <td>{{item.remark}}</td>
                               <td>{{item.userName}}</td>
                               <td>{{item.createTime}}</td>
                               <!-- <td>
@@ -172,9 +169,9 @@
             style="width:100%">
           </el-date-picker>
         </el-form-item>
-        <!-- <el-form-item label="收款账号" :label-width="formLabelWidth" prop="collectionAccount">
-          <el-input v-model="collectionRecordForm.collectionAccount" autocomplete="off"></el-input>
-        </el-form-item> -->
+        <el-form-item label="备注" :label-width="formLabelWidth" prop="remark">
+          <el-input type="textarea" v-model="collectionRecordForm.remark" autocomplete="off"></el-input>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -211,6 +208,7 @@ export default {
         idCollectionRecord: null,
         amount: null,
         collectionDate: '',
+        remark: null,
         idUser: null
       },
       formLabelWidth: '120',
@@ -282,6 +280,7 @@ export default {
             idCollectionRecord: this.collectionRecordForm.idCollectionRecord,
             amount: this.collectionRecordForm.amount,
             collectionDate: collectionDate,
+            remark: this.collectionRecordForm.remark,
             collectionAccount: this.collectionRecordForm.collectionAccount
           }
           API.updateCollectionRecord(param).then(res => {
@@ -343,6 +342,7 @@ export default {
             idCardType: this.collectionRecordForm.idCardType,
             amount: this.collectionRecordForm.amount,
             collectionDate: collectionDate,
+            remark: this.collectionRecordForm.remark,
             idUser: this.idUser
           }
           API.addCollectionRecord(param).then(res => {

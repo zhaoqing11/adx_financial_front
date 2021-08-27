@@ -1,5 +1,21 @@
 import request from '@/utils/request';
 
+
+/**
+ * 新增收款信息
+ *
+ * @export
+ * @param {*} data
+ * @returns
+ */
+export function addCollectionByApproval(data) {
+  return request({
+    url: '/collectionRecord/addCollection',
+    method: 'post',
+    data
+  });
+}
+
 /**
  * 新增收款信息
  *

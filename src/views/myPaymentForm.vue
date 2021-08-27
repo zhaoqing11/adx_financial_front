@@ -231,15 +231,26 @@ export default {
       formatCardNum: formatCardNum,
       cardTypeData: [],
       isDisabled: false,
-      promptText: '上日账单尚未通过审核，暂时无法创建请款申请'
+      promptText: '上日账单尚未通过审核，暂时无法创建请款申请',
+
+      idDaily: null,
+      idCardType: null
     }
   },
   mounted() {
-    this.getCardTypeList();
+    let query = this.$route.query
+    if (query != undefined) {
+      this.idDaily = query.idDaily
+      this.idCardType = query.idCardType
+    }
+    this.getCardTypeList()
     this.getTableData()
   },
   methods: {
     changeSelectOption() {
+      if (this.idDaily != null && this.idDaily != undefined && this.idDaily != '') {
+        return true;
+      }
       DAILY.selectIsExitUnApprovalDaily({
         idCardType: this.paymentForm.idCardType
       }).then(res => {
@@ -329,6 +340,31 @@ export default {
             if (res.data.status === 200) {
               this.$message.success('创建成功')
               this.dialogFormVisible = false
+
+              if (this.idDaily != null) {
+                if (this.idCardType == 1) {
+                  const param = {
+                    idPublicDaily: this.idDaily,
+                    state: 0
+                  }
+                  DAILY.updatePublicDaily(param).then(res => {
+                    if (res.data.status === 200) {
+                      // succeddfully !
+                    }
+                  })
+                } else {
+                  const param = {
+                    idPrivateDaily: this.idDaily,
+                    state: 0
+                  }
+                  DAILY.updatePrivateDaily(param).then(res => {
+                    if (res.data.status === 200) {
+                      // succeddfully !
+                    }
+                  })
+                }
+              }
+
               this.getTableData()
             } else {
               this.$message.error(res.data.cause)
