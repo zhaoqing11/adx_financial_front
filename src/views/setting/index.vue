@@ -146,19 +146,23 @@ export default {
     this.getTableData()
   },
   methods: {
-    updateConfig() {
-      const param = {
-        idConfig: this.active,
-        config: JSON.stringify(this.form)
-      }
-      API.updateConfig(param).then(res => {
-        if (res.data.status === 200) {
-            this.$message.success('编辑成功')
-            this.dialogFormVisible = false
-            this.resetForm('form')
-            this.getTableData()
-        } else {
-            this.$message.error(res.data.cause)
+    updateConfig(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          const param = {
+            idConfig: this.active,
+            config: JSON.stringify(this.form)
+          }
+          API.updateConfig(param).then(res => {
+            if (res.data.status === 200) {
+                this.$message.success('编辑成功')
+                this.dialogFormVisible = false
+                this.resetForm('form')
+                this.getTableData()
+            } else {
+                this.$message.error(res.data.cause)
+            }
+          })
         }
       })
     },
