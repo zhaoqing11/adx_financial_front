@@ -153,13 +153,29 @@ export default {
           url: '/setting/department',
           icon: 'department-setting',
           childMeun: []
+        }, {
+          id: 16,
+          name: '统计管理',
+          url: '/statistics/index',
+          icon: 'statistics',
+          childMeun: [{
+            id: 17,
+            name: '公账',
+            url: '/statistics/index',
+            icon: 'public-type'
+          }, {
+            id: 18,
+            name: '私账',
+            url: '/statistics/privateFlowRecord',
+            icon: 'private-type'
+          }]
         }
       ]
     };
   },
   mounted() {
     if (this.idRole === '5') {
-      let idx = [1,2,3,4,5,6,11]
+      let idx = [1,2,3,4,5,6,11,16]
       idx.forEach(id => {
         let findIdx = this.meun.findIndex(item => {
           return item.id === id
@@ -175,7 +191,7 @@ export default {
         this.meun.splice(findIdx, 1)
       })
     } else if (this.idRole === '3') {
-      let idx = [4,5,11,14,15]
+      let idx = [4,5,11,14,15,16]
       idx.forEach(id => {
         let findIdx = this.meun.findIndex(item => {
           return item.id === id
@@ -183,7 +199,7 @@ export default {
         this.meun.splice(findIdx, 1)
       })
     } else if (this.idRole === '2') {
-      let idx = [2,5,14,15]
+      let idx = [2,5,14,15,16]
       idx.forEach(id => {
         let findIdx = this.meun.findIndex(item => {
           return item.id === id
@@ -191,7 +207,7 @@ export default {
         this.meun.splice(findIdx, 1)
       })
     } else if (this.idRole === '1') {
-      let idx = [2,3,4,5,6,11,14,15]
+      let idx = [2,3,4,5,6,11,14,15,16]
       idx.forEach(id => {
         let findIdx = this.meun.findIndex(item => {
           return item.id === id
@@ -209,6 +225,8 @@ export default {
         this.active = 6
       } else if (data.id == 12 || data.id == 13) {
         this.active = 5
+      } else if (data.id == 17 || data.id == 18) {
+        this.active = 16
       } else {
         this.active = data.id
       }

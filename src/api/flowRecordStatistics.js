@@ -11,7 +11,7 @@ import request from '@/utils/request';
 export function getDataInfo(data) {
   return request({
     url: '/flowRecordStatistics/getDataInfo',
-    method: 'get',
+    method: 'post',
     data
   });
 }
@@ -26,7 +26,7 @@ export function getDataInfo(data) {
 export function publicFlowRecordByDepartment(data) {
   return request({
     url: '/flowRecordStatistics/publicFlowRecordByDepartment',
-    method: 'get',
+    method: 'post',
     data
   });
 }
@@ -41,7 +41,7 @@ export function publicFlowRecordByDepartment(data) {
 export function privateFlowRecordByDepartment(data) {
   return request({
     url: '/flowRecordStatistics/privateFlowRecordByDepartment',
-    method: 'get',
+    method: 'post',
     data
   });
 }
@@ -56,7 +56,7 @@ export function privateFlowRecordByDepartment(data) {
 export function getPublicFlowRecordDetails(data) {
   return request({
     url: '/flowRecordStatistics/getPublicFlowRecordDetails',
-    method: 'get',
+    method: 'post',
     data
   });
 }
@@ -71,7 +71,7 @@ export function getPublicFlowRecordDetails(data) {
 export function getPrivateFlowRecordDetails(data) {
   return request({
     url: '/flowRecordStatistics/getPrivateFlowRecordDetails',
-    method: 'get',
+    method: 'post',
     data
   });
 }
@@ -86,7 +86,7 @@ export function getPrivateFlowRecordDetails(data) {
 export function getCollectionRecordByMonth(data) {
   return request({
     url: '/flowRecordStatistics/getCollectionRecordByMonth',
-    method: 'get',
+    method: 'post',
     data
   });
 }

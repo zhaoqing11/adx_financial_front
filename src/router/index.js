@@ -181,14 +181,20 @@ export const constantRoutes = [
     component: Layout,
     redirect: "/statistics",
     name: "Statistics",
-    meta: { title: "统计分析", icon: "statistics", requireAuth: true },
+    meta: { title: "统计管理", icon: "statistics", requireAuth: true },
     children: [
       {
         path: "index",
         name: "Index",
-        component: () => import("@/views/statistics/index"),
-        meta: { title: "统计分析", icon: "setting", requireAuth: true }
+        component: () => import("@/views/statistics/publicFlowRecord"),
+        meta: { title: "公账", icon: "public", requireAuth: true }
       },
+      {
+        path: "privateFlowRecord",
+        name: "PrivateFlowRecord",
+        component: () => import("@/views/statistics/privateFlowRecord"),
+        meta: { title: "私账", icon: "private", requireAuth: true }
+      }
     ]
   }
 ];
