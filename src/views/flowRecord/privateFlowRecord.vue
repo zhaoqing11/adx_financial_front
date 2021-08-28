@@ -8,7 +8,7 @@
               <div class="d-flex flex-wrap align-items-center justify-content-between my-schedule mb-4">
                 <div class="d-flex align-items-center justify-content-between">
                   <h4 class="font-weight-bold">私账收支明细</h4>
-                </div>  
+                </div>
                 <div class="create-workform">
                   <div class="d-flex flex-wrap align-items-center justify-content-between">
                     <div class="modal-product-search d-flex">
@@ -29,7 +29,7 @@
                       </form>
                     </div>
                   </div>
-                </div>                    
+                </div>
               </div>
               <div class="row">
                 <div class="col-lg-12">
