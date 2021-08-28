@@ -224,6 +224,9 @@
             style="width:100%">
           </el-date-picker>
         </el-form-item>
+        <el-form-item label="备注" :label-width="formLabelWidth" prop="remark">
+          <el-input type="textarea" v-model="paymentRemittanceForm.remark" autocomplete="off"></el-input>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="remittanceDialogFormVisible = false">取 消</el-button>
@@ -293,7 +296,8 @@ export default {
         idPaymentForm: null,
         amount: null,
         serviceCharge: 0,
-        remittanceDate: ''
+        remittanceDate: '',
+        remark: ''
       },
       remittanceRules: {
         amount: [
@@ -338,6 +342,7 @@ export default {
             amount: this.paymentRemittanceForm.amount,
             serviceCharge: this.paymentRemittanceForm.serviceCharge,
             remittanceDate: remittanceDate,
+            remark: this.paymentRemittanceForm.remark,
             idUser: this.idUser
           }
           REMITTANCE.addPaymentRemittance(param).then(res => {
@@ -397,8 +402,7 @@ export default {
         if (res.data.status === 200) {
           let tmpData = res.data.datas;
           this.tableData = tmpData.list;
-          this.totalPage = tmpData.totalPage;
-          this.totalRecord = tmpData.totalRecord;
+          this.totalPage = tmpData.totalRecord;
         }
       })
     }

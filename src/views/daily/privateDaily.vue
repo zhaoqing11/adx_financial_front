@@ -207,6 +207,14 @@
           </template>
         </el-table-column>
         <el-table-column
+          prop="remark"
+          label="备注"
+          sortable>
+          <template slot-scope="scope">
+            {{scope.row.remark ? scope.row.remark : '--'}}
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="remainingSum"
           label="余额"
           width="100"
@@ -531,8 +539,7 @@ export default {
         if (res.data.status === 200) {
           let tmpData = res.data.datas;
           this.tableData = tmpData.list;
-          this.totalPage = tmpData.totalPage;
-          this.totalRecord = tmpData.totalRecord;
+          this.totalPage = tmpData.totalRecord;
         }
       })
     },

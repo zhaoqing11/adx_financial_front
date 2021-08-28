@@ -147,7 +147,7 @@
                         :limit.sync="pageSize" 
                         @pagination="getTableData" 
                         :page-sizes="[10, 15, 20,30]"
-                        layout="sizes, prev, pager, next"/>
+                        layout="total, sizes, prev, pager, next"/>
                       </div>
                     </div>
                   </div>

@@ -378,8 +378,7 @@ export default {
         if (res.data.status === 200) {
           let tmpData = res.data.datas;
           this.tableData = tmpData.list;
-          this.totalPage = tmpData.totalPage;
-          this.totalRecord = tmpData.totalRecord;
+          this.totalPage = tmpData.totalRecord;
         }
       })
     },
