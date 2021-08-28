@@ -10,14 +10,11 @@
                         <div class="auth-logo">
                            <img src="@/assets/images/logo2.png" class="img-fluid  rounded-normal  darkmode-logo" alt="logo">
                         </div>
-                        <!-- <h3 class="mb-3 font-weight-bold text-center">登 录</h3> -->
-                        <!-- <p class="text-center text-secondary mb-4">财务收支管理系统</p> -->
                         <div class="social-btn d-flex justify-content-around align-items-center mb-4">
                         </div>
                         <div class="mb-5">
                             <p class="line-around text-secondary mb-0"><span class="line-around-1">登 录</span></p>
                         </div>
-                        <form>
                            <div class="row">
                               <div class="col-lg-12">
                                 <div class="form-group">
@@ -35,10 +32,6 @@
                               </div>
                            </div>
                            <button class="btn btn-primary btn-block mt-2" v-loading="loading" @click="handleLogin()">登 录</button>
-                           <!-- <div class="col-lg-12 mt-3">
-                                <p class="mb-0 text-center">Don't have an account? <a href="auth-sign-up.html">Sign Up</a></p>
-                           </div> -->
-                        </form>
                      </div>
                   </div>
                </div>
