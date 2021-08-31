@@ -126,7 +126,8 @@
                             </el-table-column>
                             <el-table-column
                                 prop="remainingSum"
-                                label="余额">
+                                label="余额"
+                                width="120">
                                 <template slot-scope="scoped">
                                     {{scoped.row.remainingSum ? scoped.row.remainingSum : '--'}}
                                 </template>

@@ -58,46 +58,27 @@
                   <el-form-item label="付款账号" :label-width="formLabelWidth" prop="paymentAccount">
                     <el-input v-model="paymentForm.paymentAccount" autocomplete="off" :disabled="isDisabled" ref="cardInput" @blur="blurFormatCardNumber(paymentForm.paymentAccount)"></el-input>
                   </el-form-item>
-                  <!-- <el-form-item label="上传附件" :label-width="formLabelWidth">
+                  <el-form-item label="上传附件" :label-width="formLabelWidth">
                     <el-upload
+                      class="upload-demo"
                       :action="uploadUrl"
-                      list-type="picture-card"
-                      :auto-upload="false"
-                      accept=".jpg, .jpeg, .png, .JPG, .JPEG">
-                      <i slot="default" class="el-icon-plus"></i>
-                      <div slot="file" slot-scope="{file}">
-                        <img
-                          class="el-upload-list__item-thumbnail"
-                          :src="file.url" alt=""
-                        >
-                        <span class="el-upload-list__item-actions">
-                          <span
-                            class="el-upload-list__item-preview"
-                            @click="handlePictureCardPreview(file)"
-                          >
-                            <i class="el-icon-zoom-in"></i>
-                          </span>
-                          <span
-                            v-if="!disabled"
-                            class="el-upload-list__item-delete"
-                            @click="handleDownload(file)"
-                          >
-                            <i class="el-icon-download"></i>
-                          </span>
-                          <span
-                            v-if="!disabled"
-                            class="el-upload-list__item-delete"
-                            @click="handleRemove(file)"
-                          >
-                            <i class="el-icon-delete"></i>
-                          </span>
-                        </span>
-                      </div>
+                      :before-upload="beforeUpload"
+                      :on-preview="handlePreview"
+                      :on-remove="handleRemove"
+                      :before-remove="beforeRemove"
+                      :on-success="uploadSuccess"
+                      multiple
+                      :limit="3"
+                      accept=".jpg, .jpeg, .png, .JPG, .JPEG"
+                      :show-file-list="false">
+                      <el-button size="small" type="primary">点击上传</el-button>
                     </el-upload>
-                    <el-dialog :visible.sync="dialogVisible">
-                      <img width="100%" :src="dialogImageUrl" alt="">
-                    </el-dialog>
-                  </el-form-item> -->
+                    <el-tag v-for="(item,index) in fileList" 
+                    :key="index" 
+                    closable 
+                    @click="clickTag(fileList, index)"
+                    @close="closeTag(item)">{{item.fileName}}</el-tag>
+                  </el-form-item>
                 </el-form>
                 <div slot="footer" class="dialog-footer">
                   <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -210,6 +191,7 @@
         </div>
       </div>
     </footer>
+    <PreviewImage ref="previewImage" />
   </div>
 </template>
 
@@ -217,8 +199,9 @@
 import * as API from '@/api/paymentForm';
 import * as CTYPE from '@/api/cardType';
 import * as DAILY from '@/api/daily';
-import { getUserId } from '@/utils/auth';
+import { getUserId, getToken } from '@/utils/auth';
 import Pagination from '@/components/Pagination';
+import PreviewImage from "@/components/PreviewImage"
 import { formatCardNum } from '@/utils/validate';
 // import "@/utils/assets/js/demo.js";
 // import "@/utils/js/backend-bundle.min.js";
@@ -230,7 +213,7 @@ import { formatCardNum } from '@/utils/validate';
 // import "@/utils/js/app.js";
 
 export default {
-  components: { Pagination },
+  components: { PreviewImage, Pagination },
   data() {
     return {
       idUser: getUserId(),
@@ -248,6 +231,7 @@ export default {
         amount: null,
         paymentName: null,
         paymentAccount: null,
+        files: null,
         idUser: null
       },
       formLabelWidth: '120',
@@ -282,40 +266,63 @@ export default {
       fileList: []
     }
   },
-  // computed: {
-  //   uploadUrl() { //  /project-api/file/upload
-  //     return (
-  //       process.env.VUE_APP_BASE_API +
-  //       "/file/upload" +
-  //       "?AccessToken=" +
-  //       getToken()
-  //     )
-  //   }
-  // },
-  mounted() {
-    let query = this.$route.query
-    if (query != undefined) {
-      this.idDaily = query.idDaily
-      this.idCardType = query.idCardType
+  computed: {
+    uploadUrl() {
+      console.log('upload....')
+      return (
+        process.env.VUE_APP_BASE_API +
+        "/file/upload" +
+        "?AccessToken=" +
+        getToken()
+      )
     }
+  },
+  mounted() {
     this.getCardTypeList()
     this.getTableData()
   },
   methods: {
-    handleRemove(file) {
-      console.log(file);
+    clickTag(file, index) {
+      this.$refs.previewImage.show(file, index)
     },
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
+    // 文件上传
+    uploadSuccess(response, file, fileList) {
+      const { status, datas } = response
+      if (status === 200) {
+        this.fileList.push(datas)
+      }
     },
-    handleDownload(file) {
-      console.log(file);
+    closeTag(item) {
+      this.fileList.splice(this.fileList.indexOf(item), 1)
     },
-    changeSelectOption() {
-      if (this.idDaily != null && this.idDaily != undefined && this.idDaily != '') {
+    beforeUpload(file) {
+      if (file.type == 'image/jpeg' ||
+      file.type == 'image/jpg' ||
+      file.type == 'image/png') {
         return true;
       }
+      this.$message.warning('只能上传jpg/jpeg/png文件')
+      return false;
+    },
+    // 删除文件
+    handleRemove(file) {
+      let id = this.fileList.findIndex(key => {
+        return key.fileId == file.fileId
+      })
+      this.fileList.splice(id, 1)
+    },
+    // 预览文件
+    handlePreview(file) {
+      // console.log(file);
+    },
+    // 点击移除
+    beforeRemove(file, fileList) {
+      return this.$confirm(`确定移除 ${ file.fileName }？`);
+    },
+    changeSelectOption() {
+      // if (this.idDaily != null && this.idDaily != undefined && this.idDaily != '') {
+      //   return true;
+      // }
       DAILY.selectIsExitUnApprovalDaily({
         idCardType: this.paymentForm.idCardType
       }).then(res => {
@@ -390,6 +397,9 @@ export default {
     },
     // 创建申请单
     addPaymentForm(formName) {
+      if (this.fileList.length > 0) {
+        this.paymentForm.files = JSON.stringify(this.fileList)
+      }
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.paymentForm.paymentAccount = this.paymentForm.paymentAccount.replaceAll('-', '')
@@ -399,37 +409,15 @@ export default {
             amount: this.paymentForm.amount,
             paymentName: this.paymentForm.paymentName,
             paymentAccount: this.paymentForm.paymentAccount,
+            files: this.paymentForm.files,
             idUser: this.idUser
           }
           API.addPaymentForm(param).then(res => {
             if (res.data.status === 200) {
               this.$message.success('创建成功')
               this.dialogFormVisible = false
-
-              if (this.idDaily != null) {
-                if (this.idCardType == 1) {
-                  const param = {
-                    idPublicDaily: this.idDaily,
-                    state: 0
-                  }
-                  DAILY.updatePublicDaily(param).then(res => {
-                    if (res.data.status === 200) {
-                      // succeddfully !
-                    }
-                  })
-                } else {
-                  const param = {
-                    idPrivateDaily: this.idDaily,
-                    state: 0
-                  }
-                  DAILY.updatePrivateDaily(param).then(res => {
-                    if (res.data.status === 200) {
-                      // succeddfully !
-                    }
-                  })
-                }
-              }
-
+              this.resetForm(formName)
+              this.fileList = []
               this.getTableData()
             } else {
               this.$message.error(res.data.cause)
@@ -457,6 +445,9 @@ export default {
           this.totalPage = tmpData.totalRecord;
         }
       })
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
     }
   }
 }

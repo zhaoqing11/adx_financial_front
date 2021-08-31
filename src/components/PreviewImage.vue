@@ -33,8 +33,8 @@
         if (String.isEmpty(this.fileId)) {
           return {};
         }
-        const imageUrl = 'http://ai-jymq.com/' + this.fileId
-        // const imageUrl = process.env.VUE_APP_BASE_API + '/project-api/file/getFile/' + this.fileId + '?AccessToken=' + getToken();        
+        // const imageUrl = 'http://ai-jymq.com/' + this.fileId
+        const imageUrl = process.env.VUE_APP_BASE_API + '/file/get/' + this.fileId + '?AccessToken=' + getToken();        
         return {
           backgroundImage: `url(${imageUrl})`,
         };
@@ -76,7 +76,7 @@
       position: relative;
       height: 400px;
       width: 100%;
-      background: url("../assets/images/common/preload-img.gif") center no-repeat;
+      // background: url("../assets/images/common/preload-img.gif") center no-repeat;
       background-size: contain;
     }
   }
