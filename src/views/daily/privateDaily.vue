@@ -347,10 +347,14 @@
       <br/>
       <div class="footer-btn">
         <el-button type="text" @click="showUpdateValue = true">添加收款</el-button>
-        <el-button type="text" @click="clickAddPayment">添加支出</el-button>
+        <el-button type="text" @click="remittanceDialogFormVisible = true">添加支出</el-button>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editDialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="updateCollectionRecordState()">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="收款" :visible.sync="showUpdateValue">
+    <el-dialog title="添加收款" :visible.sync="showUpdateValue">
       <el-form :model="collectionRecordForm" ref="collectionRecordForm" :rules="collectionRules">
         <el-form-item label="收款金额" :label-width="formLabelWidth" prop="amount">
           <el-input v-model="collectionRecordForm.amount" type="number" autocomplete="off"></el-input>
@@ -372,6 +376,31 @@
         <el-button type="primary" @click="addCollectionRecord('collectionRecordForm')">确 定</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="添加支出" :visible.sync="remittanceDialogFormVisible">
+      <el-form :model="paymentRemittanceForm" ref="paymentRemittanceForm" :rules="remittanceRules">
+        <el-form-item label="汇款金额" :label-width="formLabelWidth" prop="amount">
+          <el-input v-model="paymentRemittanceForm.amount" type="number" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="手续费" :label-width="formLabelWidth" prop="serviceCharge">
+          <el-input type="number" min="0" v-model="paymentRemittanceForm.serviceCharge" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="汇款日期" :label-width="formLabelWidth" prop="remittanceDate">
+          <el-date-picker
+            v-model="paymentRemittanceForm.remittanceDate"
+            type="datetime"
+            placeholder="选择日期"
+            style="width:100%">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="备注" :label-width="formLabelWidth" prop="remark">
+          <el-input type="textarea" v-model="paymentRemittanceForm.remark" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="remittanceDialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addPaymentRemittance('paymentRemittanceForm')">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -379,6 +408,7 @@
 import * as API from '@/api/daily';
 import * as APPROVAL from '@/api/approvalPrivateDaily';
 import * as COLLECTIONAPI from '@/api/collectionRecord';
+import * as REMITTANCE from '@/api/paymentRemittance';
 import { getUserId, getRole } from '@/utils/auth';
 import { formatDate, formatDate2, formatCardNum } from '@/utils/validate';
 import Pagination from '@/components/Pagination';
@@ -401,6 +431,7 @@ export default {
       dialogFormVisible: false,
       editDialogFormVisible: false,
       showUpdateValue: false,
+      remittanceDialogFormVisible: false,
       form: {
         idPrivateDaily: null,
         idResultType: 2,
@@ -436,26 +467,77 @@ export default {
         ]
       },
       idDaily: null,
-      idCardType: 2
+      idCardType: 2,
+
+      privateDailyForm: {},
+      paymentRemittanceForm: {
+        amount: null,
+        serviceCharge: 0,
+        remittanceDate: '',
+        remark: ''
+      },
+      remittanceRules: {
+        amount: [
+          { required: true, message: '请填写汇款金额', trigger: 'blur' }
+        ],
+        serviceCharge: [
+          { required: true, message: '请填写手续费', trigger: 'blur' }
+        ],
+        remittanceDate: [
+          { required: true, message: '请选择汇款日期', trigger: 'change' }
+        ]
+      }
     }
   },
   mounted() {
     this.getTableData()
   },
   methods: {
-    // 路由至申请请款页面
-    clickAddPayment() {
-      this.$router.push({
-        path: '/myPaymentForm/index',
-        query: {
-          idCardType: this.idCardType,
-          idDaily: this.idDaily
+    // 创建汇款记录
+    addPaymentRemittance(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          let remittanceDate = formatDate(this.paymentRemittanceForm.remittanceDate)
+          const param = {
+            amount: this.paymentRemittanceForm.amount,
+            serviceCharge: this.paymentRemittanceForm.serviceCharge,
+            remittanceDate: remittanceDate,
+            remark: this.paymentRemittanceForm.remark,
+            idUser: this.idUser,
+            idDaily: this.idDaily,
+            idCardType: this.idCardType
+          }
+          REMITTANCE.addApprovalPaymentRemittance(param).then(res => {
+            if (res.data.status === 200) {
+              this.$message.success('操作成功')
+              this.remittanceDialogFormVisible = false
+              this.resetForm(formName)
+              this.getPrivateDailyByDate()
+            } else {
+              this.$message.error(res.data.cause)
+            }
+          })
+        }
+      })
+    },
+    updateCollectionRecordState() {
+      COLLECTIONAPI.updateCollectionRecordState({
+        idCardType: this.idCardType,
+        idDaily: this.idDaily
+      }).then(res => {
+        if (res.data.status === 200) {
+          this.$message.success('修改成功')
+          this.editDialogFormVisible = false
+          this.getTableData()
+        } else {
+          this.$message.error(res.data.cause)
         }
       })
     },
     showEditDaily(data) {
       this.idDaily = data.idPrivateDaily
-      this.getPrivateDailyByDate(data)
+      this.privateDailyForm = data
+      this.getPrivateDailyByDate() // data
       this.editDialogFormVisible = true
     },
     // 添加收款
@@ -476,9 +558,8 @@ export default {
             if (res.data.status === 200) {
               this.$message.success('修改成功')
               this.showUpdateValue = false
-              this.editDialogFormVisible = false
-              this.resetForm('collectionRecordForm')
-              this.getTableData()
+              this.resetForm(formName)
+              this.getPrivateDailyByDate()
             } else {
               this.$message.error(res.data.cause)
             }
@@ -511,10 +592,12 @@ export default {
       })
     },
     showApprovalDaily(data) {
-      this.getPrivateDailyByDate(data)
+      this.privateDailyForm = data
+      this.getPrivateDailyByDate()
       this.dialogFormVisible = true
     },
-    getPrivateDailyByDate(data) {
+    getPrivateDailyByDate() {
+      let data = this.privateDailyForm
       API.getPrivateDailyByDate({
         date: formatDate2(data.createTime)
       }).then(res => {

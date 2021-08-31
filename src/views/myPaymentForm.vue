@@ -58,6 +58,46 @@
                   <el-form-item label="付款账号" :label-width="formLabelWidth" prop="paymentAccount">
                     <el-input v-model="paymentForm.paymentAccount" autocomplete="off" :disabled="isDisabled" ref="cardInput" @blur="blurFormatCardNumber(paymentForm.paymentAccount)"></el-input>
                   </el-form-item>
+                  <!-- <el-form-item label="上传附件" :label-width="formLabelWidth">
+                    <el-upload
+                      :action="uploadUrl"
+                      list-type="picture-card"
+                      :auto-upload="false"
+                      accept=".jpg, .jpeg, .png, .JPG, .JPEG">
+                      <i slot="default" class="el-icon-plus"></i>
+                      <div slot="file" slot-scope="{file}">
+                        <img
+                          class="el-upload-list__item-thumbnail"
+                          :src="file.url" alt=""
+                        >
+                        <span class="el-upload-list__item-actions">
+                          <span
+                            class="el-upload-list__item-preview"
+                            @click="handlePictureCardPreview(file)"
+                          >
+                            <i class="el-icon-zoom-in"></i>
+                          </span>
+                          <span
+                            v-if="!disabled"
+                            class="el-upload-list__item-delete"
+                            @click="handleDownload(file)"
+                          >
+                            <i class="el-icon-download"></i>
+                          </span>
+                          <span
+                            v-if="!disabled"
+                            class="el-upload-list__item-delete"
+                            @click="handleRemove(file)"
+                          >
+                            <i class="el-icon-delete"></i>
+                          </span>
+                        </span>
+                      </div>
+                    </el-upload>
+                    <el-dialog :visible.sync="dialogVisible">
+                      <img width="100%" :src="dialogImageUrl" alt="">
+                    </el-dialog>
+                  </el-form-item> -->
                 </el-form>
                 <div slot="footer" class="dialog-footer">
                   <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -234,9 +274,24 @@ export default {
       promptText: '上日账单尚未通过审核，暂时无法创建请款申请',
 
       idDaily: null,
-      idCardType: null
+      idCardType: null,
+
+      dialogImageUrl: '',
+      dialogVisible: false,
+      disabled: false,
+      fileList: []
     }
   },
+  // computed: {
+  //   uploadUrl() { //  /project-api/file/upload
+  //     return (
+  //       process.env.VUE_APP_BASE_API +
+  //       "/file/upload" +
+  //       "?AccessToken=" +
+  //       getToken()
+  //     )
+  //   }
+  // },
   mounted() {
     let query = this.$route.query
     if (query != undefined) {
@@ -247,6 +302,16 @@ export default {
     this.getTableData()
   },
   methods: {
+    handleRemove(file) {
+      console.log(file);
+    },
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    },
+    handleDownload(file) {
+      console.log(file);
+    },
     changeSelectOption() {
       if (this.idDaily != null && this.idDaily != undefined && this.idDaily != '') {
         return true;

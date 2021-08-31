@@ -132,6 +132,13 @@
                                 </template>
                             </el-table-column>
                             <el-table-column
+                                prop="remark"
+                                label="备注">
+                                <template slot-scope="scoped">
+                                    {{scoped.row.remark ? scoped.row.remark : '--'}}
+                                </template>
+                            </el-table-column>
+                            <el-table-column
                                 prop="createTime"
                                 label="汇款日期"
                                 width="160"

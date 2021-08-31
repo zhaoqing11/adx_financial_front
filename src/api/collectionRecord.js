@@ -2,6 +2,21 @@ import request from '@/utils/request';
 
 
 /**
+ * 修改审核状态
+ *
+ * @export
+ * @param {*} data
+ * @returns
+*/
+export function updateCollectionRecordState(data) {
+  return request({
+    url: '/collectionRecord/updateCollectionRecord',
+    method: 'post',
+    data
+  });
+}
+
+/**
  * 新增收款信息
  *
  * @export
