@@ -1,5 +1,19 @@
 import request from '@/utils/request';
 
+/**
+ * 查询待审批账单数量
+ *
+ * @export
+ * @param {*} 
+ * @returns
+*/
+export function selectDailyByState(data) {
+  return request({
+    url: '/daily/selectDailyByState',
+    method: 'post',
+    data
+  });
+}
 
 /**
  * 查询上一天账单核对信息

@@ -4,12 +4,20 @@
       <div class="content-page">
         <div class="content-home">
           <div class="card" v-if="idRole === '2'" @click="routerLinkToApprocalPayment">
-            <label>待审批</label>
+            <label>待审批请款</label>
             <span>{{approvalPaymentCount}}</span>
           </div>
           <div class="card" v-if="idRole === '3'" @click="routerLinkToApprocalPayment">
             <label>待汇款</label>
             <span>{{paymentRemittanceCount}}</span>
+          </div>
+          <div class="card" v-if="idRole === '2' || idRole === '3'" @click="routerLinkToPublicDaily">
+            <label>待审批账单(公账)</label>
+            <span>{{countPub}}</span>
+          </div>
+          <div class="card" v-if="idRole === '2' || idRole === '3'" @click="routerLinkToPrivateDaily">
+            <label>待审批账单（私账）</label>
+            <span>{{countPri}}</span>
           </div>
           <div class="card" v-if="idRole === '2'">
             <label>公账余额</label>
@@ -55,6 +63,7 @@
 <script>
 import * as API from '@/api/paymentForm';
 import * as CTYPE from '@/api/cardType';
+import * as DAILY from '@/api/daily';
 import * as REMAINSUM from '@/api/remainingSum';
 import Pagination from "@/components/Pagination";
 import { getRole } from "@/utils/auth";
@@ -82,7 +91,10 @@ export default {
         ]
       },
       formLabelWidth: '80',
-      cardTypeData: []
+      cardTypeData: [],
+
+      countPub: 0,
+      countPri: 0
     };
   },
   created() {
@@ -90,12 +102,36 @@ export default {
   mounted() {
     this.getCardTypeList()
     this.getDataInfo()
+    this.selectDailyByState()
   },
   methods: {
+    // 路由至（公账）账单审批页
+    routerLinkToPublicDaily() {
+      this.$router.push('/daily/publicDaily')
+    },
+    // 路由至（私账）账单审批页
+    routerLinkToPrivateDaily() {
+      this.$router.push('/daily/privateDaily')
+    },
+    // 获取待审批账单数量
+    selectDailyByState() {
+      const param = {
+        idRole: this.idRole
+      }
+      DAILY.selectDailyByState(param).then(res => {
+        if (res.data.status === 200) {
+          let tmpData = res.data.datas
+          this.countPub = tmpData.countPub
+          this.countPri = tmpData.countPri
+        }
+      })
+    },
+    // 展开窗口
     clickShowDialogForm(type) {
       this.form.idCardType = type
       this.dialogFormVisible = true
     },
+    // 获取账目类型
     getCardTypeList() {
       CTYPE.getCardType().then(res => {
         if (res.data.status === 200) {
@@ -103,9 +139,11 @@ export default {
         }
       })
     },
+    // 路由至请款审批页
     routerLinkToApprocalPayment() {
       this.$router.push('/paymentForm/index')
     },
+    // 创建每日余额
     addRemainingSum(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -127,6 +165,7 @@ export default {
         }
       })
     },
+    // 获取待办数据
     getDataInfo() {
       API.getDataInfo()
       .then(res => {
