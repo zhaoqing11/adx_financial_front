@@ -151,6 +151,7 @@
                               <td>
                                 <div class="d-flex justify-content-end align-items-center">
                                   <i class="el-icon-view" @click="clickPreview(item.idPaymentForm)"></i>&nbsp;&nbsp;
+                                  <!-- <i class="el-icon-edit" @click="clickPreview(item.idPaymentForm)"></i>&nbsp;&nbsp; -->
                                   <i class="el-icon-delete" @click="deletePaymentForm(item.idPaymentForm)"></i>
                                 </div>
                               </td>
@@ -486,7 +487,9 @@ export default {
 </script>
 
 <style lang="scss" >
-.el-icon-delete:before {
+.el-icon-delete:before,
+.el-icon-edit:before,
+.el-icon-view:before {
   color: #8f9fbc !important;
   font-weight: 500;
 }
