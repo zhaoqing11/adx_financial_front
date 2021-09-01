@@ -22,7 +22,7 @@
                           </a>
                         </div>
                       </form>
-                      <a href="javaScript:void(0);" class="btn btn-primary position-relative d-flex align-items-center justify-content-between" @click="dialogFormVisible = true">
+                      <a href="javaScript:void(0);" class="btn btn-primary position-relative d-flex align-items-center justify-content-between" @click="clickShowDialogForm">
                         <svg xmlns="http://www.w3.org/2000/svg" class="mr-2" width="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
@@ -32,9 +32,9 @@
                   </div>
                 </div>                    
               </div>
-              <el-dialog title="创建申请单" :visible.sync="dialogFormVisible">
+              <el-dialog :title="title" :visible.sync="dialogFormVisible">
                 <span class="promptText" v-if="isDisabled">{{promptText}}</span>
-                <el-form :model="paymentForm" ref="paymentForm" :rules="rules">
+                <el-form :model="paymentForm" ref="paymentForm" :rules="rules" :disabled="disabled">
                   <el-form-item label="类型" :label-width="formLabelWidth" prop="idCardType">
                     <el-select v-model="paymentForm.idCardType" placeholder="请选择" style="width:100%;" @change="changeSelectOption">
                       <el-option
@@ -49,7 +49,6 @@
                     <el-input type="textarea" v-model="paymentForm.reasonApplication" autocomplete="off" :disabled="isDisabled"></el-input>
                   </el-form-item>
                   <el-form-item label="申请金额" :label-width="formLabelWidth" prop="amount">
-                    <!-- oninput="value=value.replace(/[^0-9.]/g,'')" -->
                     <el-input v-model="paymentForm.amount" type="number" autocomplete="off" :disabled="isDisabled"></el-input>
                   </el-form-item>
                   <el-form-item label="付款名称" :label-width="formLabelWidth" prop="paymentName">
@@ -61,26 +60,26 @@
                   <el-form-item label="上传附件" :label-width="formLabelWidth">
                     <el-upload
                       class="upload-demo"
+                      v-if="!disabled"
                       :action="uploadUrl"
                       :before-upload="beforeUpload"
-                      :on-preview="handlePreview"
                       :on-remove="handleRemove"
-                      :before-remove="beforeRemove"
                       :on-success="uploadSuccess"
                       multiple
                       :limit="3"
-                      accept=".jpg, .jpeg, .png, .JPG, .JPEG"
+                      accept=".jpg, .jpeg, .png, .JPG, .JPEG, .pdf, .PDF, .xls, .xlsx"
                       :show-file-list="false">
                       <el-button size="small" type="primary">点击上传</el-button>
+                      <span style="color:red;">仅限上传3个文件，格式支持（.jpg/.jpeg/.png/.pdf/.xls/.xlsx）</span>
                     </el-upload>
                     <el-tag v-for="(item,index) in fileList" 
                     :key="index" 
-                    closable 
+                    :closable="!disabled"
                     @click="clickTag(fileList, index)"
                     @close="closeTag(item)">{{item.fileName}}</el-tag>
                   </el-form-item>
                 </el-form>
-                <div slot="footer" class="dialog-footer">
+                <div slot="footer" class="dialog-footer" v-if="!disabled">
                   <el-button @click="dialogFormVisible = false">取 消</el-button>
                   <el-button type="primary" @click="addPaymentForm('paymentForm')">确 定</el-button>
                 </div>
@@ -142,7 +141,6 @@
                                 </div>
                               </td>
                               <td>{{index + 1}}</td>
-                              <!-- {{item.state ? item.code : '--'}} -->
                               <td>{{item.code ? item.code : '--'}}</td>
                               <td>{{item.reasonApplication}}</td>
                               <td>{{item.amount}}</td>
@@ -152,6 +150,7 @@
                               <td>{{item.createTime}}</td>
                               <td>
                                 <div class="d-flex justify-content-end align-items-center">
+                                  <i class="el-icon-view" @click="clickPreview(item.idPaymentForm)"></i>&nbsp;&nbsp;
                                   <i class="el-icon-delete" @click="deletePaymentForm(item.idPaymentForm)"></i>
                                 </div>
                               </td>
@@ -197,6 +196,7 @@
 
 <script>
 import * as API from '@/api/paymentForm';
+import * as REMITTANCE from '@/api/paymentRemittance';
 import * as CTYPE from '@/api/cardType';
 import * as DAILY from '@/api/daily';
 import { getUserId, getToken } from '@/utils/auth';
@@ -216,6 +216,7 @@ export default {
   components: { PreviewImage, Pagination },
   data() {
     return {
+      title: '',
       idUser: getUserId(),
       showUser: false,
       pageNum: 1,
@@ -268,7 +269,6 @@ export default {
   },
   computed: {
     uploadUrl() {
-      console.log('upload....')
       return (
         process.env.VUE_APP_BASE_API +
         "/file/upload" +
@@ -296,11 +296,17 @@ export default {
       this.fileList.splice(this.fileList.indexOf(item), 1)
     },
     beforeUpload(file) {
+      if (this.fileList.length > 3) {
+        this.$message.warning('仅限上传3个文件')
+        return false;
+      }
+
       if (file.type == 'image/jpeg' ||
-      file.type == 'image/jpg' ||
-      file.type == 'image/png') {
+        file.type == 'image/jpg' ||
+        file.type == 'image/png') {
         return true;
       }
+
       this.$message.warning('只能上传jpg/jpeg/png文件')
       return false;
     },
@@ -310,14 +316,6 @@ export default {
         return key.fileId == file.fileId
       })
       this.fileList.splice(id, 1)
-    },
-    // 预览文件
-    handlePreview(file) {
-      // console.log(file);
-    },
-    // 点击移除
-    beforeRemove(file, fileList) {
-      return this.$confirm(`确定移除 ${ file.fileName }？`);
     },
     changeSelectOption() {
       // if (this.idDaily != null && this.idDaily != undefined && this.idDaily != '') {
@@ -335,65 +333,48 @@ export default {
         }
       })
     },
-    // 获取账目类型
-    getCardTypeList() {
-      CTYPE.getCardType().then(res => {
+    // 删除请款单
+    deletePaymentForm(id) {
+      REMITTANCE.getRemittanceByIdPamentForm({
+        idPaymentForm: id
+      }).then(res => {
         if (res.data.status === 200) {
-          this.cardTypeData = res.data.datas
+          if (res.data.datas > 0) {
+            this.$message.warning('此申请已完成汇款，无法删除请款记录');
+          } else {
+            this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              API.delPaymentForm({
+                idPaymentForm: id
+              }).then(res => {
+                if (res.data.status === 200) {
+                  this.$message.success('删除成功');
+                  this.getTableData();
+                }
+              })
+            }).catch(() => {
+              this.$message.info('已取消删除');
+            });
+          }
         }
       })
     },
-    // 格式化卡号显示，每4位加-
-    blurFormatCardNumber (cardNum) {
-      // cardNum = cardNum.replaceAll('-', '')
-      // if (cardNum.length < 16 || cardNum.length > 22) {
-      //   this.$message.warning('请输入正确卡号')
-      //   return false
-      // }
-      // 获取input的dom对象，这里因为用的是element ui的input，所以需要这样拿到
-      const input = this.$refs.cardInput.$el.getElementsByTagName('input')[0]
-      // 获取当前光标的位置
-      const cursorIndex = input.selectionStart
-      // 字符串中光标之前-的个数
-      const lineNumOfCursorLeft = (cardNum.slice(0, cursorIndex).match(/-/g) || []).length
-      // 去掉所有-的字符串
-      const noLine = cardNum.replace(/-/g, '')
-      // 去除格式不对的字符并重新插入-的字符串
-      const newCardNum = noLine.replace(/\D+/g, '').replace(/(\d{4})/g, '$1-').replace(/-$/, '')
-      // 改后字符串中原光标之前-的个数
-      const newLineNumOfCursorLeft = (newCardNum.slice(0, cursorIndex).match(/-/g) || []).length
-      // 光标在改后字符串中应在的位置
-      const newCursorIndex = cursorIndex + newLineNumOfCursorLeft - lineNumOfCursorLeft
-      // 赋新值，nextTick保证-不能手动输入或删除，只能按照规则自动填入
-      this.$nextTick(() => {
-        this.paymentForm.paymentAccount = newCardNum
-        // 修正光标位置，nextTick保证在渲染新值后定位光标
-        this.$nextTick(() => {
-          // selectionStart、selectionEnd分别代表选择一段文本时的开头和结尾位置
-          input.selectionStart = newCursorIndex
-          input.selectionEnd = newCursorIndex
-        })
+    // 查看详情
+    clickPreview(id) {
+      this.title = '查看申请单'
+      API.selectPaymentFormById({
+        idPaymentForm: id
+      }).then(res => {
+        if (res.data.status === 200) {
+          this.paymentForm = res.data.datas
+          this.fileList = this.paymentForm.files != null ? JSON.parse(this.paymentForm.files) : []
+          this.disabled = true
+          this.dialogFormVisible = true
+        }
       })
-    },
-    // 删除请款单
-    deletePaymentForm(id) {
-      this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-        center: true
-      }).then(() => {
-        API.delPaymentForm({
-          idPaymentForm: id
-        }).then(res => {
-          if (res.data.status === 200) {
-            this.$message.success('删除成功');
-            this.getTableData();
-          }
-        })
-      }).catch(() => {
-        this.$message.info('已取消删除');
-      });
     },
     // 创建申请单
     addPaymentForm(formName) {
@@ -426,8 +407,19 @@ export default {
         }
       })
     },
-    currentChange() {
-      this.currentChange
+    clickShowDialogForm() {
+      this.paymentForm.idCardType = null
+      this.paymentForm.reasonApplication = null
+      this.paymentForm.amount = null
+      this.paymentForm.paymentName = null
+      this.paymentForm.paymentAccount = null
+      this.paymentForm.files = null
+      this.paymentForm.idUser = null
+      this.fileList = []
+
+      this.title = '创建申请单'
+      this.disabled = false
+      this.dialogFormVisible = true
     },
     // 获取个人请款记录列表
     getTableData() {
@@ -446,8 +438,48 @@ export default {
         }
       })
     },
+    // 获取账目类型
+    getCardTypeList() {
+      CTYPE.getCardType().then(res => {
+        if (res.data.status === 200) {
+          this.cardTypeData = res.data.datas
+        }
+      })
+    },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+    // 格式化卡号显示，每4位加-
+    blurFormatCardNumber (cardNum) {
+      // cardNum = cardNum.replaceAll('-', '')
+      // if (cardNum.length < 16 || cardNum.length > 22) {
+      //   this.$message.warning('请输入正确卡号')
+      //   return false
+      // }
+      // 获取input的dom对象，这里因为用的是element ui的input，所以需要这样拿到
+      const input = this.$refs.cardInput.$el.getElementsByTagName('input')[0]
+      // 获取当前光标的位置
+      const cursorIndex = input.selectionStart
+      // 字符串中光标之前-的个数
+      const lineNumOfCursorLeft = (cardNum.slice(0, cursorIndex).match(/-/g) || []).length
+      // 去掉所有-的字符串
+      const noLine = cardNum.replace(/-/g, '')
+      // 去除格式不对的字符并重新插入-的字符串
+      const newCardNum = noLine.replace(/\D+/g, '').replace(/(\d{4})/g, '$1-').replace(/-$/, '')
+      // 改后字符串中原光标之前-的个数
+      const newLineNumOfCursorLeft = (newCardNum.slice(0, cursorIndex).match(/-/g) || []).length
+      // 光标在改后字符串中应在的位置
+      const newCursorIndex = cursorIndex + newLineNumOfCursorLeft - lineNumOfCursorLeft
+      // 赋新值，nextTick保证-不能手动输入或删除，只能按照规则自动填入
+      this.$nextTick(() => {
+        this.paymentForm.paymentAccount = newCardNum
+        // 修正光标位置，nextTick保证在渲染新值后定位光标
+        this.$nextTick(() => {
+          // selectionStart、selectionEnd分别代表选择一段文本时的开头和结尾位置
+          input.selectionStart = newCursorIndex
+          input.selectionEnd = newCursorIndex
+        })
+      })
     }
   }
 }
@@ -465,5 +497,8 @@ export default {
 .promptText {
   color: red;
   font-size: 22px;
+}
+.el-tag {
+  margin: 0 5px;
 }
 </style>

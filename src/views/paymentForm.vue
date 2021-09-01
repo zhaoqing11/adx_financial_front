@@ -129,7 +129,7 @@
                                   <span v-if="idRole != '3'">--</span>
                                   <span v-else>
                                     <span v-if="item.idPaymentFormState === 1">--</span>
-                                    <i class="el-icon-edit" v-else @click="clickPaymentRemittance(item.idPaymentForm)"></i>
+                                    <i class="el-icon-edit" v-else @click="clickPaymentRemittance(item)"></i>
                                   </span>
                                 </span>
                               </td>
@@ -140,11 +140,11 @@
                         </table>
                       </div>
                       <div class="pagination">
-                        <Pagination 
-                        v-show="totalPage > 0" 
-                        :total="totalPage" 
-                        :page.sync="pageNum" 
-                        :limit.sync="pageSize" 
+                        <Pagination
+                        v-show="totalPage > 0"
+                        :total="totalPage"
+                        :page.sync="pageNum"
+                        :limit.sync="pageSize"
                         @pagination="getTableData" 
                         :page-sizes="[10, 15, 20,30]"
                         layout="total, sizes, prev, pager, next"/>
@@ -187,7 +187,6 @@
           <el-input type="textarea" v-model="paymentForm.reasonApplication" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="申请金额" :label-width="formLabelWidth">
-          <!-- oninput="value=value.replace(/[^0-9.]/g,'')" -->
           <el-input v-model="paymentForm.amount" type="number" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="付款名称" :label-width="formLabelWidth">
@@ -195,6 +194,14 @@
         </el-form-item>
         <el-form-item label="付款账号" :label-width="formLabelWidth">
           <el-input v-model="paymentForm.paymentAccount" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="附件" :label-width="formLabelWidth">
+          <el-tag 
+          v-for="(item,index) in fileList"
+          :key="index" 
+          @click="clickTag(fileList, index)">
+            {{item.fileName}}
+          </el-tag>
         </el-form-item>
       </el-form>
       <el-divider content-position="left">审批操作</el-divider>
@@ -209,6 +216,39 @@
       </div>
     </el-dialog>
     <el-dialog title="汇款" :visible.sync="remittanceDialogFormVisible">
+      <el-form :model="paymentForm" ref="paymentForm" :rules="rules" disabled>
+        <el-form-item label="类型" :label-width="formLabelWidth" prop="idCardType">
+          <el-select v-model="paymentForm.idCardType" placeholder="请选择" style="width:100%;" disabled>
+            <el-option
+              v-for="item in cardTypeData"
+              :key="item.idCardType"
+              :label="item.name"
+              :value="item.idCardType">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="申请事由" :label-width="formLabelWidth">
+          <el-input type="textarea" v-model="paymentForm.reasonApplication" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="申请金额" :label-width="formLabelWidth">
+          <el-input v-model="paymentForm.amount" type="number" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="付款名称" :label-width="formLabelWidth">
+          <el-input v-model="paymentForm.paymentName" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="付款账号" :label-width="formLabelWidth">
+          <el-input v-model="paymentForm.paymentAccount" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="附件" :label-width="formLabelWidth">
+          <el-tag 
+          v-for="(item,index) in fileList"
+          :key="index" 
+          @click="clickTag(fileList, index)">
+            {{item.fileName}}
+          </el-tag>
+        </el-form-item>
+      </el-form>
+      <el-divider content-position="left">汇款操作</el-divider>
       <el-form :model="paymentRemittanceForm" ref="paymentRemittanceForm" :rules="remittanceRules">
         <el-form-item label="汇款金额" :label-width="formLabelWidth" prop="amount">
           <el-input v-model="paymentRemittanceForm.amount" type="number" autocomplete="off"></el-input>
@@ -233,6 +273,7 @@
         <el-button type="primary" @click="addPaymentRemittance('paymentRemittanceForm')">确 定</el-button>
       </div>
     </el-dialog>
+    <PreviewImage ref="previewImage" />
   </div>
 </template>
 
@@ -244,9 +285,10 @@ import * as REMITTANCE from '@/api/paymentRemittance';
 import { getUserId, getRole } from '@/utils/auth';
 import { formatDate, formatCardNum } from '@/utils/validate';
 import Pagination from '@/components/Pagination';
+import PreviewImage from "@/components/PreviewImage"
 
 export default {
-  components: { Pagination },
+  components: { PreviewImage, Pagination },
   data() {
     return {
       dialogFormVisible: false,
@@ -266,7 +308,8 @@ export default {
         reasonApplication: null,
         amount: null,
         paymentName: null,
-        paymentAccount: null
+        paymentAccount: null,
+        files: null
       },
       formLabelWidth: '80',
       rules: {
@@ -312,7 +355,8 @@ export default {
       },
       idPaymentFormState: 1,
       formatCardNum: formatCardNum,
-      cardTypeData: []
+      cardTypeData: [],
+      fileList: []
     }
   },
   mounted() {
@@ -320,6 +364,10 @@ export default {
     this.getTableData()
   },
   methods: {
+    // 预览图片
+    clickTag(file, index) {
+      this.$refs.previewImage.show(file, index)
+    },
     // 获取账目类型
     getCardTypeList() {
       CTYPE.getCardType().then(res => {
@@ -328,8 +376,11 @@ export default {
         }
       })
     },
-    clickPaymentRemittance(id) {
-      this.paymentRemittanceForm.idPaymentForm = id
+    clickPaymentRemittance(data) {
+      this.paymentForm = data;
+      this.fileList = data.files != null ? JSON.parse(data.files) : [];
+
+      this.paymentRemittanceForm.idPaymentForm = data.idPaymentForm
       this.remittanceDialogFormVisible = true
     },
     // 创建汇款记录
@@ -382,6 +433,7 @@ export default {
     },
     editPaymentForm(data) {
       this.paymentForm = data;
+      this.fileList = data.files != null ? JSON.parse(data.files) : [];
       this.paymentFormApproval.idPaymentForm = data.idPaymentForm;
       this.dialogFormVisible = true;
     },

@@ -1,6 +1,20 @@
 import request from '@/utils/request';
 
 
+/**
+ * 根据请款id查询汇款记录
+ *
+ * @export
+ * @param {*} data
+ * @returns
+*/
+export function getRemittanceByIdPamentForm(data) {
+  return request({
+    url: '/paymentRemittance/getRemittanceByIdPamentForm',
+    method: 'post',
+    data
+  });
+}
 
 /**
  * 审核创建支出流水记录

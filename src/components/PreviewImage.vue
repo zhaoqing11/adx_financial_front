@@ -78,6 +78,7 @@
       width: 100%;
       // background: url("../assets/images/common/preload-img.gif") center no-repeat;
       background-size: contain;
+      background-repeat: no-repeat;
     }
   }
   .box {

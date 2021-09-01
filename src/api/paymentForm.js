@@ -86,11 +86,11 @@ export function addPaymentForm(data) {
  * @returns
  */
 export function updatePaymentForm(data) {
-    return request({
-      url: '/paymentForm/updateSelective',
-      method: 'post',
-      data
-    });
+  return request({
+    url: '/paymentForm/updateSelective',
+    method: 'post',
+    data
+  });
 }
 
 /**
@@ -101,11 +101,11 @@ export function updatePaymentForm(data) {
  * @returns
  */
 export function delPaymentForm(data) {
-    return request({
-      url: '/paymentForm/deleteSelective',
-      method: 'post',
-      data
-    });
+  return request({
+    url: '/paymentForm/deleteSelective',
+    method: 'post',
+    data
+  });
 }
 
 /**
@@ -116,11 +116,11 @@ export function delPaymentForm(data) {
  * @returns
  */
 export function selectPaymentFormById(data) {
-    return request({
-      url: '/paymentForm/selectByPrimaryKey',
-      method: 'post',
-      data
-    });
+  return request({
+    url: '/paymentForm/selectByPrimaryKey',
+    method: 'post',
+    data
+  });
 }
 
 /**
@@ -131,9 +131,9 @@ export function selectPaymentFormById(data) {
  * @returns
  */
 export function selectPaymentFormList(data) {
-    return request({
-      url: '/paymentForm/selectByPage',
-      method: 'post',
-      data
-    });
+  return request({
+    url: '/paymentForm/selectByPage',
+    method: 'post',
+    data
+  });
 }

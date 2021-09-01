@@ -12,14 +12,14 @@
             <span>{{paymentRemittanceCount}}</span>
           </div>
           <div class="card" v-if="idRole === '2' || idRole === '3'" @click="routerLinkToPublicDaily">
-            <label>待审批账单(公账)</label>
+            <label>待审批公账</label>
             <span>{{countPub}}</span>
           </div>
           <div class="card" v-if="idRole === '2' || idRole === '3'" @click="routerLinkToPrivateDaily">
-            <label>待审批账单（私账）</label>
+            <label>待审批私账</label>
             <span>{{countPri}}</span>
           </div>
-          <div class="card" v-if="idRole === '2'">
+          <!-- <div class="card" v-if="idRole === '2'">
             <label>公账余额</label>
             <span>
               <span v-if="publicRemainingSum != null">{{publicRemainingSum}}</span>
@@ -32,7 +32,7 @@
               <span v-if="privateRemainingSum != null">{{privateRemainingSum}}</span>
               <span v-else><i class="el-icon-edit" @click="clickShowDialogForm(2)"></i></span>
             </span>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
