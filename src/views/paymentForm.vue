@@ -205,14 +205,25 @@
         </el-form-item>
       </el-form>
       <el-divider content-position="left">审批操作</el-divider>
-      <el-form :model="paymentFormApproval" ref="paymentFormApproval" :rules="approvalRules">
+      <el-form :model="approvalForm" ref="approvalForm" :rules="approvalRules">
+        <el-form-item label="审核结果：" :label-width="formLabelWidth" prop="idCheckResult">
+          <el-radio-group v-model="approvalForm.idCheckResult" style="width:100%;">
+            <el-radio :label="1">通过</el-radio>
+            <el-radio :label="2">不通过</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="备注" :label-width="formLabelWidth" prop="checkCommon">
+          <el-input type="textarea" v-model="approvalForm.checkCommon" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <el-form :model="paymentFormApproval" ref="approvalForm" :rules="pfApprovalRules" v-if="approvalForm.idCheckResult == 1">
         <el-form-item label="审批金额" :label-width="formLabelWidth" prop="amount">
           <el-input type="number" v-model="paymentFormApproval.amount" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="approvalPaymentForm('paymentFormApproval')">确 定</el-button>
+        <el-button type="primary" @click="approvalPaymentForm('approvalRules')">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="汇款" :visible.sync="remittanceDialogFormVisible">
@@ -330,9 +341,18 @@ export default {
         idPaymentForm: null,
         amount: null
       },
-      approvalRules: {
+      pfApprovalRules: {
         amount: [
-            { required: true, message: '请填写审批金额', trigger: 'blur' }
+          { required: true, message: '请填写审批金额', trigger: 'blur' }
+        ]
+      },
+      approvalForm: {
+        idCheckResult: null,
+        checkCommon: '',
+      },
+      approvalRules: {
+        idCheckResult: [
+          { required: true, message: '请选择审批结果', trigger: 'change' }
         ]
       },
       paymentRemittanceForm: {
@@ -413,29 +433,37 @@ export default {
     approvalPaymentForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          const param = {
-            idPaymentForm: this.paymentFormApproval.idPaymentForm,
-            amount: this.paymentFormApproval.amount,
-            idUser: this.idUser
-          }
-          APPROVAL.approvalPaymentForm(param).then(res => {
-            if (res.data.status === 200) {
-              this.$message.success('操作成功')
-              this.dialogFormVisible = false
-              this.resetForm(formName)
-              this.getTableData()
-            } else {
-              this.$message.error(res.data.cause)
+          if (this.approvalForm.idCheckResult === 1) { // 通过
+            const param = {
+              idPaymentForm: this.paymentFormApproval.idPaymentForm,
+              amount: this.paymentFormApproval.amount,
+              idUser: this.idUser
             }
-          })
+            APPROVAL.approvalPaymentForm(param).then(res => {
+              if (res.data.status === 200) {
+                this.$message.success('操作成功')
+                this.dialogFormVisible = false
+                this.resetForm(formName)
+                this.getTableData()
+              } else {
+                this.$message.error(res.data.cause)
+              }
+            })
+          } else { // 不通过
+            
+          }
         }
       })
     },
     editPaymentForm(data) {
-      this.paymentForm = data;
-      this.fileList = data.files != null ? JSON.parse(data.files) : [];
+      // console.log('edit: ',data)
+      this.paymentForm = data
+      this.fileList = data.files != null ? JSON.parse(data.files) : []
       this.paymentFormApproval.idPaymentForm = data.idPaymentForm;
-      this.dialogFormVisible = true;
+      this.approvalForm.idApproval = data.idApproval
+      this.dialogFormVisible = true
+
+      // console.log('approval form: ', this.approvalForm)
     },
     // 重置
     resetForm(formName) {

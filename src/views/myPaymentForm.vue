@@ -32,58 +32,6 @@
                   </div>
                 </div>                    
               </div>
-              <el-dialog :title="title" :visible.sync="dialogFormVisible">
-                <span class="promptText" v-if="isDisabled">{{promptText}}</span>
-                <el-form :model="paymentForm" ref="paymentForm" :rules="rules" :disabled="disabled">
-                  <el-form-item label="类型" :label-width="formLabelWidth" prop="idCardType">
-                    <el-select v-model="paymentForm.idCardType" placeholder="请选择" style="width:100%;" @change="changeSelectOption">
-                      <el-option
-                        v-for="item in cardTypeData"
-                        :key="item.idCardType"
-                        :label="item.name"
-                        :value="item.idCardType">
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                  <el-form-item label="事由" :label-width="formLabelWidth" prop="reasonApplication">
-                    <el-input type="textarea" v-model="paymentForm.reasonApplication" autocomplete="off" :disabled="isDisabled"></el-input>
-                  </el-form-item>
-                  <el-form-item label="申请金额" :label-width="formLabelWidth" prop="amount">
-                    <el-input v-model="paymentForm.amount" type="number" autocomplete="off" :disabled="isDisabled"></el-input>
-                  </el-form-item>
-                  <el-form-item label="付款名称" :label-width="formLabelWidth" prop="paymentName">
-                    <el-input v-model="paymentForm.paymentName" autocomplete="off" :disabled="isDisabled"></el-input>
-                  </el-form-item>
-                  <el-form-item label="付款账号" :label-width="formLabelWidth" prop="paymentAccount">
-                    <el-input v-model="paymentForm.paymentAccount" autocomplete="off" :disabled="isDisabled" ref="cardInput" @blur="blurFormatCardNumber(paymentForm.paymentAccount)"></el-input>
-                  </el-form-item>
-                  <el-form-item label="上传附件" :label-width="formLabelWidth">
-                    <el-upload
-                      class="upload-demo"
-                      v-if="!disabled"
-                      :action="uploadUrl"
-                      :before-upload="beforeUpload"
-                      :on-remove="handleRemove"
-                      :on-success="uploadSuccess"
-                      multiple
-                      :limit="3"
-                      accept=".jpg, .jpeg, .png, .JPG, .JPEG"
-                      :show-file-list="false">
-                      <el-button size="small" type="primary">点击上传</el-button>
-                      <span style="color:red;">仅限上传3个文件，格式支持（.jpg/.jpeg/.png）</span>
-                    </el-upload>
-                    <el-tag v-for="(item,index) in fileList" 
-                    :key="index" 
-                    :closable="!disabled"
-                    @click="clickTag(fileList, index)"
-                    @close="closeTag(item)">{{item.fileName}}</el-tag>
-                  </el-form-item>
-                </el-form>
-                <div slot="footer" class="dialog-footer" v-if="!disabled">
-                  <el-button @click="dialogFormVisible = false">取 消</el-button>
-                  <el-button type="primary" @click="addPaymentForm('paymentForm')">确 定</el-button>
-                </div>
-              </el-dialog>
               <div class="row">
                 <div class="col-lg-12">
                   <div class="card card-block card-stretch">
@@ -150,8 +98,8 @@
                               <td>{{item.createTime}}</td>
                               <td>
                                 <div class="d-flex justify-content-end align-items-center">
-                                  <i class="el-icon-view" @click="clickPreview(item.idPaymentForm)"></i>&nbsp;&nbsp;
-                                  <!-- <i class="el-icon-edit" @click="clickPreview(item.idPaymentForm)"></i>&nbsp;&nbsp; -->
+                                  <i class="el-icon-view" @click="clickPreview(item, 'view')"></i>&nbsp;&nbsp;
+                                  <i class="el-icon-edit" @click="clickPreview(item, 'edit')"></i>&nbsp;&nbsp;
                                   <i class="el-icon-delete" @click="deletePaymentForm(item.idPaymentForm)"></i>
                                 </div>
                               </td>
@@ -191,6 +139,58 @@
         </div>
       </div>
     </footer>
+    <el-dialog :title="title" :visible.sync="dialogFormVisible">
+      <span class="promptText" v-if="isDisabled">{{promptText}}</span>
+      <el-form :model="paymentForm" ref="paymentForm" :rules="rules" :disabled="disabled">
+        <el-form-item label="类型" :label-width="formLabelWidth" prop="idCardType">
+          <el-select v-model="paymentForm.idCardType" placeholder="请选择" style="width:100%;" @change="changeSelectOption">
+            <el-option
+              v-for="item in cardTypeData"
+              :key="item.idCardType"
+              :label="item.name"
+              :value="item.idCardType">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="事由" :label-width="formLabelWidth" prop="reasonApplication">
+          <el-input type="textarea" v-model="paymentForm.reasonApplication" autocomplete="off" :disabled="isDisabled"></el-input>
+        </el-form-item>
+        <el-form-item label="申请金额" :label-width="formLabelWidth" prop="amount">
+          <el-input v-model="paymentForm.amount" type="number" autocomplete="off" :disabled="isDisabled"></el-input>
+        </el-form-item>
+        <el-form-item label="付款名称" :label-width="formLabelWidth" prop="paymentName">
+          <el-input v-model="paymentForm.paymentName" autocomplete="off" :disabled="isDisabled"></el-input>
+        </el-form-item>
+        <el-form-item label="付款账号" :label-width="formLabelWidth" prop="paymentAccount">
+          <el-input v-model="paymentForm.paymentAccount" autocomplete="off" :disabled="isDisabled" ref="cardInput" @blur="blurFormatCardNumber(paymentForm.paymentAccount)"></el-input>
+        </el-form-item>
+        <el-form-item label="上传附件" :label-width="formLabelWidth">
+          <el-upload
+            class="upload-demo"
+            v-if="!disabled"
+            :action="uploadUrl"
+            :before-upload="beforeUpload"
+            :on-remove="handleRemove"
+            :on-success="uploadSuccess"
+            multiple
+            :limit="3"
+            accept=".jpg, .jpeg, .png, .JPG, .JPEG"
+            :show-file-list="false">
+            <el-button size="small" type="primary">点击上传</el-button>
+            <span style="color:red;">仅限上传3个文件，格式支持（.jpg/.jpeg/.png）</span>
+          </el-upload>
+          <el-tag v-for="(item,index) in fileList" 
+          :key="index" 
+          :closable="!disabled"
+          @click="clickTag(fileList, index)"
+          @close="closeTag(item)">{{item.fileName}}</el-tag>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer" v-if="!disabled">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addPaymentForm('paymentForm')">确 定</el-button>
+      </div>
+    </el-dialog>
     <PreviewImage ref="previewImage" />
   </div>
 </template>
@@ -228,13 +228,15 @@ export default {
       tableData: [],
       dialogFormVisible: false,
       paymentForm: {
+        idPaymentForm: null,
         idCardType: null,
         reasonApplication: null,
         amount: null,
         paymentName: null,
         paymentAccount: null,
         files: null,
-        idUser: null
+        idUser: null,
+        state: null
       },
       formLabelWidth: '120',
       rules: {
@@ -364,18 +366,32 @@ export default {
       })
     },
     // 查看详情
-    clickPreview(id) {
-      this.title = '查看申请单'
+    clickPreview(data, type) {
+      console.log(data)
       API.selectPaymentFormById({
-        idPaymentForm: id
+        idPaymentForm: data.idPaymentForm
       }).then(res => {
         if (res.data.status === 200) {
           this.paymentForm = res.data.datas
           this.fileList = this.paymentForm.files != null ? JSON.parse(this.paymentForm.files) : []
-          this.disabled = true
-          this.dialogFormVisible = true
         }
       })
+
+      if (type === 'view') {
+        this.title = '查看申请单'
+        this.disabled = true
+        this.dialogFormVisible = true
+      } else {
+        if (data.state === 2) {
+          this.$message.warning('无法编辑，数据正在审核中')
+        } else if (data.state === 3) {
+          this.$message.warning('无法编辑，申请已通过审核')
+        } else {
+          this.title = '编辑申请单'
+          this.disabled = false
+          this.dialogFormVisible = true
+        }
+      }
     },
     // 创建申请单
     addPaymentForm(formName) {
@@ -392,6 +408,7 @@ export default {
             paymentName: this.paymentForm.paymentName,
             paymentAccount: this.paymentForm.paymentAccount,
             files: this.paymentForm.files,
+            state: 2,
             idUser: this.idUser
           }
           API.addPaymentForm(param).then(res => {

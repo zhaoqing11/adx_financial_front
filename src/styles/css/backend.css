@@ -2294,6 +2294,12 @@ pre code {
   -webkit-overflow-scrolling: touch
 }
 
+.table-responsive::-webkit-scrollbar,
+.el-table--scrollable-x .el-table__body-wrapper::-webkit-scrollbar {
+  width: 5px;     /*高宽分别对应横竖滚动条的尺寸*/
+  height: 10px;
+}
+
 .table-responsive>.table-bordered {
   border: 0
 }
