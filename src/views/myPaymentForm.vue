@@ -67,10 +67,10 @@
                       :on-success="uploadSuccess"
                       multiple
                       :limit="3"
-                      accept=".jpg, .jpeg, .png, .JPG, .JPEG, .pdf, .PDF, .xls, .xlsx"
+                      accept=".jpg, .jpeg, .png, .JPG, .JPEG"
                       :show-file-list="false">
                       <el-button size="small" type="primary">点击上传</el-button>
-                      <span style="color:red;">仅限上传3个文件，格式支持（.jpg/.jpeg/.png/.pdf/.xls/.xlsx）</span>
+                      <span style="color:red;">仅限上传3个文件，格式支持（.jpg/.jpeg/.png）</span>
                     </el-upload>
                     <el-tag v-for="(item,index) in fileList" 
                     :key="index" 
