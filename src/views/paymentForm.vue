@@ -113,10 +113,15 @@
                               <td class="text-right">{{item.paymentName}}</td>
                               <td>{{formatCardNum(item.paymentAccount)}}</td>
                               <td>{{item.userName}}</td>
-                               <td>{{item.idCardType === 1 ? '公账' : '私账'}}</td>
-                              <td :class="item.idPaymentFormState == 1 ? 'orange-cell' : 'green-cell'">{{item.idPaymentFormState == 1 ? '待审批' : '已审批'}}</td>
+                              <td>{{item.idCardType === 1 ? '公账' : '私账'}}</td>
                               <td>
-                                <span v-if="item.approvalAmount">{{item.approvalAmount}}</span>
+                                <span id="orange-cell" v-if="item.state == 2">待审批</span>
+                                <span id="green-cell" v-else-if="item.state == 3">审批通过</span>
+                                <span id="red-cell" v-else-if="item.state == 4">驳回</span>
+                              </td>
+                              <td>
+                                <!-- item.approvalAmount -->
+                                <span v-if="item.state != 2">{{item.approvalAmount ? item.approvalAmount : '--'}}</span>
                                 <span v-else>
                                   <span v-if="idRole != '2'">--</span>
                                   <i class="el-icon-edit" v-else @click="editPaymentForm(item)"></i>
@@ -216,14 +221,14 @@
           <el-input type="textarea" v-model="approvalForm.checkCommon" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
-      <el-form :model="paymentFormApproval" ref="approvalForm" :rules="pfApprovalRules" v-if="approvalForm.idCheckResult == 1">
+      <el-form :model="paymentFormApproval" ref="paymentFormApproval" :rules="pfApprovalRules" v-if="approvalForm.idCheckResult == 1">
         <el-form-item label="审批金额" :label-width="formLabelWidth" prop="amount">
           <el-input type="number" v-model="paymentFormApproval.amount" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="approvalPaymentForm('approvalRules')">确 定</el-button>
+        <el-button type="primary" @click="approvalPaymentForm('approvalForm')">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="汇款" :visible.sync="remittanceDialogFormVisible">
@@ -289,9 +294,10 @@
 </template>
 
 <script>
-import * as API from '@/api/paymentForm';
+import * as APPROVAL from '@/api/approval';
 import * as CTYPE from '@/api/cardType';
-import * as APPROVAL from '@/api/approvalPayment';
+import * as API from '@/api/paymentForm';
+import * as APPROVALPAY from '@/api/approvalPayment';
 import * as REMITTANCE from '@/api/paymentRemittance';
 import { getUserId, getRole } from '@/utils/auth';
 import { formatDate, formatCardNum } from '@/utils/validate';
@@ -376,7 +382,10 @@ export default {
       idPaymentFormState: 1,
       formatCardNum: formatCardNum,
       cardTypeData: [],
-      fileList: []
+      fileList: [],
+      
+      processTable: [],
+      processName: null
     }
   },
   mounted() {
@@ -434,40 +443,60 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           if (this.approvalForm.idCheckResult === 1) { // 通过
-            const param = {
-              idPaymentForm: this.paymentFormApproval.idPaymentForm,
-              amount: this.paymentFormApproval.amount,
-              idUser: this.idUser
+            if (this.paymentFormApproval.amount == null) {
+              this.$message.warning('请填写申请金额')
+              return false
             }
-            APPROVAL.approvalPaymentForm(param).then(res => {
-              if (res.data.status === 200) {
-                this.$message.success('操作成功')
-                this.dialogFormVisible = false
-                this.resetForm(formName)
-                this.getTableData()
-              } else {
-                this.$message.error(res.data.cause)
-              }
-            })
-          } else { // 不通过
-            
           }
+          const processTable = this.processTable[this.processTable.length - 1]
+          const param = {
+            idApprovalProcessNode: processTable.idApprovalProcessNode,
+            idApproval: processTable.idApproval,
+            idApprovalCaseNodeUser: processTable.idApprovalCaseNodeUser,
+            idCheckResult: this.approvalForm.idCheckResult,
+            checkCommon: this.approvalForm.checkCommon,
+            idPaymentForm: this.paymentFormApproval.idPaymentForm,
+            amount: this.paymentFormApproval.amount,
+            idUser: this.idUser
+          }
+          APPROVAL.approvalVerify(param).then(res => {
+            if (res.data.status === 200) {
+              this.$message.success(res.data.datas)
+              this.dialogFormVisible = false
+              this.resetForm(formName)
+              this.paymentFormApproval.amount = null
+              this.paymentFormApproval.idPaymentForm = null
+              this.getTableData()
+            } else {
+              this.$message.error(res.data.cause)
+            }
+          })
         }
       })
     },
     editPaymentForm(data) {
-      // console.log('edit: ',data)
       this.paymentForm = data
       this.fileList = data.files != null ? JSON.parse(data.files) : []
       this.paymentFormApproval.idPaymentForm = data.idPaymentForm;
       this.approvalForm.idApproval = data.idApproval
       this.dialogFormVisible = true
-
-      // console.log('approval form: ', this.approvalForm)
+      this.selectApprovalInfo(data.idApproval)
     },
     // 重置
     resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+    // 获取审批流信息
+    selectApprovalInfo(id) {
+      APPROVAL.selectApprovalInfo({
+        idApproval: id
+      }).then(res => {
+        if (res.data.status === 200) {
+          let tmpData = res.data.datas
+          this.processTable = tmpData.list
+          this.processName = tmpData.name
+        }
+      })
     },
     // 获取个人请款记录列表
     getTableData() {
@@ -476,7 +505,7 @@ export default {
         pageSize: this.pageSize,
         idCardType: this.idCardType,
         code: this.code
-      } 
+      }
       API.queryAllPaymentForm(params)
       .then(res => {
         if (res.data.status === 200) {
@@ -495,12 +524,16 @@ export default {
   color: #8f9fbc !important;
   font-weight: 500;
 }
-.orange-cell {
+#orange-cell {
   color: orange;
   font-weight: bold;
 }
-.green-cell {
+#green-cell {
   color:green;
+  font-weight: bold;
+}
+#red-cell {
+  color: red;
   font-weight: bold;
 }
 .pagination {

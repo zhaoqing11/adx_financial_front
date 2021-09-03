@@ -190,6 +190,44 @@
         <el-button @click="dialogFormVisible = false">取 消</el-button>
         <el-button type="primary" @click="addPaymentForm('paymentForm')">确 定</el-button>
       </div>
+      <div class="_approval" v-if="disabled">
+        <h5>审批进度</h5>
+        <br/>
+        <div class="el-steps el-steps--horizontal">
+          <div class="el-step is-horizontal" style="flex-basis: 50%; margin-right: 0px;" v-for="(item,index) in processTable" :key="index">
+            <div :class="item.idCheckResult == 1 ? 'el-step__head is-finish' : 'el-step__head'">
+              <div class="el-step__line" style="margin-right: 0px;">
+                <i class="el-step__line-inner" style="transition-delay: 0ms; border-width: 0px; width: 0%;"></i>
+              </div>
+              <div class="el-step__icon is-text">
+                <div class="el-step__icon-inner">
+                  <span v-if="item.idCheckResult == 1"><i class="el-icon-check"></i></span>
+                  <span v-else>{{index + 1}}</span>
+                </div>
+              </div>
+            </div>
+            <div class="el-step__main">
+              <div :class="item.idCheckResult == 1 ? 'el-step__title is-finish' : 'el-step__title'">{{item.caseName}}</div>
+              <div :class="item.idCheckResult == 1 ? 'el-step__description is-finish' : 'el-step__description'">
+                <div v-if="index == 0">
+                  {{item.createTime}}
+                </div>
+                <div v-else-if="index == 1">
+                  <span v-if="item.idCheckResult == 1">审核通过</span>
+                  <span v-else-if="item.idCheckResult == 2">审核不通过</span>
+                  <span v-else-if="item.idCheckResult == 3">驳回</span>
+                  <span v-else>待审核</span>
+                </div>
+                <div v-else>
+                  <span v-if="item.idCheckResult">已汇款</span>
+                  <span v-else>待汇款</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
     </el-dialog>
     <PreviewImage ref="previewImage" />
   </div>
@@ -197,6 +235,7 @@
 
 <script>
 import * as API from '@/api/paymentForm';
+import * as APPROVAL from '@/api/approval';
 import * as REMITTANCE from '@/api/paymentRemittance';
 import * as CTYPE from '@/api/cardType';
 import * as DAILY from '@/api/daily';
@@ -229,6 +268,7 @@ export default {
       dialogFormVisible: false,
       paymentForm: {
         idPaymentForm: null,
+        idApproval: null,
         idCardType: null,
         reasonApplication: null,
         amount: null,
@@ -267,7 +307,10 @@ export default {
       dialogImageUrl: '',
       dialogVisible: false,
       disabled: false,
-      fileList: []
+      fileList: [],
+
+      processTable: [],
+      processName: null
     }
   },
   computed: {
@@ -367,15 +410,8 @@ export default {
     },
     // 查看详情
     clickPreview(data, type) {
-      console.log(data)
-      API.selectPaymentFormById({
-        idPaymentForm: data.idPaymentForm
-      }).then(res => {
-        if (res.data.status === 200) {
-          this.paymentForm = res.data.datas
-          this.fileList = this.paymentForm.files != null ? JSON.parse(this.paymentForm.files) : []
-        }
-      })
+      this.selectPaymentFormById(data.idPaymentForm)
+      this.selectApprovalInfo(data.idApproval)
 
       if (type === 'view') {
         this.title = '查看申请单'
@@ -393,6 +429,17 @@ export default {
         }
       }
     },
+    // 查看申请详情
+    selectPaymentFormById(id) {
+      API.selectPaymentFormById({
+        idPaymentForm: id
+      }).then(res => {
+        if (res.data.status === 200) {
+          this.paymentForm = res.data.datas
+          this.fileList = this.paymentForm.files != null ? JSON.parse(this.paymentForm.files) : []
+        }
+      })
+    },
     // 创建申请单
     addPaymentForm(formName) {
       if (this.fileList.length > 0) {
@@ -401,7 +448,10 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.paymentForm.paymentAccount = this.paymentForm.paymentAccount.replaceAll('-', '')
+          let idPaymentForm = this.paymentForm.idPaymentForm != null ? this.paymentForm.idPaymentForm : null
           const param = {
+            idPaymentForm: this.paymentForm.idPaymentForm,
+            idApproval: this.paymentForm.idApproval,
             idCardType: this.paymentForm.idCardType,
             reasonApplication: this.paymentForm.reasonApplication,
             amount: this.paymentForm.amount,
@@ -413,7 +463,7 @@ export default {
           }
           API.addPaymentForm(param).then(res => {
             if (res.data.status === 200) {
-              this.$message.success('创建成功')
+              this.$message.success('操作成功')
               this.dialogFormVisible = false
               this.resetForm(formName)
               this.fileList = []
@@ -422,6 +472,7 @@ export default {
               this.$message.error(res.data.cause)
             }
           })
+
         }
       })
     },
@@ -433,11 +484,25 @@ export default {
       this.paymentForm.paymentAccount = null
       this.paymentForm.files = null
       this.paymentForm.idUser = null
+      this.paymentForm.idApproval = null
+      this.paymentForm.idPaymentForm = null
       this.fileList = []
 
       this.title = '创建申请单'
       this.disabled = false
       this.dialogFormVisible = true
+    },
+    // 获取审批流信息
+    selectApprovalInfo(id) {
+      APPROVAL.selectApprovalInfo({
+        idApproval: id
+      }).then(res => {
+        if (res.data.status === 200) {
+          let tmpData = res.data.datas
+          this.processTable = tmpData.list
+          this.processName = tmpData.name
+        }
+      })
     },
     // 获取个人请款记录列表
     getTableData() {
