@@ -56,7 +56,6 @@ const user = {
             //   }
             //   resolve(res);
             // }).catch(err => {
-            //   console.log(err)
             // });
           } else {
             resolve(res);

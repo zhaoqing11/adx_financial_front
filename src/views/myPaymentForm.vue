@@ -98,9 +98,14 @@
                               <td>{{item.createTime}}</td>
                               <td>
                                 <div class="d-flex justify-content-end align-items-center">
-                                  <i class="el-icon-view" @click="clickPreview(item, 'view')"></i>&nbsp;&nbsp;
-                                  <i class="el-icon-edit" @click="clickPreview(item, 'edit')"></i>&nbsp;&nbsp;
-                                  <i class="el-icon-delete" @click="deletePaymentForm(item.idPaymentForm)"></i>
+                                  <el-button type="text" @click="clickPreview(item, 'view')"><i class="el-icon-view"></i></el-button>
+                                  <el-button type="text" @click="clickPreview(item, 'edit')"><i class="el-icon-edit"></i></el-button>
+                                  <el-button type="text" @click="clickReset(item)">
+                                    <span class="svg-container">
+                                      <svg-icon icon-class="reset"/>
+                                    </span>
+                                  </el-button>
+                                  <el-button type="text"><i class="el-icon-delete" @click="deletePaymentForm(item.idPaymentForm)"></i></el-button>
                                 </div>
                               </td>
                             </tr>
@@ -194,7 +199,7 @@
         <h5>审批进度</h5>
         <br/>
         <div class="el-steps el-steps--horizontal">
-          <div class="el-step is-horizontal" style="flex-basis: 50%; margin-right: 0px;" v-for="(item,index) in processTable" :key="index">
+          <div class="el-step is-horizontal is-center" style="flex-basis: 50%; margin-right: 0px;" v-for="(item,index) in processTable" :key="index">
             <div :class="item.idCheckResult == 1 ? 'el-step__head is-finish' : 'el-step__head'">
               <div class="el-step__line" style="margin-right: 0px;">
                 <i class="el-step__line-inner" style="transition-delay: 0ms; border-width: 0px; width: 0%;"></i>
@@ -202,6 +207,7 @@
               <div class="el-step__icon is-text">
                 <div class="el-step__icon-inner">
                   <span v-if="item.idCheckResult == 1"><i class="el-icon-check"></i></span>
+                  <span v-else-if="item.idCheckResult == 2"><i class="el-icon-close"></i></span>
                   <span v-else>{{index + 1}}</span>
                 </div>
               </div>
@@ -214,7 +220,9 @@
                 </div>
                 <div v-else-if="index == 1">
                   <span v-if="item.idCheckResult == 1">审核通过</span>
-                  <span v-else-if="item.idCheckResult == 2">审核不通过</span>
+                  <span v-else-if="item.idCheckResult == 2">
+                    <p style="color:red;">{{item.checkCommon}}</p>
+                  </span>
                   <span v-else-if="item.idCheckResult == 3">驳回</span>
                   <span v-else>待审核</span>
                 </div>
@@ -328,6 +336,31 @@ export default {
     this.getTableData()
   },
   methods: {
+    // 撤回
+    clickReset(data) {
+      if (data.state != 2) {
+        this.$message.warning('无法撤回，申请已通过审核')
+        return false
+      }
+      
+      this.$confirm('是否确定撤回该申请？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let param = {
+          idPaymentForm: data.idPaymentForm,
+          state: 1
+        }
+        API.updatePaymentForm(param).then(res => {
+          if (res.data.status === 200) {
+            this.$message.success('撤回成功')
+          }
+        })
+      }).catch(() => {
+        this.$message.info('已取消撤回')
+      })
+    },
     clickTag(file, index) {
       this.$refs.previewImage.show(file, index)
     },
@@ -411,7 +444,7 @@ export default {
     // 查看详情
     clickPreview(data, type) {
       this.selectPaymentFormById(data.idPaymentForm)
-      this.selectApprovalInfo(data.idApproval)
+      this.selectApprovalInfo(data.idApproval, data.idPaymentForm)
 
       if (type === 'view') {
         this.title = '查看申请单'
@@ -493,14 +526,33 @@ export default {
       this.dialogFormVisible = true
     },
     // 获取审批流信息
-    selectApprovalInfo(id) {
+    selectApprovalInfo(idApproval, idPaymentForm) {
+      this.processTable = []
       APPROVAL.selectApprovalInfo({
-        idApproval: id
+        idApproval: idApproval
       }).then(res => {
         if (res.data.status === 200) {
           let tmpData = res.data.datas
-          this.processTable = tmpData.list
+          let len = tmpData.list.length
+          this.processTable.push(tmpData.list[len - 2])
+          this.processTable.push(tmpData.list[len - 1])
           this.processName = tmpData.name
+          this.getRemittanceByIdPamentForm(idPaymentForm)
+        }
+      })
+    },
+    // 根据请款id获取汇款记录
+    getRemittanceByIdPamentForm(idPaymentForm) {
+      REMITTANCE.getRemittanceByIdPamentForm({
+        idPaymentForm: idPaymentForm
+      }).then(res => {
+        if (res.data.status === 200) {
+          let idCheckResult = res.data.datas > 0 ? 1 : null
+          let param = {
+            caseName: '业务部门汇款',
+            idCheckResult: idCheckResult
+          }
+          this.processTable.push(param)
         }
       })
     },

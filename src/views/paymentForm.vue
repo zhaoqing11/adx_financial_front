@@ -116,8 +116,8 @@
                               <td>{{item.idCardType === 1 ? '公账' : '私账'}}</td>
                               <td>
                                 <span id="orange-cell" v-if="item.state == 2">待审批</span>
-                                <span id="green-cell" v-else-if="item.state == 3">审批通过</span>
-                                <span id="red-cell" v-else-if="item.state == 4">驳回</span>
+                                <span id="green-cell" v-else-if="item.state == 3">通过</span>
+                                <span id="red-cell" v-else-if="item.state == 4">不通过</span>
                               </td>
                               <td>
                                 <!-- item.approvalAmount -->
