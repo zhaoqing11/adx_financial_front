@@ -193,7 +193,8 @@
       </el-form>
       <div slot="footer" class="dialog-footer" v-if="!disabled">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addPaymentForm('paymentForm')">确 定</el-button>
+        <el-button type="warning" @click="addPaymentForm('paymentForm', 1)">保 存</el-button>
+        <el-button type="primary" @click="addPaymentForm('paymentForm', 2)">确 定</el-button>
       </div>
       <div class="_approval" v-if="disabled">
         <h5>审批进度</h5>
@@ -474,7 +475,7 @@ export default {
       })
     },
     // 创建申请单
-    addPaymentForm(formName) {
+    addPaymentForm(formName, state) {
       if (this.fileList.length > 0) {
         this.paymentForm.files = JSON.stringify(this.fileList)
       }
@@ -491,7 +492,7 @@ export default {
             paymentName: this.paymentForm.paymentName,
             paymentAccount: this.paymentForm.paymentAccount,
             files: this.paymentForm.files,
-            state: 2,
+            state: state,
             idUser: this.idUser
           }
           API.addPaymentForm(param).then(res => {
