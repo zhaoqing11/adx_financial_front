@@ -70,6 +70,9 @@
                                 <label class="text-muted mb-0" >付款账号</label>
                               </th>
                               <th scope="col">
+                                <label class="text-muted mb-0" >状态</label>
+                              </th>
+                              <th scope="col">
                                 <label class="text-muted mb-0" >申请人</label>
                               </th>
                               <th scope="col">
@@ -94,13 +97,19 @@
                               <td>{{item.amount}}</td>
                               <td class="text-right">{{item.paymentName}}</td>
                               <td>{{formatCardNum(item.paymentAccount)}}</td>
+                              <td>
+                                <span v-if="item.state === 1">草稿</span>
+                                <span v-else-if="item.state === 2">待审核</span>
+                                <span v-else-if="item.state === 3">审核通过</span>
+                                <span v-else>审核不通过</span>
+                              </td>
                               <td>{{item.userName}}</td>
                               <td>{{item.createTime}}</td>
                               <td>
                                 <div class="d-flex justify-content-end align-items-center">
                                   <el-button type="text" @click="clickPreview(item, 'view')"><i class="el-icon-view"></i></el-button>
                                   <el-button type="text" @click="clickPreview(item, 'edit')"><i class="el-icon-edit"></i></el-button>
-                                  <el-button type="text" @click="clickReset(item)">
+                                  <el-button type="text" :disabled="item.state === 1" @click="clickReset(item)">
                                     <span class="svg-container">
                                       <svg-icon icon-class="reset"/>
                                     </span>
@@ -197,45 +206,46 @@
         <el-button type="primary" @click="addPaymentForm('paymentForm', 2)">确 定</el-button>
       </div>
       <div class="_approval" v-if="disabled">
-        <h5>审批进度</h5>
-        <br/>
-        <div class="el-steps el-steps--horizontal">
-          <div class="el-step is-horizontal is-center" style="flex-basis: 50%; margin-right: 0px;" v-for="(item,index) in processTable" :key="index">
-            <div :class="item.idCheckResult == 1 ? 'el-step__head is-finish' : 'el-step__head'">
-              <div class="el-step__line" style="margin-right: 0px;">
-                <i class="el-step__line-inner" style="transition-delay: 0ms; border-width: 0px; width: 0%;"></i>
-              </div>
-              <div class="el-step__icon is-text">
-                <div class="el-step__icon-inner">
-                  <span v-if="item.idCheckResult == 1"><i class="el-icon-check"></i></span>
-                  <span v-else-if="item.idCheckResult == 2"><i class="el-icon-close"></i></span>
-                  <span v-else>{{index + 1}}</span>
+        <div v-if="paymentForm.state != 1">
+          <h5>审批进度</h5>
+          <br/>
+          <div class="el-steps el-steps--horizontal">
+            <div class="el-step is-horizontal is-center" style="flex-basis: 50%; margin-right: 0px;" v-for="(item,index) in processTable" :key="index">
+              <div :class="item.idCheckResult == 1 ? 'el-step__head is-finish' : 'el-step__head'">
+                <div class="el-step__line" style="margin-right: 0px;">
+                  <i class="el-step__line-inner" style="transition-delay: 0ms; border-width: 0px; width: 0%;"></i>
+                </div>
+                <div class="el-step__icon is-text">
+                  <div class="el-step__icon-inner">
+                    <span v-if="item.idCheckResult == 1"><i class="el-icon-check"></i></span>
+                    <span v-else-if="item.idCheckResult == 2"><i class="el-icon-close"></i></span>
+                    <span v-else>{{index + 1}}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="el-step__main">
-              <div :class="item.idCheckResult == 1 ? 'el-step__title is-finish' : 'el-step__title'">{{item.caseName}}</div>
-              <div :class="item.idCheckResult == 1 ? 'el-step__description is-finish' : 'el-step__description'">
-                <div v-if="index == 0">
-                  {{item.createTime}}
-                </div>
-                <div v-else-if="index == 1">
-                  <span v-if="item.idCheckResult == 1">审核通过</span>
-                  <span v-else-if="item.idCheckResult == 2">
-                    <p style="color:red;">{{item.checkCommon}}</p>
-                  </span>
-                  <span v-else-if="item.idCheckResult == 3">驳回</span>
-                  <span v-else>待审核</span>
-                </div>
-                <div v-else>
-                  <span v-if="item.idCheckResult">已汇款</span>
-                  <span v-else>待汇款</span>
+              <div class="el-step__main">
+                <div :class="item.idCheckResult == 1 ? 'el-step__title is-finish' : 'el-step__title'">{{item.caseName}}</div>
+                <div :class="item.idCheckResult == 1 ? 'el-step__description is-finish' : 'el-step__description'">
+                  <div v-if="index == 0">
+                    {{item.createTime}}
+                  </div>
+                  <div v-else-if="index == 1">
+                    <span v-if="item.idCheckResult == 1">审核通过</span>
+                    <span v-else-if="item.idCheckResult == 2">
+                      <p style="color:red;">{{item.checkCommon}}</p>
+                    </span>
+                    <span v-else-if="item.idCheckResult == 3">驳回</span>
+                    <span v-else>待审核</span>
+                  </div>
+                  <div v-else>
+                    <span v-if="item.idCheckResult">已汇款</span>
+                    <span v-else>待汇款</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        
       </div>
     </el-dialog>
     <PreviewImage ref="previewImage" />
@@ -356,6 +366,7 @@ export default {
         API.updatePaymentForm(param).then(res => {
           if (res.data.status === 200) {
             this.$message.success('撤回成功')
+            this.getTableData()
           }
         })
       }).catch(() => {
