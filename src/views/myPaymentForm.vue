@@ -100,8 +100,8 @@
                               <td>
                                 <span v-if="item.state === 1">草稿</span>
                                 <span v-else-if="item.state === 2">待审核</span>
-                                <span v-else-if="item.state === 3">审核通过</span>
-                                <span v-else>审核不通过</span>
+                                <span id="green-cell" v-else-if="item.state === 3">审核通过</span>
+                                <span id="red-cell" v-else>审核不通过</span>
                               </td>
                               <td>{{item.userName}}</td>
                               <td>{{item.createTime}}</td>
@@ -207,7 +207,7 @@
       </div>
       <div class="_approval" v-if="disabled">
         <div v-if="paymentForm.state != 1">
-          <h5>审批进度</h5>
+          <h5>汇款进度</h5>
           <br/>
           <div class="el-steps el-steps--horizontal">
             <div class="el-step is-horizontal is-center" style="flex-basis: 50%; margin-right: 0px;" v-for="(item,index) in processTable" :key="index">
@@ -350,7 +350,7 @@ export default {
     // 撤回
     clickReset(data) {
       if (data.state != 2) {
-        this.$message.warning('无法撤回，申请已通过审核')
+        this.$message.warning('无法撤回，申请已进入审核阶段')
         return false
       }
       
@@ -456,7 +456,10 @@ export default {
     // 查看详情
     clickPreview(data, type) {
       this.selectPaymentFormById(data.idPaymentForm)
-      this.selectApprovalInfo(data.idApproval, data.idPaymentForm)
+      if (data.idApproval != null) {
+        this.selectApprovalInfo(data.idApproval, data.idPaymentForm)
+      }
+      console.log('data', data)
 
       if (type === 'view') {
         this.title = '查看申请单'
@@ -650,4 +653,18 @@ export default {
 .el-tag {
   margin: 0 5px;
 }
+#green-cell {
+  color:green;
+  font-weight: bold;
+}
+#red-cell {
+  color: red;
+  font-weight: bold;
+}
+// .el-icon-view:hover {
+//   cursor: text;
+//   &:before {
+//     content: '查看';
+//   }
+// }
 </style>

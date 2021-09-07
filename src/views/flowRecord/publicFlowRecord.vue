@@ -230,6 +230,7 @@ export default {
           }
         }]
       },
+      tableData: [],
       currentDate: '',
       formatCardNum: formatCardNum
     }
@@ -293,12 +294,16 @@ export default {
       .then(res => {
         if (res.data.status === 200) {
           let tmpData = res.data.datas
-          this.publicRemainSumList = tmpData.publicRemainSumList.datas
-          this.publicTotalPage = tmpData.publicRemainSumList.totalPage
-          this.privateRemainSumList = tmpData.privateRemainSumList.datas
-          this.privateTotalPage = tmpData.privateRemainSumList.totalPage
+          this.tableData = tmpData.publicRemainSumList.datas
+          this.changeToPage()
         }
       })
+    },
+    // 分页获取流水记录
+    changeToPage() {
+      this.publicTotalPage = this.tableData.length
+      this.publicRemainSumList = JSON.parse(JSON.stringify(this.tableData))
+      this.publicRemainSumList = this.publicRemainSumList.slice((this.pageNum - 1) * this.pageSize, this.pageNum * this.pageSize)
     }
   }
 }
