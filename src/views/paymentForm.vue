@@ -294,10 +294,10 @@
 </template>
 
 <script>
+import * as DAILY from '@/api/daily';
 import * as APPROVAL from '@/api/approval';
 import * as CTYPE from '@/api/cardType';
 import * as API from '@/api/paymentForm';
-import * as APPROVALPAY from '@/api/approvalPayment';
 import * as REMITTANCE from '@/api/paymentRemittance';
 import { getUserId, getRole } from '@/utils/auth';
 import { formatDate, formatCardNum } from '@/utils/validate';
@@ -406,11 +406,21 @@ export default {
       })
     },
     clickPaymentRemittance(data) {
-      this.paymentForm = data;
-      this.fileList = data.files != null ? JSON.parse(data.files) : [];
-
-      this.paymentRemittanceForm.idPaymentForm = data.idPaymentForm
-      this.remittanceDialogFormVisible = true
+      // 判断当天得上一天账单未审核通过不能进行汇款操作
+      DAILY.selectIsExitUnApprovalDaily({
+        idCardType: data.idCardType
+      }).then(res => {
+        if (res.data.status === 200) {
+          if (res.data.datas >= 1) {
+            this.$message.warning('上日账单尚未通过审核，暂时无法汇款操作')
+          } else {
+            this.paymentForm = data
+            this.fileList = data.files != null ? JSON.parse(data.files) : []
+            this.paymentRemittanceForm.idPaymentForm = data.idPaymentForm
+            this.remittanceDialogFormVisible = true
+          }
+        }
+      })
     },
     // 创建汇款记录
     addPaymentRemittance(formName) {

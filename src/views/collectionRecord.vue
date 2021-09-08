@@ -147,9 +147,10 @@
       </div>
     </footer>
     <el-dialog :title="title" :visible.sync="dialogFormVisible">
+      <span class="promptText" v-if="isDisabled">{{promptText}}</span>
       <el-form :model="collectionRecordForm" ref="collectionRecordForm" :rules="rules">
         <el-form-item label="账目类型" :label-width="formLabelWidth" prop="idCardType">
-          <el-select v-model="collectionRecordForm.idCardType" placeholder="请选择" style="width:100%;">
+          <el-select v-model="collectionRecordForm.idCardType" placeholder="请选择" style="width:100%;" @change="changeSelectOption">
             <el-option
               v-for="item in cardTypeData"
               :key="item.idCardType"
@@ -159,10 +160,11 @@
           </el-select>
         </el-form-item>
         <el-form-item label="收款金额" :label-width="formLabelWidth" prop="amount">
-          <el-input v-model="collectionRecordForm.amount" type="number" autocomplete="off"></el-input>
+          <el-input v-model="collectionRecordForm.amount" type="number" autocomplete="off" :disabled="isDisabled"></el-input>
         </el-form-item>
         <el-form-item label="收款日期" :label-width="formLabelWidth" prop="collectionDate">
           <el-date-picker
+            :disabled="isDisabled"
             v-model="collectionRecordForm.collectionDate"
             type="datetime"
             placeholder="选择日期"
@@ -170,10 +172,10 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item label="备注" :label-width="formLabelWidth" prop="remark">
-          <el-input type="textarea" v-model="collectionRecordForm.remark" autocomplete="off"></el-input>
+          <el-input type="textarea" v-model="collectionRecordForm.remark" autocomplete="off" :disabled="isDisabled"></el-input>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <div slot="footer" class="dialog-footer" v-if="!isDisabled">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
         <el-button type="primary" @click="type == 'insert' ? addCollectionRecord('collectionRecordForm') : editCollectionRecord('collectionRecordForm')">确 定</el-button>
       </div>
@@ -182,12 +184,12 @@
 </template>
 
 <script>
+import * as DAILY from '@/api/daily';
 import * as API from '@/api/collectionRecord';
 import * as CTYPE from '@/api/cardType';
 import { getUserId } from '@/utils/auth';
 import { formatDate, formatCardNum } from '@/utils/validate';
 import Pagination from '@/components/Pagination';
-
 
 export default {
   components: { Pagination },
@@ -255,7 +257,9 @@ export default {
       },
       type: null,
       formatCardNum: formatCardNum,
-      cardTypeData: []
+      cardTypeData: [],
+      isDisabled: false,
+      promptText: '上日账单尚未通过审核，暂时无法收款操作'
     }
   },
   mounted() {
@@ -263,6 +267,19 @@ export default {
     this.getTableData()
   },
   methods: {
+    changeSelectOption() {
+      DAILY.selectIsExitUnApprovalDaily({
+        idCardType: this.collectionRecordForm.idCardType
+      }).then(res => {
+        if (res.data.status === 200) {
+          if (res.data.datas >= 1) {
+            this.isDisabled = true
+          } else {
+            this.isDisabled = false
+          }
+        }
+      })
+    },
     // 获取账目类型列表
     getCardTypeList() {
       CTYPE.getCardType().then(res => {
@@ -402,5 +419,9 @@ export default {
 .pagination {
   float: right;
   margin: 20px 10px;
+}
+.promptText {
+  color: red;
+  font-size: 22px;
 }
 </style>
