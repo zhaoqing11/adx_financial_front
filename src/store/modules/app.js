@@ -5,7 +5,10 @@ const state = {
     opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : true,
     withoutAnimation: false
   },
-  device: 'desktop'
+  device: 'desktop',
+  winWidth: 0,
+  winHeight: 0,
+  showSidebar: false
 };
 
 const mutations = {
@@ -25,6 +28,15 @@ const mutations = {
   },
   TOGGLE_DEVICE: (state, device) => {
     state.device = device;
+  },
+  WINWIDTH: (state, winWidth) => {
+    state.winWidth = winWidth
+  },
+  WINHEIGHT: (state, winHeight) => {
+    state.winHeight = winHeight
+  },
+  SHOWSIDEBAR: (state, showSidebar) => {
+    state.showSidebar = showSidebar
   }
 };
 
@@ -37,6 +49,15 @@ const actions = {
   },
   toggleDevice({ commit }, device) {
     commit('TOGGLE_DEVICE', device);
+  },
+  winWidth({ commit }, winWidth) {
+    commit('WINWIDTH', winWidth)
+  },
+  winHeight({ commit }, winHeight) {
+    commit('WINHEIGHT', winHeight)
+  },
+  showSidebar({ commit }, showSidebar) {
+    commit('SHOWSIDEBAR', showSidebar)
   }
 };
 

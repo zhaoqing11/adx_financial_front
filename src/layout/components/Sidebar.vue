@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div class="iq-sidebar  sidebar-default  ">
+    <div :class="$store.getters.showSidebar ? 'iq-sidebar  sidebar-default sidebar-mobile-show' : 'iq-sidebar  sidebar-default'">
+      <div v-if="$store.getters.showSidebar" class="close-sidebar" @click="closeSidebar"><i class="el-icon-close"></i></div>
       <div class="iq-sidebar-logo d-flex align-items-end justify-content-between">
         <a href="index.html" class="header-logo">
           <img src="@/assets/images/logo.png" class="img-fluid rounded-normal light-logo" alt="logo">
@@ -217,6 +218,9 @@ export default {
     }
   },
   methods: {
+    closeSidebar() {
+      this.$store.commit('app/SHOWSIDEBAR', false)
+    },
     // 路由至对应页面
     routerLinkToPage(data) {
       if (data.id == 7 || data.id == 8) {
@@ -239,3 +243,18 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.sidebar-mobile-show {
+  left: 0;
+}
+.close-sidebar {
+  display: block;
+  position: absolute;
+  z-index: 9999999;
+  color: #fff;
+  left: 220px;
+  top: 10px;
+  font-size: 25px;
+}
+</style>

@@ -2,13 +2,14 @@
   <div class="iq-top-navbar">
     <div class="iq-navbar-custom">
       <nav class="navbar navbar-expand-lg navbar-light p-0">
-        <div class="side-menu-bt-sidebar">
+        <div class="side-menu-bt-sidebar" @click="clickShowMenu">
           <svg xmlns="http://www.w3.org/2000/svg" class="text-secondary wrapper-menu" width="30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </div>
         <div class="d-flex align-items-center">
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <div :class="$store.getters.winWidth <= 1299 ? 'collapse navbar-collapse mobile-collapse' : 'collapse navbar-collapse'" 
+          id="navbarSupportedContent">
             <ul class="navbar-nav ml-auto navbar-list align-items-center">
               <li class="nav-item nav-icon dropdown">
                 <a href="javaScript:void(0);" class="nav-item nav-icon dropdown-toggle pr-0 search-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
@@ -100,6 +101,14 @@ export default {
     };
   },
   methods: {
+    clickShowMenu() {
+      let params = this.$store.getters
+      if (params.winWidth <= 1299) {
+        this.$store.commit('app/SHOWSIDEBAR', true)
+      } else {
+        this.$store.commit('app/SHOWSIDEBAR', false)
+      }
+    },
     updateUserPassword(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -155,6 +164,13 @@ export default {
 img {
   background-color: #f6f6f6;
   padding: 5px;
+}
+.mobile-collapse {
+  width: 100px;
+  left: 300px;
+  top: -20px;
+  background: none;
+  box-shadow: none;
 }
 </style>
 
