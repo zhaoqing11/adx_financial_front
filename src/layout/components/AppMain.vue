@@ -8,7 +8,7 @@
 
 <script>
 export default {
-  // name: 'AppMain',
+  name: 'AppMain',
   data() {
     return {
       windowWidth: document.documentElement.clientWidth,  //实时屏幕宽度
