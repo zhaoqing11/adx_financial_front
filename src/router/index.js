@@ -196,6 +196,27 @@ export const constantRoutes = [
         meta: { title: "私账", icon: "private", requireAuth: true }
       }
     ]
+  },
+  {
+    path: "/mobile",
+    component: Layout,
+    redirect: "/mobile",
+    name: "Mobile",
+    meta: { title: "请款申请", icon: "mobile", requireAuth: true },
+    children: [
+      {
+        path: "index",
+        name: "Index",
+        component: () => import("@/views/mobile/myPaymentForm"),
+        meta: { title: "请款申请", icon: "myPaymentForm", requireAuth: true }
+      },
+      {
+        path: "addPaymentForm",
+        name: "AddPaymentForm",
+        component: () => import("@/views/mobile/addPaymentForm"),
+        meta: { title: "创建请款申请", icon: "addPaymentForm", requireAuth: true }
+      }
+    ]
   }
 ];
 

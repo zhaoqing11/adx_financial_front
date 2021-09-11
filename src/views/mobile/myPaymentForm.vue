@@ -1,14 +1,43 @@
 ﻿<template>
   <div>
     <div class="wrapper">
-      <div class="content-page">
+      <van-search :value="code" placeholder="搜索申请单编号" />
+      <van-cell-group>
+        <van-cell :title="item.code" is-link v-for="(item,index) in tableData" :key="index" @click="clickItemValue(item)"/>
+      </van-cell-group>
+      <van-popup
+        v-model="show"
+        round
+        position="bottom"
+        custom-style="height: 20%"
+      >
+        <div class="form_action" @click="routerLinkToAddPaymentForm('view')">
+          <span><van-icon name="eye-o" /></span>
+          <span>查看</span>
+        </div>
+        <div class="form_action"  @click="routerLinkToAddPaymentForm('edit')">
+          <span><van-icon name="edit" /></span>
+          <span>编辑</span>
+        </div>
+        <div class="form_action">
+          <span><van-icon name="revoke" /></span>
+          <span>撤回</span>
+        </div>
+        <div class="form_action">
+          <span><van-icon name="delete-o" /></span>
+          <span>删除</span>
+        </div>
+        <van-button type="info" size="large" @click="show = false">取 消</van-button>
+      </van-popup>
+      <van-button class="create_pay_form" icon="plus" type="info" size="large" @click="routerLinkToAddPaymentForm('add')">创建申请</van-button>
+      <!-- <div class="content-page">
         <div class="container-fluid">
           <div class="row">
             <div class="col-lg-12">
               <div class="d-flex flex-wrap align-items-center justify-content-between my-schedule mb-4">
                 <div class="d-flex align-items-center justify-content-between">
                   <h4 class="font-weight-bold">请款申请</h4>
-                </div>  
+                </div>
                 <div class="create-workform">
                   <div class="d-flex flex-wrap align-items-center justify-content-between">
                     <div class="modal-product-search d-flex">
@@ -138,9 +167,9 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
-    <footer class="iq-footer">
+    <!-- <footer class="iq-footer">
       <div class="container-fluid">
         <div class="row">
           <div class="col-lg-6">
@@ -152,7 +181,7 @@
           </div>
         </div>
       </div>
-    </footer>
+    </footer> -->
     <el-dialog :title="title" :visible.sync="dialogFormVisible">
       <span class="promptText" v-if="isDisabled">{{promptText}}</span>
       <el-form :model="paymentForm" ref="paymentForm" :rules="rules" :disabled="disabled">
@@ -253,7 +282,7 @@
 </template>
 
 <script>
-import { Toast, Notify } from 'vant';
+import { Toast } from 'vant';
 import * as API from '@/api/paymentForm';
 import * as APPROVAL from '@/api/approval';
 import * as REMITTANCE from '@/api/paymentRemittance';
@@ -263,14 +292,6 @@ import { getUserId, getToken } from '@/utils/auth';
 import Pagination from '@/components/Pagination';
 import PreviewImage from "@/components/PreviewImage"
 import { formatCardNum } from '@/utils/validate';
-// import "@/utils/assets/js/demo.js";
-// import "@/utils/js/backend-bundle.min.js";
-// import "@/utils/js/sidebar.js";
-// import "@/utils/js/flex-tree.min.js";
-// import "@/utils/js/tree.js";
-// import "@/utils/js/table-treeview.js";
-// import "@/utils/js/slider.js";
-// import "@/utils/js/app.js";
 
 export default {
   components: { PreviewImage, Pagination },
@@ -330,7 +351,10 @@ export default {
       fileList: [],
 
       processTable: [],
-      processName: null
+      processName: null,
+
+      show: false,
+      idPaymentForm: null
     }
   },
   computed: {
@@ -348,6 +372,22 @@ export default {
     this.getTableData()
   },
   methods: {
+    // 路由至创建请款页面
+    routerLinkToAddPaymentForm(type) {
+      this.$router.push({
+        path: '/mobile/addPaymentForm',
+        query: {
+          type: type,
+          state: this.paymentForm.state,
+          idApproval: this.paymentForm.idApproval,
+          idPaymentForm: this.paymentForm.idPaymentForm
+        }
+      })
+    },
+    clickItemValue(data) {
+      this.paymentForm = data
+      this.show = true
+    }, 
     // 撤回
     clickReset(data) {
       if (data.state != 2) {
@@ -663,10 +703,47 @@ export default {
   color: red;
   font-weight: bold;
 }
-// .el-icon-view:hover {
-//   cursor: text;
-//   &:before {
-//     content: '查看';
-//   }
-// }
+</style>
+
+<style scoped>
+.van-popup {
+  height: 200px;
+  text-align: center;
+}
+.form_action {
+  float: left;
+  width: 25%;
+}
+.form_action span {
+  display: block;
+  color: #646566;
+}
+.form_action span:nth-child(1) {
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin: 30px 10px 5px 10px;
+  background-color: #f2f3f5;
+}
+.form_action span:nth-child(2) {
+  margin-bottom: 32px;
+}
+.form_action span i {
+  line-height: 60px;
+  font-size: 26px;
+}
+.van-button {
+  color: #646566;
+  border: none;
+  box-shadow: 10px 2px 5px 10px #f7f8fa;
+}
+.van-popup .van-button {
+  background-color: #fff;
+}
+.create_pay_form {
+  position: fixed;
+  bottom: 0;
+  color: #fff;
+}
 </style>

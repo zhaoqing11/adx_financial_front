@@ -1,8 +1,9 @@
 import Vue from 'vue';
 import 'normalize.css/normalize.css'; // A modern alternative to CSS resets
 import ElementUI from 'element-ui';
+import Vant from 'vant';
+import 'vant/lib/index.css';
 import 'element-ui/lib/theme-chalk/index.css';
-
 import '@/styles/index.scss'; // global css
 
 // 注入通用接口
@@ -17,6 +18,7 @@ import '@/icons'; // icon
 import '@/utils/requireAuth';
 
 Vue.use(ElementUI);
+Vue.use(Vant);
 Vue.config.productionTip = false;
 
 Vue.config.errorHandler = (err) => {
