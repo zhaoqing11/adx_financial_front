@@ -69,7 +69,8 @@ export default {
     return {
       idRole: getRole(),
       active: -1,
-      meun: [
+      meun: [],
+      pcMeun: [
         {
           id: 1,
           name: '请款申请',
@@ -171,53 +172,173 @@ export default {
             icon: 'private-type'
           }]
         }
+      ],
+      mobileMeun: [
+        {
+          id: 1,
+          name: '请款申请',
+          url: '/mobile/index',
+          icon: 'payment-form',
+          childMeun: []
+        }, {
+          id: 2,
+          name: '收款',
+          url: '/collectionRecord/index',
+          icon: 'collection-amount',
+          childMeun: []
+        }, {
+          id: 3,
+          name: '申请列表',
+          url: '/paymentForm/index',
+          icon: 'request-list',
+          childMeun: []
+        }, {
+          id: 4,
+          name: '收支明细',
+          url: '/flowRecord/publicFlowRecord',
+          icon: 'flow-record',
+          childMeun: [{
+            id: 7,
+            name: '公账',
+            url: '/flowRecord/publicFlowRecord',
+            icon: 'public-type'
+          }, {
+            id: 8,
+            name: '私账',
+            url: '/flowRecord/privateFlowRecord',
+            icon: 'private-type'
+          }]
+        }, {
+          id: 5,
+          name: '月报统计',
+          url: '/report/index',
+          icon: 'report',
+          childMeun: [{
+            id: 12,
+            name: '公账',
+            url: '/report/index',
+            icon: 'public-type'
+          }, {
+            id: 13,
+            name: '私账',
+            url: '/report/privateReport',
+            icon: 'private-type'
+          }]
+        }, {
+          id: 6,
+          name: '账单核对',
+          url: '/daily/publicDaily',
+          icon: 'daily',
+          childMeun: [{
+            id: 9,
+            name: '公账',
+            url: '/daily/publicDaily',
+            icon: 'public-type'
+          }, {
+            id: 10,
+            name: '私账',
+            url: '/daily/privateDaily',
+            icon: 'private-type'
+          }]
+        }, {
+          id: 11,
+          name: '账户设置',
+          url: '/setting/index',
+          icon: 'setting',
+          childMeun: []
+        }, {
+          id: 14,
+          name: '用户设置',
+          url: '/setting/user',
+          icon: 'user-setting',
+          childMeun: []
+        }, {
+          id: 15,
+          name: '部门管理',
+          url: '/setting/department',
+          icon: 'department-setting',
+          childMeun: []
+        }, {
+          id: 16,
+          name: '统计管理',
+          url: '/statistics/index',
+          icon: 'statistics',
+          childMeun: [{
+            id: 17,
+            name: '公账',
+            url: '/statistics/index',
+            icon: 'public-type'
+          }, {
+            id: 18,
+            name: '私账',
+            url: '/statistics/privateFlowRecord',
+            icon: 'private-type'
+          }]
+        }
       ]
     };
   },
-  mounted() {
-    if (this.idRole === '5') {
-      let idx = [1,2,3,4,5,6,11,16]
-      idx.forEach(id => {
-        let findIdx = this.meun.findIndex(item => {
-          return item.id === id
-        })
-        this.meun.splice(findIdx, 1)
-      })
-    } else if (this.idRole === '4') {
-      let idx = [2,3,11,14,15]
-      idx.forEach(id => {
-        let findIdx = this.meun.findIndex(item => {
-          return item.id === id
-        })
-        this.meun.splice(findIdx, 1)
-      })
-    } else if (this.idRole === '3') {
-      let idx = [5,11,14,15,16]
-      idx.forEach(id => {
-        let findIdx = this.meun.findIndex(item => {
-          return item.id === id
-        })
-        this.meun.splice(findIdx, 1)
-      })
-    } else if (this.idRole === '2') {
-      let idx = [2,5,14,15,16]
-      idx.forEach(id => {
-        let findIdx = this.meun.findIndex(item => {
-          return item.id === id
-        })
-        this.meun.splice(findIdx, 1)
-      })
-    } else if (this.idRole === '1') {
-      let idx = [2,3,4,5,6,11,14,15,16]
-      idx.forEach(id => {
-        let findIdx = this.meun.findIndex(item => {
-          return item.id === id
-        })
-        this.meun.splice(findIdx, 1)
-      })
+  watch: {
+    '$store.getters.winWidth'(newVal, oldVal) {
+      console.log(newVal, oldVal)
+      if (newVal < 1299) {
+        this.meun = this.mobileMeun
+      } else {
+        this.meun = this.pcMeun
+      }
+      setTimeout(() => {
+        this.initData()
+      }, 3000)
     }
   },
+  mounted() {
+    this.initData()
+  },
   methods: {
+    initData() {
+      if (this.idRole === '5') {
+        let idx = [1,2,3,4,5,6,11,16]
+        idx.forEach(id => {
+          let findIdx = this.meun.findIndex(item => {
+            return item.id === id
+          })
+          this.meun.splice(findIdx, 1)
+        })
+      } else if (this.idRole === '4') {
+        let idx = [2,3,11,14,15]
+        idx.forEach(id => {
+          let findIdx = this.meun.findIndex(item => {
+            return item.id === id
+          })
+          this.meun.splice(findIdx, 1)
+        })
+      } else if (this.idRole === '3') {
+        let idx = [5,11,14,15,16]
+        idx.forEach(id => {
+          let findIdx = this.meun.findIndex(item => {
+            return item.id === id
+          })
+          this.meun.splice(findIdx, 1)
+        })
+      } else if (this.idRole === '2') {
+        let idx = [2,5,14,15,16]
+        idx.forEach(id => {
+          let findIdx = this.meun.findIndex(item => {
+            return item.id === id
+          })
+          this.meun.splice(findIdx, 1)
+        })
+      } else if (this.idRole === '1') {
+        let idx = [2,3,4,5,6,11,14,15,16]
+        idx.forEach(id => {
+          let findIdx = this.meun.findIndex(item => {
+            return item.id === id
+          })
+          this.meun.splice(findIdx, 1)
+        })
+      }
+      console.log('meun', this.meun)
+    },
     closeSidebar() {
       this.$store.commit('app/SHOWSIDEBAR', false)
     },

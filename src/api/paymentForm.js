@@ -1,5 +1,17 @@
 import request from '@/utils/request';
 
+/**
+ * 获取草稿项目
+ * @param {*} data 
+ * @returns 
+ */
+export function getPaymentFormByState(data) {
+  return request({
+    url: '/paymentForm/selectByState',
+    method: 'post',
+    data
+  })
+}
 
 /**
  * 获取收支流水列表

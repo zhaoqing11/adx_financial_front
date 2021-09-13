@@ -9,11 +9,12 @@
       <van-divider contentPosition="left">基础信息（必填）</van-divider>
       <van-cell-group>
         <van-field
+          :disabled="type == 'view'"
           v-model="paymentForm.cardTypeName"
           label="类型"
           placeholder="请选择类型"
           :border="false"
-          @click="show = true"
+          @click="clickShowType"
         />
         <van-field
           :disabled="isDisabled"
@@ -66,122 +67,23 @@
         @select="selectCardType"
       />
     </div>
-    <!-- <footer class="iq-footer">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-lg-6">
-            <ul class="list-inline mb-0">
-            </ul>
-          </div>
-          <div class="col-lg-6 text-right">
-            <span class="mr-1">财务管理平台系统 版权所有 | <a href="https://beian.miit.gov.cn/">粤ICP备12030444号</a></span>
-          </div>
-        </div>
-      </div>
-    </footer> -->
-    <!-- <el-dialog :title="title" :visible.sync="dialogFormVisible">
-      <span class="promptText" v-if="isDisabled">{{promptText}}</span>
-      <el-form :model="paymentForm" ref="paymentForm" :rules="rules" :disabled="disabled">
-        <el-form-item label="类型" :label-width="formLabelWidth" prop="idCardType">
-          <el-select v-model="paymentForm.idCardType" placeholder="请选择" style="width:100%;" @change="changeSelectOption">
-            <el-option
-              v-for="item in cardTypeData"
-              :key="item.idCardType"
-              :label="item.name"
-              :value="item.idCardType">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="事由" :label-width="formLabelWidth" prop="reasonApplication">
-          <el-input type="textarea" v-model="paymentForm.reasonApplication" autocomplete="off" :disabled="isDisabled"></el-input>
-        </el-form-item>
-        <el-form-item label="申请金额" :label-width="formLabelWidth" prop="amount">
-          <el-input v-model="paymentForm.amount" type="number" autocomplete="off" :disabled="isDisabled"></el-input>
-        </el-form-item>
-        <el-form-item label="付款名称" :label-width="formLabelWidth" prop="paymentName">
-          <el-input v-model="paymentForm.paymentName" autocomplete="off" :disabled="isDisabled"></el-input>
-        </el-form-item>
-        <el-form-item label="付款账号" :label-width="formLabelWidth" prop="paymentAccount">
-          <el-input v-model="paymentForm.paymentAccount" autocomplete="off" :disabled="isDisabled" ref="cardInput" @blur="blurFormatCardNumber(paymentForm.paymentAccount)"></el-input>
-        </el-form-item>
-        <el-form-item label="上传附件" :label-width="formLabelWidth">
-          <el-upload
-            class="upload-demo"
-            v-if="!disabled"
-            :action="uploadUrl"
-            :before-upload="beforeUpload"
-            :on-remove="handleRemove"
-            :on-success="uploadSuccess"
-            multiple
-            :limit="3"
-            accept=".jpg, .jpeg, .png, .JPG, .JPEG"
-            :show-file-list="false">
-            <el-button size="small" type="primary">点击上传</el-button>
-            <span style="color:red;">仅限上传3个文件，格式支持（.jpg/.jpeg/.png）</span>
-          </el-upload>
-          <el-tag v-for="(item,index) in fileList" 
-          :key="index" 
-          :closable="!disabled"
-          @click="clickTag(fileList, index)"
-          @close="closeTag(item)">{{item.fileName}}</el-tag>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer" v-if="!disabled">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="warning" @click="addPaymentForm(1)">保 存</el-button>
-        <el-button type="primary" @click="addPaymentForm(2)">确 定</el-button>
-      </div>
-    </el-dialog>
-    <PreviewImage ref="previewImage" /> -->
     <div class="_approval" v-if="type == 'view' && isDisabled">
       <div v-if="paymentForm.state != 1">
-        <h5>汇款进度</h5>
-        <br/>
-        <van-steps :steps="steps" :active="active" />
-
-        <div class="el-steps el-steps--horizontal">
-          <div class="el-step is-horizontal is-center" style="flex-basis: 50%; margin-right: 0px;" v-for="(item,index) in processTable" :key="index">
-            <div :class="item.idCheckResult == 1 ? 'el-step__head is-finish' : 'el-step__head'">
-              <div class="el-step__line" style="margin-right: 0px;">
-                <i class="el-step__line-inner" style="transition-delay: 0ms; border-width: 0px; width: 0%;"></i>
-              </div>
-              <div class="el-step__icon is-text">
-                <div class="el-step__icon-inner">
-                  <span v-if="item.idCheckResult == 1"><i class="el-icon-check"></i></span>
-                  <span v-else-if="item.idCheckResult == 2"><i class="el-icon-close"></i></span>
-                  <span v-else>{{index + 1}}</span>
-                </div>
-              </div>
-            </div>
-            <div class="el-step__main">
-              <div :class="item.idCheckResult == 1 ? 'el-step__title is-finish' : 'el-step__title'">{{item.caseName}}</div>
-              <div :class="item.idCheckResult == 1 ? 'el-step__description is-finish' : 'el-step__description'">
-                <div v-if="index == 0">
-                  {{item.createTime}}
-                </div>
-                <div v-else-if="index == 1">
-                  <span v-if="item.idCheckResult == 1">审核通过</span>
-                  <span v-else-if="item.idCheckResult == 2">
-                    <p style="color:red;">{{item.checkCommon}}</p>
-                  </span>
-                  <span v-else-if="item.idCheckResult == 3">驳回</span>
-                  <span v-else>待审核</span>
-                </div>
-                <div v-else>
-                  <span v-if="item.idCheckResult">已汇款</span>
-                  <span v-else>待汇款</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <van-divider contentPosition="left">汇款进度</van-divider>
+        <van-steps
+          :active="active"
+          active-icon="success"
+          active-color="#38f">
+          <van-step v-for="(item,index) in processTable" :key="index">{{item.caseName}}</van-step>
+        </van-steps>
       </div>
     </div>
+    <van-button size="large" style="width:100%;" @click="goback" v-if="type == 'view'">返 回</van-button>
   </div>
 </template>
 
 <script>
-import { Toast } from 'vant';
+import { Toast, Steps, Step } from 'vant';
 import * as API from '@/api/paymentForm';
 import * as APPROVAL from '@/api/approval';
 import * as REMITTANCE from '@/api/paymentRemittance';
@@ -190,21 +92,13 @@ import * as DAILY from '@/api/daily';
 import { getUserId, getToken } from '@/utils/auth';
 import Pagination from '@/components/Pagination';
 import PreviewImage from "@/components/PreviewImage"
-import { formatCardNum, isEmpty } from '@/utils/validate';
+import { isEmpty } from '@/utils/validate';
 
 export default {
-  components: { PreviewImage, Pagination },
+  components: { PreviewImage, Pagination, Steps, Step },
   data() {
     return {
-      title: '',
       idUser: getUserId(),
-      showUser: false,
-      pageNum: 1,
-      pageSize: 10,
-      totalPage: 1,
-      totalRecord: 0,
-      code: '',
-      tableData: [],
       paymentForm: {
         idPaymentForm: null,
         idApproval: null,
@@ -218,66 +112,19 @@ export default {
         idUser: null,
         state: null
       },
-      formLabelWidth: '120',
-      rules: {
-        idCardType: [
-          { required: true, message: '请选择账目类型', trigger: 'change' },
-        ],
-        reasonApplication: [
-          { required: true, message: '请填写申请事由', trigger: 'blur' },
-        ],
-        amount: [
-          { required: true, message: '请填写申请金额', trigger: 'blur' }
-        ],
-        paymentName: [
-          { required: true, message: '请填写付款名称', trigger: 'blur' }
-        ],
-        paymentAccount: [
-          { required: true, message: '请填写付款账号', trigger: 'blur' }
-        ]
-      },
-      formatCardNum: formatCardNum,
       cardTypeData: [],
       isDisabled: false,
       promptText: '上日账单尚未通过审核，暂时无法创建请款申请',
-
-      idDaily: null,
-      idCardType: null,
-
-      dialogImageUrl: '',
-      dialogVisible: false,
-      disabled: false,
       fileList: [],
-
       processTable: [],
       processName: null,
-
       show: false,
       showPrompt: false,
       type: null,
       state: null,
       idApproval: null,
       idPaymentForm: null,
-
-      active: 1,
-      steps: [
-        {
-          text: '步骤一',
-          desc: '描述信息',
-        },
-        {
-          text: '步骤二',
-          desc: '描述信息',
-        },
-        {
-          text: '步骤三',
-          desc: '描述信息',
-        },
-        {
-          text: '步骤四',
-          desc: '描述信息',
-        },
-      ]
+      active: 0
     }
   },
   computed: {
@@ -301,8 +148,14 @@ export default {
     if (this.type == 'view' || this.type == 'edit') {
       this.clickPreview(query.type, query.state, query.idApproval, query.idPaymentForm)
     }
+    this.getPaymentFormByState()
   },
   methods: {
+    clickShowType() {
+      if (this.type != 'view') {
+        this.show = true
+      }
+    },
     // 返回
     goback() {
       this.$router.go(-1)
@@ -373,17 +226,9 @@ export default {
       }
 
       if (type === 'view') {
-        this.title = '查看申请单'
         this.isDisabled = true
       } else {
-        if (state === 2) {
-          this.$message.warning('无法编辑，数据正在审核中')
-        } else if (state === 3) {
-          this.$message.warning('无法编辑，申请已通过审核')
-        } else {
-          this.title = '编辑申请单'
-          this.isDisabled = false
-        }
+        this.isDisabled = false
       }
     },
     // 查看申请详情
@@ -453,21 +298,6 @@ export default {
         })
       }
     },
-    clickShowDialogForm() {
-      this.paymentForm.idCardType = null
-      this.paymentForm.reasonApplication = null
-      this.paymentForm.amount = null
-      this.paymentForm.paymentName = null
-      this.paymentForm.paymentAccount = null
-      this.paymentForm.files = null
-      this.paymentForm.idUser = null
-      this.paymentForm.idApproval = null
-      this.paymentForm.idPaymentForm = null
-      this.fileList = []
-
-      this.title = '创建申请单'
-      this.disabled = false
-    },
     // 获取审批流信息
     selectApprovalInfo(idApproval, idPaymentForm) {
       this.processTable = []
@@ -480,6 +310,12 @@ export default {
           this.processTable.push(tmpData.list[len - 2])
           this.processTable.push(tmpData.list[len - 1])
           this.processName = tmpData.name
+
+          this.processTable.forEach(item => {
+            if (item.idCheckResult == 1) {
+              this.active = this.active + 1
+            }
+          })
           this.getRemittanceByIdPamentForm(idPaymentForm)
         }
       })
@@ -496,6 +332,19 @@ export default {
             idCheckResult: idCheckResult
           }
           this.processTable.push(param)
+        }
+      })
+    },
+    // 获取草稿项目
+    getPaymentFormByState() {
+      API.getPaymentFormByState({
+        idUser: this.idUser
+      }).then(res => {
+        if (res.data.status === 200) {
+          if (res.data.datas != null) {
+            this.paymentForm = res.data.datas
+            this.paymentForm.cardTypeName = this.cardTypeData[this.paymentForm.idCardType - 1].name
+          }
         }
       })
     },
@@ -522,11 +371,6 @@ export default {
     },
     // 格式化卡号显示，每4位加-
     blurFormatCardNumber (cardNum) {
-      // cardNum = cardNum.replaceAll('-', '')
-      // if (cardNum.length < 16 || cardNum.length > 22) {
-      //   this.$message.warning('请输入正确卡号')
-      //   return false
-      // }
       // 获取input的dom对象，这里因为用的是element ui的input，所以需要这样拿到
       const input = this.$refs.cardInput.$el.getElementsByTagName('input')[0]
       // 获取当前光标的位置
