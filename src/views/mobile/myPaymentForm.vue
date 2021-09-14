@@ -43,7 +43,7 @@ import Pagination from '@/components/Pagination';
 import PreviewImage from "@/components/PreviewImage"
 
 export default {
-  components: { PreviewImage, Pagination, Dialog },
+  components: { PreviewImage, Pagination },
   data() {
     return {
       idUser: getUserId(),
@@ -122,7 +122,7 @@ export default {
                 }
               })
             }).catch(() => {
-              Toast('已取消删除')
+              Toast('已取消')
             });
           }
         }
@@ -152,7 +152,7 @@ export default {
           }
         })
       }).catch(() => {
-        Toast('已取消撤回')
+        Toast('已取消')
       });
     },
     // 获取个人请款记录列表
@@ -205,34 +205,6 @@ export default {
 </style>
 
 <style scoped>
-.van-popup {
-  height: 200px;
-  text-align: center;
-}
-.form_action {
-  float: left;
-  width: 25%;
-}
-.form_action span {
-  display: block;
-  color: #646566;
-}
-.form_action span:nth-child(1) {
-  display: inline-block;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  margin: 30px 10px 5px 10px;
-  background-color: #f2f3f5;
-}
-.form_action span:nth-child(2) {
-  margin-bottom: 32px;
-}
-.form_action span i {
-  color: #fff;
-  line-height: 60px;
-  font-size: 26px;
-}
 .van-button {
   color: #646566;
   border: none;
@@ -245,17 +217,5 @@ export default {
   position: fixed;
   bottom: 0;
   color: #fff;
-}
-#view-btn {
-  background-color: #409EFF;
-}
-#edit-btn {
-  background-color: #E6A23C;
-}
-#revoke-btn {
-  background-color: #DCDFE6;
-}
-#del-btn {
-  background-color: #F56C6C;
 }
 </style>

@@ -215,6 +215,18 @@ export const constantRoutes = [
         name: "AddPaymentForm",
         component: () => import("@/views/mobile/addPaymentForm"),
         meta: { title: "创建请款申请", icon: "addPaymentForm", requireAuth: true }
+      },
+      {
+        path: "paymentForm",
+        name: "PaymentForm",
+        component: () => import("@/views/mobile/paymentForm"),
+        meta: { title: "申请列表", icon: "paymentForm", requireAuth: true }
+      },
+      {
+        path: "approval",
+        name: "Approval",
+        component: () => import("@/views/mobile/approval"),
+        meta: { title: "审核申请列表", icon: "approval", requireAuth: true }
       }
     ]
   }

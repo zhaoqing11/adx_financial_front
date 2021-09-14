@@ -1,5 +1,18 @@
 import request from '@/utils/request';
 
+
+/**
+ * 获取审批数据
+ * @param {*} data 
+ * @returns 
+*/
+export function selectByStateCount() {
+  return request({
+    url: '/paymentForm/selectByStateCount',
+    method: 'post'
+  })
+}
+
 /**
  * 获取草稿项目
  * @param {*} data 

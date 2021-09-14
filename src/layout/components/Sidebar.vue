@@ -189,7 +189,7 @@ export default {
         }, {
           id: 3,
           name: '申请列表',
-          url: '/paymentForm/index',
+          url: '/mobile/paymentForm',
           icon: 'request-list',
           childMeun: []
         }, {
@@ -275,27 +275,49 @@ export default {
             icon: 'private-type'
           }]
         }
-      ]
+      ],
+      windowWidth: document.documentElement.clientWidth,  //实时屏幕宽度
+      windowHeight: document.documentElement.clientHeight,   //实时屏幕高度
     };
   },
   watch: {
-    '$store.getters.winWidth'(newVal, oldVal) {
-      console.log(newVal, oldVal)
+    '$store.getters.winWidth'(newVal) {
       if (newVal < 1299) {
-        this.meun = this.mobileMeun
+        this.meun = JSON.parse(JSON.stringify(this.mobileMeun))
       } else {
-        this.meun = this.pcMeun
+        this.meun = JSON.parse(JSON.stringify(this.pcMeun))
       }
-      setTimeout(() => {
-        this.initData()
-      }, 3000)
+      this.initData()
+    },
+    windowHeight (val) {
+      this.$store.commit('app/WINHEIGHT', val)
+    },
+    windowWidth (val) {
+      this.$store.commit('app/WINWIDTH', val)
     }
   },
   mounted() {
+    console.log('mounted...')
+    var that = this;
+    // <!--把window.onresize事件挂在到mounted函数上-->
+    window.onresize = () => {
+      return (() => {
+        window.fullHeight = document.documentElement.clientHeight;
+        window.fullWidth = document.documentElement.clientWidth;
+        that.windowHeight = window.fullHeight;  // 高
+        that.windowWidth = window.fullWidth; // 宽
+      })()
+    };
+    if (that.windowWidth < 1299) {
+      this.meun = JSON.parse(JSON.stringify(this.mobileMeun))
+    } else {
+      this.meun = JSON.parse(JSON.stringify(this.pcMeun))
+    }
     this.initData()
   },
   methods: {
     initData() {
+      // console.log('before ', this.meun)
       if (this.idRole === '5') {
         let idx = [1,2,3,4,5,6,11,16]
         idx.forEach(id => {
@@ -337,7 +359,7 @@ export default {
           this.meun.splice(findIdx, 1)
         })
       }
-      console.log('meun', this.meun)
+      // console.log('after ', this.meun)
     },
     closeSidebar() {
       this.$store.commit('app/SHOWSIDEBAR', false)
@@ -355,6 +377,7 @@ export default {
       } else {
         this.active = data.id
       }
+      this.closeSidebar()
       this.$router.push(data.url)
     },
     // 返回首页

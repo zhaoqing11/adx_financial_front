@@ -57,6 +57,7 @@
 </template>
 
 <script>
+import { Toast, Dialog } from 'vant';
 import * as API from '@/api/user';
 import { getRealName, getUserId, getToken  } from "@/utils/auth";
 
@@ -101,6 +102,7 @@ export default {
     };
   },
   methods: {
+    // 展开菜单
     clickShowMenu() {
       let params = this.$store.getters
       if (params.winWidth <= 1299) {
@@ -109,6 +111,7 @@ export default {
         this.$store.commit('app/SHOWSIDEBAR', false)
       }
     },
+    // 修改用户密码
     updateUserPassword(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -130,6 +133,7 @@ export default {
         }
       })
     },
+    // 展开用户菜单
     clickShowCard() {
       if (this.showUser) {
         this.showUser = false
@@ -139,17 +143,33 @@ export default {
     },
     // 退出登录
     logout() {
-      this.$confirm("确定退出系统吗？", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(() => {
-        this.$store.dispatch("logout", this.userInfo).then(res => {
-          if (res.data.status === 200) {
-            this.$router.push("/login");
-          }
+      let params = this.$store.getters
+      if (params.winWidth < 1299) {
+        Dialog.confirm({
+          title: '提示',
+          message: '确定退出系统吗？',
+        }).then(() => {
+          this.$store.dispatch("logout", this.userInfo).then(res => {
+            if (res.data.status === 200) {
+              this.$router.push("/login");
+            }
+          });
+        }).catch(() => {
+          Toast('已取消')
         });
-      });
+      } else {
+        this.$confirm("确定退出系统吗？", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(() => {
+          this.$store.dispatch("logout", this.userInfo).then(res => {
+            if (res.data.status === 200) {
+              this.$router.push("/login");
+            }
+          });
+        });
+      }
     },
     // 重置
     resetForm(formName) {

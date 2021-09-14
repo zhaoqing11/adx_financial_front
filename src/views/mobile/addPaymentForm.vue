@@ -95,7 +95,7 @@ import PreviewImage from "@/components/PreviewImage"
 import { isEmpty } from '@/utils/validate';
 
 export default {
-  components: { PreviewImage, Pagination, Steps, Step },
+  components: { PreviewImage, Pagination },
   data() {
     return {
       idUser: getUserId(),
