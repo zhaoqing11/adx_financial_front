@@ -51,7 +51,20 @@
       <van-divider contentPosition="left">上传附件</van-divider>
       <van-row>
         <van-col span="24">
-          <van-uploader :file-list="fileList" @after-read="afterRead" />
+          <van-uploader
+          v-if="type == 'add' || type == 'edit'"
+          v-model="fileList"
+          :multiple="true"
+          :deletable="true"
+          :max-count="3"
+          :after-read="afterRead"
+          @delete="deleteFile"/>
+          <van-uploader
+          v-else
+          :file-list="fileList"
+          :capture="capture"
+          :show-upload="false"
+          :deletable="false"/>
         </van-col>
       </van-row>
       <br/>
@@ -83,7 +96,7 @@
 </template>
 
 <script>
-import { Toast, Steps, Step } from 'vant';
+import { Toast } from 'vant';
 import * as API from '@/api/paymentForm';
 import * as APPROVAL from '@/api/approval';
 import * as REMITTANCE from '@/api/paymentRemittance';
@@ -124,7 +137,11 @@ export default {
       state: null,
       idApproval: null,
       idPaymentForm: null,
-      active: 0
+      active: 0,
+
+      capture: ['album'],
+      imageUrl: [],
+      baseURL: ''
     }
   },
   computed: {
@@ -151,6 +168,44 @@ export default {
     this.getPaymentFormByState()
   },
   methods: {
+    // 删除文件
+    deleteFile(file) {
+      // let delIdx = this.fileList.findIndex(key => {
+      //   return key.id === file.id
+      // })
+      // this.fileList.splice(delIdx, 1)
+      let id = this.imageUrl.findIndex(key => {
+        return key.fileId === file.id
+      })
+      this.imageUrl.splice(id, 1)
+    },
+    // 文件上传
+    afterRead(event) {
+      if (this.fileList.length >= 3) {
+        Toast.fail('上传文件不得超过3个');
+        return false;
+      }
+      Toast.loading({
+        message: '上传中...',
+        forbidClick: true,
+      });
+      const file = new FormData();
+      if (event.length > 0) {
+        for (const i in event) {
+          if (event[i].file) {
+            file.append("file", event[i].file);
+          }
+        }
+      } else {
+        file.append("file", event.file);
+      }
+      
+      this.axios.post(process.env.VUE_APP_BASE_API + `/file/upload`, file) // this.baseURL
+      .then(res => {
+        let tmpData = res.data.datas;
+        this.imageUrl.push(tmpData);
+      })
+    },
     clickShowType() {
       if (this.type != 'view') {
         this.show = true
@@ -166,42 +221,6 @@ export default {
       this.paymentForm.cardTypeName = event.name
       this.show = false
       this.changeSelectOption()
-    },
-    afterRead() {},
-    clickTag(file, index) {
-      this.$refs.previewImage.show(file, index)
-    },
-    // 文件上传
-    uploadSuccess(response, file, fileList) {
-      const { status, datas } = response
-      if (status === 200) {
-        this.fileList.push(datas)
-      }
-    },
-    closeTag(item) {
-      this.fileList.splice(this.fileList.indexOf(item), 1)
-    },
-    beforeUpload(file) {
-      if (this.fileList.length > 3) {
-        this.$message.warning('仅限上传3个文件')
-        return false;
-      }
-
-      if (file.type == 'image/jpeg' ||
-        file.type == 'image/jpg' ||
-        file.type == 'image/png') {
-        return true;
-      }
-
-      this.$message.warning('只能上传jpg/jpeg/png文件')
-      return false;
-    },
-    // 删除文件
-    handleRemove(file) {
-      let id = this.fileList.findIndex(key => {
-        return key.fileId == file.fileId
-      })
-      this.fileList.splice(id, 1)
     },
     changeSelectOption() {
       DAILY.selectIsExitUnApprovalDaily({
@@ -240,6 +259,15 @@ export default {
           this.paymentForm = res.data.datas
           this.paymentForm.cardTypeName = this.cardTypeData[this.paymentForm.idCardType - 1].name
           this.fileList = this.paymentForm.files != null ? JSON.parse(this.paymentForm.files) : []
+          this.imageUrl = JSON.parse(JSON.stringify(this.fileList))
+          this.fileList.forEach((item, idx) => {
+            let param = {
+              id: item.fileId,
+              url: process.env.VUE_APP_BASE_API + `/file/get/` + item.fileId,
+              name: item.fileName
+            }
+            this.fileList[idx] = param
+          })
         }
       })
     },
@@ -268,7 +296,7 @@ export default {
       let valid  = this.checkFormValue()
       if (valid) {
         if (this.fileList.length > 0) {
-          this.paymentForm.files = JSON.stringify(this.fileList)
+          this.paymentForm.files = JSON.stringify(this.imageUrl)
         }
         this.paymentForm.paymentAccount = this.paymentForm.paymentAccount.replaceAll('-', '')
         let idPaymentForm = this.paymentForm.idPaymentForm != null ? this.paymentForm.idPaymentForm : null

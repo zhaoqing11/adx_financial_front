@@ -12,11 +12,11 @@
             <span>{{paymentRemittanceCount}}</span>
           </div>
           <div class="card" v-if="idRole === '2' || idRole === '3'" @click="routerLinkToPublicDaily">
-            <label>待审批公账</label>
+            <label>{{ idRole === '2' ? '待审批公账' : '待汇款公账'}}</label>
             <span>{{countPub}}</span>
           </div>
           <div class="card" v-if="idRole === '2' || idRole === '3'" @click="routerLinkToPrivateDaily">
-            <label>待审批私账</label>
+            <label>{{ idRole === '2' ? '待审批私账' : '待汇款私账'}} </label>
             <span>{{countPri}}</span>
           </div>
           <!-- <div class="card" v-if="idRole === '2'">
@@ -107,11 +107,21 @@ export default {
   methods: {
     // 路由至（公账）账单审批页
     routerLinkToPublicDaily() {
-      this.$router.push('/daily/publicDaily')
+      let width = this.$store.getters.winWidth
+      if (width < 1299) {
+        // this.$router.push('/mobile/paymentForm')
+      } else {
+        this.$router.push('/daily/publicDaily')
+      }
     },
     // 路由至（私账）账单审批页
     routerLinkToPrivateDaily() {
-      this.$router.push('/daily/privateDaily')
+      let width = this.$store.getters.winWidth
+      if (width < 1299) {
+        // this.$router.push('/mobile/paymentForm')
+      } else {
+        this.$router.push('/daily/privateDaily')
+      }
     },
     // 获取待审批账单数量
     selectDailyByState() {
@@ -141,7 +151,12 @@ export default {
     },
     // 路由至请款审批页
     routerLinkToApprocalPayment() {
-      this.$router.push('/paymentForm/index')
+      let width = this.$store.getters.winWidth
+      if (width < 1299) {
+        this.$router.push('/mobile/paymentForm')
+      } else {
+        this.$router.push('/paymentForm/index')
+      }
     },
     // 创建每日余额
     addRemainingSum(formName) {

@@ -4,7 +4,6 @@ import ElementUI from 'element-ui';
 import Vant from 'vant';
 import 'vant/lib/index.css';
 import 'element-ui/lib/theme-chalk/index.css';
-import '@/styles/css/iconfont.css';
 import '@/styles/index.scss'; // global css
 
 // 注入通用接口
