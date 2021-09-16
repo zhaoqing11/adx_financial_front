@@ -2,7 +2,7 @@
   <div>
     <div class="wrapper">
       <van-search v-model="code" placeholder="搜索申请单编号" @search="getTableData"/>
-      <van-row gutter="20">
+      <van-row gutter="20" class="_top">
         <van-col span="11">
           <span v-if="idRole == 2">已审核: {{approvaled}}</span>
           <span v-else-if="idRole == 3">已汇款: {{remittanceCount}}</span>
@@ -49,10 +49,6 @@
               <van-col span="18">{{item.idCardType === 1 ? '公账' : '私账'}}</van-col>
             </van-row>
             <van-row gutter="20">
-              <van-col span="6">附件：</van-col>
-              <van-col span="18">{{item.paymentAccount}}</van-col>
-            </van-row>
-            <van-row gutter="20">
               <van-col span="6">审核状态：</van-col>
               <van-col span="18">
                 <span id="orange-cell" v-if="item.state == 2">待审批</span>
@@ -60,6 +56,18 @@
                 <span id="red-cell" v-else-if="item.state == 4">不通过</span>
               </van-col>
             </van-row>
+            <br/>
+            <van-row gutter="20">
+              <van-col span="24" class="_accessory" style="padding:5px 10px; min-height: 120px;">
+                <h6 style="text-indent: 0; margin: 5px 0;">附件：</h6>
+                <van-uploader
+                :file-list="fileList"
+                :capture="capture"
+                :show-upload="false"
+                :deletable="false"/>
+              </van-col>
+            </van-row>
+            <br/>
             <van-row gutter="20" v-if="item.state == 3">
               <van-col span="6">审批金额：</van-col>
               <van-col span="18">{{item.approvalAmount ? item.approvalAmount : '--'}}</van-col>
@@ -83,17 +91,13 @@
           </div>
           <!-- approval payment form -->
           <div class="_approval" v-if="item.state == 2 && idRole == 2">
-            <van-divider contentPosition="left">审批操作</van-divider>
             <van-row gutter="20">
-              <van-col span="24">
+              <van-col span="24" style="padding: 10px;">
+                <h6>审批操作</h6>
                 <van-radio-group v-model="approvalForm.idCheckResult">
                   <van-radio :name="1">通过</van-radio>
                   <van-radio :name="2">不通过</van-radio>
                 </van-radio-group>
-              </van-col>
-            </van-row>
-            <van-row gutter="20">
-              <van-col span="24">
                 <van-cell-group>
                   <van-field
                     v-model="approvalForm.checkCommon"
@@ -103,56 +107,29 @@
                     autosize
                     :border="false"
                   />
+                  <van-field
+                    v-if="approvalForm.idCheckResult == 1"
+                    v-model="paymentFormApproval.amount"
+                    type="number"
+                    label="审批金额"
+                    placeholder="请输入审批金额"
+                    required
+                    :border="false"
+                  />
                 </van-cell-group>
-
+                <div class="_submit_approval">
+                  <van-button type="default" size="large" @click="cancelApproval(index)">取 消</van-button>
+                  <van-button type="info" size="large" @click="approvalPaymentForm(index)">审 批</van-button>
+                </div>
               </van-col>
-            </van-row>
-            <van-row gutter="20">
-              <van-col span="24">
-                <van-field
-                  v-if="approvalForm.idCheckResult == 1"
-                  v-model="paymentFormApproval.amount"
-                  type="number"
-                  label="审批金额"
-                  placeholder="请输入审批金额"
-                  required
-                  :border="false"
-                />
-              </van-col>
-            </van-row>
-            <van-row gutter="20">
-              <van-col span="12"><van-button type="default" size="large" @click="cancelApproval(index)">取 消</van-button></van-col>
-              <van-col span="12"><van-button type="info" size="large" @click="approvalPaymentForm(index)">审 批</van-button></van-col>
             </van-row>
           </div>
+          <br/>
           <!-- remittance payment form -->
           <div class="_approval" v-if="item.state == 3 && idRole == 3 && item.remittanceAmount == null">
-            <van-divider contentPosition="left">汇款操作</van-divider>
             <van-row gutter="20">
-              <van-col span="24">
-                <van-field
-                  v-model="paymentRemittanceForm.amount"
-                  type="number"
-                  label="金额"
-                  placeholder="请输入金额"
-                  required
-                  :border="false"
-                />
-              </van-col>
-            </van-row>
-            <van-row gutter="20">
-              <van-col span="24">
-                <van-field
-                  v-model="paymentRemittanceForm.serviceCharge"
-                  type="number"
-                  label="手续费"
-                  placeholder="请输入手续费"
-                  :border="false"
-                />
-              </van-col>
-            </van-row>
-            <van-row gutter="20">
-              <van-col span="24">
+              <van-col span="24" style="padding: 10px;">
+                <h6>汇款操作</h6>
                 <van-cell-group>
                   <van-field
                     v-model="paymentRemittanceForm.remittanceDate"
@@ -178,12 +155,21 @@
                       :max-date="maxDate" 
                       :formatter="formatter" />
                   </van-popup>
-                </van-cell-group>
-              </van-col>
-            </van-row>
-            <van-row gutter="20">
-              <van-col span="24">
-                <van-cell-group>
+                  <van-field
+                    v-model="paymentRemittanceForm.amount"
+                    type="number"
+                    label="金额"
+                    placeholder="请输入金额"
+                    required
+                    :border="false"
+                  />
+                  <van-field
+                    v-model="paymentRemittanceForm.serviceCharge"
+                    type="number"
+                    label="手续费"
+                    placeholder="请输入手续费"
+                    :border="false"
+                  />
                   <van-field
                     v-model="paymentRemittanceForm.remark"
                     label="备注"
@@ -193,11 +179,11 @@
                     :border="false"
                   />
                 </van-cell-group>
+                <div class="_submit_approval">
+                  <van-button type="default" size="large" @click="cancelRemittance(index)">取 消</van-button>
+                  <van-button type="info" size="large" @click="addPaymentRemittance(index)">确 定</van-button>
+                </div>
               </van-col>
-            </van-row>
-            <van-row gutter="20">
-              <van-col span="12"><van-button type="default" size="large" @click="cancelRemittance(index)">取 消</van-button></van-col>
-              <van-col span="12"><van-button type="info" size="large" @click="addPaymentRemittance(index)">确 定</van-button></van-col>
             </van-row>
           </div>
         </van-collapse-item>
@@ -259,6 +245,8 @@ export default {
       minDate: new Date(1947, 0, 1),
       maxDate: new Date(),
       currentDate: new Date(),
+      capture: ['album'],
+      fileList: []
     }
   },
   mounted() {
@@ -338,6 +326,15 @@ export default {
     changeCollapse(element, data) {
       this.paymentFormApproval.idPaymentForm = data.idPaymentForm
       this.paymentRemittanceForm.idPaymentForm = data.idPaymentForm
+      this.fileList = JSON.parse(data.files)
+      this.fileList.forEach((item, idx) => {
+        let param = {
+          id: item.fileId,
+          url: process.env.VUE_APP_BASE_API + `/file/get/` + item.fileId,
+          name: item.fileName
+        }
+        this.fileList[idx] = param
+      })
       this.selectApprovalInfo(data.idApproval)
     },
     // 非空验证
@@ -436,13 +433,24 @@ export default {
 </script>
 
 <style lang="scss" >
+.wrapper {
+  font-family: DM Sans, sans-serif;
+}
+.van-collapse-item__content {
+  background-color: #F2F6FC;
+}
+.van-uploader__preview-image {
+  background-color: #E4E7ED;
+}
 </style>
 
 <style scoped>
+._top {
+  margin: 5px 0;
+}
 .van-row {
   color: #646566;
   font-size: 16px;
-  margin: 5px 0;
   text-align: center;
 }
 .svg-icon {
@@ -456,11 +464,8 @@ export default {
   font-weight: 400;
   margin: 0;
   padding: 0%;
-  background-color: #F2F6FC;
+  background-color: #fff;
   font-family: DM Sans, sans-serif;
-}
-.van-collapse-item .van-col:nth-child(1) {
-  background-color: #EBEEF5;
 }
 .cell_body {
   text-indent: 1em;
@@ -470,7 +475,6 @@ export default {
 }
 ._approval .van-col,
 ._approval .van-col:nth-child(1) {
-  background: none;
   font-size: initial;
 }
 .van-radio {
@@ -487,5 +491,8 @@ export default {
 #red-cell {
   color: red;
   font-weight: bold;
+}
+._submit_approval .van-button {
+  width: 49%;
 }
 </style>

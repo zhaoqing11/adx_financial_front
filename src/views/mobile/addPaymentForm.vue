@@ -6,8 +6,8 @@
         :scrollable="false"
         :text="promptText"
       />
-      <van-divider contentPosition="left">基础信息（必填）</van-divider>
       <van-cell-group>
+        <h6 style="padding-top:10px;">基础信息（必填）</h6>
         <van-field
           :disabled="type == 'view'"
           v-model="paymentForm.cardTypeName"
@@ -48,9 +48,10 @@
           :border="false"
         />
       </van-cell-group>
-      <van-divider contentPosition="left">上传附件</van-divider>
+      <br/>
       <van-row>
         <van-col span="24">
+          <h6>上传附件</h6>
           <van-uploader
           v-if="type == 'add' || type == 'edit'"
           v-model="fileList"
@@ -82,16 +83,21 @@
     </div>
     <div class="_approval" v-if="type == 'view' && isDisabled">
       <div v-if="paymentForm.state != 1">
-        <van-divider contentPosition="left">汇款进度</van-divider>
-        <van-steps
-          :active="active"
-          active-icon="success"
-          active-color="#38f">
-          <van-step v-for="(item,index) in processTable" :key="index">{{item.caseName}}</van-step>
-        </van-steps>
+        <van-row>
+          <van-col span="24">
+            <h6>汇款进度</h6>
+            <van-steps
+              :active="active"
+              active-icon="success"
+              active-color="#38f">
+              <van-step v-for="(item,index) in processTable" :key="index">{{item.caseName}}</van-step>
+            </van-steps>
+          </van-col>
+        </van-row>
       </div>
     </div>
-    <van-button size="large" style="width:100%;" @click="goback" v-if="type == 'view'">返 回</van-button>
+    <br/>
+    <van-button style="width:100%;" @click="goback" v-if="type == 'view'">返 回</van-button>
   </div>
 </template>
 
@@ -434,7 +440,6 @@ export default {
   font-size: 22px;
 }
 .van-row {
-  text-align: center;
   background-color:#fff;
 }
 .van-uploader {
@@ -445,5 +450,9 @@ export default {
 }
 .button_group {
   text-align: center;
+}
+h6 {
+  margin: 10px 0;
+  text-indent: 1em;
 }
 </style>

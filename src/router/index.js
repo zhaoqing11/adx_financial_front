@@ -223,10 +223,10 @@ export const constantRoutes = [
         meta: { title: "申请列表", icon: "paymentForm", requireAuth: true }
       },
       {
-        path: "approval",
-        name: "Approval",
-        component: () => import("@/views/mobile/approval"),
-        meta: { title: "审核申请列表", icon: "approval", requireAuth: true }
+        path: "publicDaily",
+        name: "PublicDaily",
+        component: () => import("@/views/mobile/publicDaily"),
+        meta: { title: "账单核对（公账）", icon: "publicDaily", requireAuth: true }
       }
     ]
   }

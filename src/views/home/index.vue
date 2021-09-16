@@ -109,7 +109,7 @@ export default {
     routerLinkToPublicDaily() {
       let width = this.$store.getters.winWidth
       if (width < 1299) {
-        // this.$router.push('/mobile/paymentForm')
+        this.$router.push('/mobile/publicDaily')
       } else {
         this.$router.push('/daily/publicDaily')
       }
@@ -118,7 +118,7 @@ export default {
     routerLinkToPrivateDaily() {
       let width = this.$store.getters.winWidth
       if (width < 1299) {
-        // this.$router.push('/mobile/paymentForm')
+        this.$router.push('/mobile/daily')
       } else {
         this.$router.push('/daily/privateDaily')
       }
