@@ -230,10 +230,6 @@ export default {
       processName: null,
 
       show: false,
-      minDate: new Date(),
-      maxDate: new Date(),
-      currentDate: new Date(),
-
       paymentRemittanceForm: {
         idPaymentForm: null,
         amount: null,
