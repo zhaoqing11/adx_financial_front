@@ -19,9 +19,7 @@
             <span class="svg-container" v-if="item.state == 0 && idRole == 2">
               <svg-icon icon-class="icon-approval" style="font-size: 20px;"/>
             </span>
-            <span class="svg-container" v-else-if="item.state == 2 && idRole == 3">
-              <svg-icon icon-class="remittance" style="font-size: 50px; margin-top: -10px;"/>
-            </span>
+            <van-icon name="close" v-else-if="item.state == 2 && idRole == 3"/>
           </template>
           <div class="cell_body">
             <div class="_details">
@@ -674,5 +672,11 @@ h6 {
 }
 ._button .van-button:nth-child(2) {
   border: none;
+}
+.van-icon-close::before {
+  color: red;
+  font-size: 18px;
+  position: absolute;
+  margin-top: -14px;
 }
 </style>

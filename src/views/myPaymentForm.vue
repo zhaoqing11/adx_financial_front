@@ -153,7 +153,7 @@
         </div>
       </div>
     </footer>
-    <el-dialog :title="title" :visible.sync="dialogFormVisible">
+    <el-dialog :title="title" :visible.sync="dialogFormVisible" :before-close="handleClose">
       <span class="promptText" v-if="isDisabled">{{promptText}}</span>
       <el-form :model="paymentForm" ref="paymentForm" :rules="rules" :disabled="disabled">
         <el-form-item label="类型" :label-width="formLabelWidth" prop="idCardType">
@@ -253,7 +253,6 @@
 </template>
 
 <script>
-import { Toast, Notify } from 'vant';
 import * as API from '@/api/paymentForm';
 import * as APPROVAL from '@/api/approval';
 import * as REMITTANCE from '@/api/paymentRemittance';
@@ -263,14 +262,6 @@ import { getUserId, getToken } from '@/utils/auth';
 import Pagination from '@/components/Pagination';
 import PreviewImage from "@/components/PreviewImage"
 import { formatCardNum } from '@/utils/validate';
-// import "@/utils/assets/js/demo.js";
-// import "@/utils/js/backend-bundle.min.js";
-// import "@/utils/js/sidebar.js";
-// import "@/utils/js/flex-tree.min.js";
-// import "@/utils/js/tree.js";
-// import "@/utils/js/table-treeview.js";
-// import "@/utils/js/slider.js";
-// import "@/utils/js/app.js";
 
 export default {
   components: { PreviewImage, Pagination },
@@ -348,6 +339,10 @@ export default {
     this.getTableData()
   },
   methods: {
+    handleClose() {
+      console.log('handleClose。。。')
+      this.dialogFormVisible = true
+    },
     // 撤回
     clickReset(data) {
       if (data.state != 2) {
@@ -460,7 +455,6 @@ export default {
       if (data.idApproval != null) {
         this.selectApprovalInfo(data.idApproval, data.idPaymentForm)
       }
-      console.log('data', data)
 
       if (type === 'view') {
         this.title = '查看申请单'
@@ -526,7 +520,6 @@ export default {
       })
     },
     clickShowDialogForm() {
-      Toast.success('成功文案');
       this.paymentForm.idCardType = null
       this.paymentForm.reasonApplication = null
       this.paymentForm.amount = null

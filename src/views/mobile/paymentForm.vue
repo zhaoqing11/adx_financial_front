@@ -5,7 +5,7 @@
       <van-row gutter="20" class="_top">
         <van-col span="11">
           <span v-if="idRole == 2">已审核: {{approvaled}}</span>
-          <span v-else-if="idRole == 3">已汇款: {{remittanceCount}}</span>
+          <span v-else-if="idRole == 3">总汇款: {{remittanceCount}}</span>
         </van-col>
         <van-col span="2"></van-col>
         <van-col span="11">

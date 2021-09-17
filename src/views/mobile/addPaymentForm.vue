@@ -187,7 +187,7 @@ export default {
     },
     // 文件上传
     afterRead(event) {
-      if (this.fileList.length >= 3) {
+      if (this.fileList.length > 3) {
         Toast.fail('上传文件不得超过3个');
         return false;
       }
