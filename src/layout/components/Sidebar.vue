@@ -227,17 +227,17 @@ export default {
         }, {
           id: 6,
           name: '账单核对',
-          url: '/daily/publicDaily',
-          icon: 'daily',
+          url: '/mobile/publicDaily',
+          icon: 'mobile',
           childMeun: [{
             id: 9,
             name: '公账',
-            url: '/daily/publicDaily',
+            url: '/mobile/publicDaily',
             icon: 'public-type'
           }, {
             id: 10,
             name: '私账',
-            url: '/daily/privateDaily',
+            url: '/mobile/privateDaily',
             icon: 'private-type'
           }]
         }, {

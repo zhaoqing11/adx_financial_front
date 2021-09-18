@@ -339,8 +339,17 @@ export default {
     this.getTableData()
   },
   methods: {
+    // 关闭窗口提示
     handleClose() {
-      this.dialogFormVisible = true
+      this.$confirm('确认关闭窗口?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.dialogFormVisible = false
+      }).catch(() => {
+        this.$message.info('已取消');
+      });
     },
     // 撤回
     clickReset(data) {

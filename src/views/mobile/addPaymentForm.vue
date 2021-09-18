@@ -147,7 +147,7 @@ export default {
 
       capture: ['album'],
       imageUrl: [],
-      baseURL: ''
+      baseURL: 'http://www.ai-jymq.com/adx-financial'
     }
   },
   computed: {
@@ -206,7 +206,7 @@ export default {
         file.append("file", event.file);
       }
       
-      this.axios.post(process.env.VUE_APP_BASE_API + `/file/upload`, file) // this.baseURL
+      this.axios.post(this.baseURL + `/file/upload`, file) // process.env.VUE_APP_BASE_API
       .then(res => {
         let tmpData = res.data.datas;
         this.imageUrl.push(tmpData);
