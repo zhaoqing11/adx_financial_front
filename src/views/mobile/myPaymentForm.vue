@@ -3,7 +3,9 @@
     <div class="wrapper">
       <van-search v-model="code" placeholder="搜索申请单编号" @search="getTableData"/>
       <van-cell-group>
-        <van-cell :title="item.code" is-link v-for="(item,index) in tableData" :key="index" @click="clickItemValue(item)"/>
+        <van-cell :title="item.code" is-link v-for="(item,index) in tableData" :key="index" @click="clickItemValue(item)">
+          <van-icon name="close" v-if="item.state === 4"/>
+        </van-cell>
       </van-cell-group>
       <van-popup
         v-model="show"
@@ -217,5 +219,8 @@ export default {
   position: fixed;
   bottom: 0;
   color: #fff;
+}
+.van-icon-close::before {
+  color: red;
 }
 </style>

@@ -297,7 +297,6 @@ export default {
     }
   },
   mounted() {
-    console.log('mounted...')
     var that = this;
     // <!--把window.onresize事件挂在到mounted函数上-->
     window.onresize = () => {
@@ -317,7 +316,6 @@ export default {
   },
   methods: {
     initData() {
-      // console.log('before ', this.meun)
       if (this.idRole === '5') {
         let idx = [1,2,3,4,5,6,11,16]
         idx.forEach(id => {
@@ -359,7 +357,6 @@ export default {
           this.meun.splice(findIdx, 1)
         })
       }
-      // console.log('after ', this.meun)
     },
     closeSidebar() {
       this.$store.commit('app/SHOWSIDEBAR', false)

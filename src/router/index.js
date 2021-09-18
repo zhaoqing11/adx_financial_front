@@ -227,6 +227,12 @@ export const constantRoutes = [
         name: "PublicDaily",
         component: () => import("@/views/mobile/publicDaily"),
         meta: { title: "账单核对（公账）", icon: "publicDaily", requireAuth: true }
+      },
+      {
+        path: "privateDaily",
+        name: "PrivateDaily",
+        component: () => import("@/views/mobile/privateDaily"),
+        meta: { title: "账单核对（私账）", icon: "privateDaily", requireAuth: true }
       }
     ]
   }

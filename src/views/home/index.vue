@@ -118,7 +118,7 @@ export default {
     routerLinkToPrivateDaily() {
       let width = this.$store.getters.winWidth
       if (width < 1299) {
-        this.$router.push('/mobile/daily')
+        this.$router.push('/mobile/privateDaily')
       } else {
         this.$router.push('/daily/privateDaily')
       }
