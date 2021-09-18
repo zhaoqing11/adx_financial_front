@@ -8,7 +8,7 @@
           </svg>
         </div>
         <div class="d-flex align-items-center">
-          <div :class="$store.getters.winWidth <= 1299 ? 'collapse navbar-collapse mobile-collapse' : 'collapse navbar-collapse'" 
+          <div :class="$store.getters.winWidth <= 1024 ? 'collapse navbar-collapse mobile-collapse' : 'collapse navbar-collapse'" 
           id="navbarSupportedContent">
             <ul class="navbar-nav ml-auto navbar-list align-items-center">
               <li class="nav-item nav-icon dropdown">
@@ -105,7 +105,7 @@ export default {
     // 展开菜单
     clickShowMenu() {
       let params = this.$store.getters
-      if (params.winWidth <= 1299) {
+      if (params.winWidth <= 1024) {
         this.$store.commit('app/SHOWSIDEBAR', true)
       } else {
         this.$store.commit('app/SHOWSIDEBAR', false)
@@ -144,7 +144,7 @@ export default {
     // 退出登录
     logout() {
       let params = this.$store.getters
-      if (params.winWidth < 1299) {
+      if (params.winWidth < 1024) {
         Dialog.confirm({
           title: '提示',
           message: '确定退出系统吗？',

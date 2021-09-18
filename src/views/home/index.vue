@@ -108,7 +108,7 @@ export default {
     // 路由至（公账）账单审批页
     routerLinkToPublicDaily() {
       let width = this.$store.getters.winWidth
-      if (width < 1299) {
+      if (width < 1024) {
         this.$router.push('/mobile/publicDaily')
       } else {
         this.$router.push('/daily/publicDaily')
@@ -117,7 +117,7 @@ export default {
     // 路由至（私账）账单审批页
     routerLinkToPrivateDaily() {
       let width = this.$store.getters.winWidth
-      if (width < 1299) {
+      if (width < 1024) {
         this.$router.push('/mobile/privateDaily')
       } else {
         this.$router.push('/daily/privateDaily')
@@ -152,7 +152,7 @@ export default {
     // 路由至请款审批页
     routerLinkToApprocalPayment() {
       let width = this.$store.getters.winWidth
-      if (width < 1299) {
+      if (width < 1024) {
         this.$router.push('/mobile/paymentForm')
       } else {
         this.$router.push('/paymentForm/index')

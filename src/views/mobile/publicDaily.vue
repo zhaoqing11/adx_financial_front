@@ -178,6 +178,7 @@
                     <p><span>收款金额：</span>{{childItem.collectionAmount ? childItem.collectionAmount : '--'}}</p>
                   </div>
                   <p><span>余额：</span>{{childItem.remainingSum ? childItem.remainingSum : '--'}}</p>
+                  <p><span>备注：</span>{{childItem.remark ? childItem.remark : '--'}}</p>
                 </div>
               </div>
               <div v-if="flowRecordDta.length <= 0">

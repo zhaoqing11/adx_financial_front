@@ -282,7 +282,7 @@ export default {
   },
   watch: {
     '$store.getters.winWidth'(newVal) {
-      if (newVal < 1299) {
+      if (newVal < 1024) {
         this.meun = JSON.parse(JSON.stringify(this.mobileMeun))
       } else {
         this.meun = JSON.parse(JSON.stringify(this.pcMeun))
@@ -307,7 +307,7 @@ export default {
         that.windowWidth = window.fullWidth; // 宽
       })()
     };
-    if (that.windowWidth < 1299) {
+    if (that.windowWidth < 1024) {
       this.meun = JSON.parse(JSON.stringify(this.mobileMeun))
     } else {
       this.meun = JSON.parse(JSON.stringify(this.pcMeun))
