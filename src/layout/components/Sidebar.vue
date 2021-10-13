@@ -104,6 +104,16 @@ export default {
             name: '私账',
             url: '/flowRecord/privateFlowRecord',
             icon: 'private-type'
+          }, {
+            id: 19,
+            name: '普通账户1',
+            url: '/flowRecord/generalAccountRecord',
+            icon: 'general-type'
+          }, {
+            id: 20,
+            name: '普通账户2',
+            url: '/flowRecord/generalAccountRecord',
+            icon: 'general-type'
           }]
         }, {
           id: 5,
@@ -207,6 +217,16 @@ export default {
             name: '私账',
             url: '/flowRecord/privateFlowRecord',
             icon: 'private-type'
+          }, {
+            id: 19,
+            name: '普通账户1',
+            url: '/flowRecord/generalAccountRecord',
+            icon: 'general-type'
+          }, {
+            id: 20,
+            name: '普通账户2',
+            url: '/flowRecord/generalAccountRecord',
+            icon: 'general-type'
           }]
         }, {
           id: 5,

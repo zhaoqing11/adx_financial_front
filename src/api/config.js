@@ -1,5 +1,17 @@
 import request from '@/utils/request';
 
+/**
+ * 新增账户
+ * @param {*} data 
+ * @returns 
+ */
+export function addConfig(data) {
+  return request({
+    url: '/config/insertSelective',
+    method: 'post',
+    data
+  })
+}
 
 /**
  * 获取账户信息
@@ -9,10 +21,10 @@ import request from '@/utils/request';
  * @returns
 */
 export function selectAll() {
-    return request({
-      url: '/config/selectAll',
-      method: 'post'
-    });
+  return request({
+    url: '/config/selectAll',
+    method: 'post'
+  });
 }
 
 /**

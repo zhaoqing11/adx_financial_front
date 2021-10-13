@@ -158,12 +158,23 @@
       <el-form :model="paymentForm" ref="paymentForm" :rules="rules" :disabled="disabled">
         <el-form-item label="类型" :label-width="formLabelWidth" prop="idCardType">
           <el-select v-model="paymentForm.idCardType" placeholder="请选择" style="width:100%;" @change="changeSelectOption">
-            <el-option
-              v-for="item in cardTypeData"
-              :key="item.idCardType"
-              :label="item.name"
-              :value="item.idCardType">
-            </el-option>
+            <span v-if="idRole != 3">
+              <el-option
+                v-show="(item.idCardType == 1 || item.idCardType == 2) && idRole != 3"
+                v-for="item in cardTypeData"
+                :key="item.idCardType"
+                :label="item.name"
+                :value="item.idCardType">
+              </el-option>
+            </span>
+            <span v-else>
+              <el-option
+                v-for="item in cardTypeData"
+                :key="item.idCardType"
+                :label="item.name"
+                :value="item.idCardType">
+              </el-option>
+            </span>
           </el-select>
         </el-form-item>
         <el-form-item label="事由" :label-width="formLabelWidth" prop="reasonApplication">
@@ -258,7 +269,7 @@ import * as APPROVAL from '@/api/approval';
 import * as REMITTANCE from '@/api/paymentRemittance';
 import * as CTYPE from '@/api/cardType';
 import * as DAILY from '@/api/daily';
-import { getUserId, getToken } from '@/utils/auth';
+import { getUserId, getRole, getToken } from '@/utils/auth';
 import Pagination from '@/components/Pagination';
 import PreviewImage from "@/components/PreviewImage"
 import { formatCardNum } from '@/utils/validate';
@@ -268,6 +279,7 @@ export default {
   data() {
     return {
       title: '',
+      idRole: getRole(),
       idUser: getUserId(),
       showUser: false,
       pageNum: 1,

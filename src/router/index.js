@@ -98,6 +98,18 @@ export const constantRoutes = [
         name: "PrivateFlowRecord",
         component: () => import("@/views/flowRecord/privateFlowRecord"),
         meta: { title: "私账", icon: "privateFlowRcord", requireAuth: true }
+      },
+      {
+        path: "generalAccountRecord",
+        name: "GeneralAccountRecord",
+        component: () => import("@/views/flowRecord/generalAccountRecord"),
+        meta: { title: "普通账户1", icon: "privateFlowRcord", requireAuth: true }
+      },
+      {
+        path: "generalAccountRecord",
+        name: "GeneralAccountRecord",
+        component: () => import("@/views/flowRecord/generalAccountRecord"),
+        meta: { title: "普通账户2", icon: "privateFlowRcord", requireAuth: true }
       }
     ]
   },

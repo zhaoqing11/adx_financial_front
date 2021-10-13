@@ -7,7 +7,7 @@
             <div class="col-lg-12">
               <div class="d-flex flex-wrap align-items-center justify-content-between my-schedule mb-4">
                 <div class="d-flex align-items-center justify-content-between">
-                  <h4 class="font-weight-bold">私账收支明细</h4>
+                  <h4 class="font-weight-bold">普账收支明细</h4>
                 </div>
                 <div class="create-workform">
                   <div class="d-flex flex-wrap align-items-center justify-content-between">
@@ -39,125 +39,125 @@
                       </div>
                       <div class="table-responsive">
                         <el-table
-                          :data="privateRemainSumList"
-                          :summary-method="getSummaries"
-                          show-summary
-                          style="width: 100%"
-                          :default-sort = "{prop: 'createTime', order: 'descending'}"
-                          >
-                          <el-table-column
-                              type="selection"
-                              width="80">
-                          </el-table-column>
-                          <el-table-column
-                              prop="reasonApplication"
-                              label="事由"
-                              width="100">
+                            :data="privateRemainSumList"
+                            :summary-method="getSummaries"
+                            show-summary
+                            style="width: 100%"
+                            :default-sort = "{prop: 'createTime', order: 'descending'}"
+                            >
+                            <el-table-column
+                                type="selection"
+                                width="80">
+                            </el-table-column>
+                            <el-table-column
+                                prop="reasonApplication"
+                                label="事由"
+                                width="100">
+                                <template slot-scope="scoped">
+                                  <div @click="handleView(scoped.row)">{{scoped.row.reasonApplication ? scoped.row.reasonApplication : '--'}}</div>
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                prop="remark"
+                                label="备注"
+                                width="100">
+                                <template slot-scope="scoped">
+                                    {{scoped.row.remark ? scoped.row.remark : '--'}}
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                prop="amount"
+                                label="申请金额"
+                                width="100">
+                                <template slot-scope="scoped">
+                                    {{scoped.row.amount ? scoped.row.amount : '--'}}
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                prop="paymentName"
+                                label="付款名称"
+                                width="120">
+                                <template slot-scope="scoped">
+                                    {{scoped.row.paymentName ? scoped.row.paymentName : '--'}}
+                                </template>
+                                </el-table-column>
+                            <el-table-column
+                                prop="paymentAccount"
+                                label="付款账号"
+                                width="120">
+                                <template slot-scope="scoped">
+                                    {{scoped.row.paymentAccount ? formatCardNum(scoped.row.paymentAccount) : '--'}}
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                prop="code"
+                                label="申请单编号"
+                                sortable
+                                width="120">
+                                <template slot-scope="scoped">
+                                  <div @click="handleView(scoped.row)">{{scoped.row.code ? scoped.row.code : '--'}}</div>
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                prop="approvalAmount"
+                                label="审批金额"
+                                width="100">
+                                <template slot-scope="scoped">
+                                    {{scoped.row.approvalAmount ? scoped.row.approvalAmount : '--'}}
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                prop="remittanceAmount"
+                                label="汇款金额"
+                                width="100">
+                                <template slot-scope="scoped">
+                                    {{scoped.row.remittanceAmount ? scoped.row.remittanceAmount : '--'}}
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                prop="serviceCharge"
+                                label="手续费"
+                                width="80">
+                                <template slot-scope="scoped">
+                                    {{scoped.row.serviceCharge ? scoped.row.serviceCharge : '--'}}
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                prop="idFlowType"
+                                label="操作类型"
+                                width="80">
+                                <template slot-scope="scoped">
+                                    {{scoped.row.idFlowType === 1? '收入' : '支出'}}
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                prop="collectionAmount"
+                                label="收款"
+                                width="100">
+                                <template slot-scope="scoped">
+                                    {{scoped.row.collectionAmount ? scoped.row.collectionAmount : '--'}}
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                prop="remainingSum"
+                                label="余额"
+                                width="110">
+                                <template slot-scope="scoped">
+                                    {{scoped.row.remainingSum ? scoped.row.remainingSum : '--'}}
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                prop="createTime"
+                                label="汇款日期"
+                                width="160"
+                                :formatter="formatter">
+                            </el-table-column>
+                            <el-table-column
+                            label="操作">
                               <template slot-scope="scoped">
-                                <div @click="handleView(scoped.row)">{{scoped.row.reasonApplication ? scoped.row.reasonApplication : '--'}}</div>
+                                <el-button type="text" @click="handleView(scoped.row)">查看详情</el-button>
                               </template>
-                          </el-table-column>
-                          <el-table-column
-                              prop="remark"
-                              label="备注"
-                              width="100">
-                              <template slot-scope="scoped">
-                                  {{scoped.row.remark ? scoped.row.remark : '--'}}
-                              </template>
-                          </el-table-column>
-                          <el-table-column
-                              prop="amount"
-                              label="申请金额"
-                              width="100">
-                              <template slot-scope="scoped">
-                                  {{scoped.row.amount ? scoped.row.amount : '--'}}
-                              </template>
-                          </el-table-column>
-                          <el-table-column
-                              prop="paymentName"
-                              label="付款名称"
-                              width="120">
-                              <template slot-scope="scoped">
-                                  {{scoped.row.paymentName ? scoped.row.paymentName : '--'}}
-                              </template>
-                              </el-table-column>
-                          <el-table-column
-                              prop="paymentAccount"
-                              label="付款账号"
-                              width="120">
-                              <template slot-scope="scoped">
-                                  {{scoped.row.paymentAccount ? formatCardNum(scoped.row.paymentAccount) : '--'}}
-                              </template>
-                          </el-table-column>
-                          <el-table-column
-                              prop="code"
-                              label="申请单编号"
-                              sortable
-                              width="120">
-                              <template slot-scope="scoped">
-                                <div @click="handleView(scoped.row)">{{scoped.row.code ? scoped.row.code : '--'}}</div>
-                              </template>
-                          </el-table-column>
-                          <el-table-column
-                              prop="approvalAmount"
-                              label="审批金额"
-                              width="100">
-                              <template slot-scope="scoped">
-                                  {{scoped.row.approvalAmount ? scoped.row.approvalAmount : '--'}}
-                              </template>
-                          </el-table-column>
-                          <el-table-column
-                              prop="remittanceAmount"
-                              label="汇款金额"
-                              width="100">
-                              <template slot-scope="scoped">
-                                  {{scoped.row.remittanceAmount ? scoped.row.remittanceAmount : '--'}}
-                              </template>
-                          </el-table-column>
-                          <el-table-column
-                              prop="serviceCharge"
-                              label="手续费"
-                              width="80">
-                              <template slot-scope="scoped">
-                                  {{scoped.row.serviceCharge ? scoped.row.serviceCharge : '--'}}
-                              </template>
-                          </el-table-column>
-                          <el-table-column
-                              prop="idFlowType"
-                              label="操作类型"
-                              width="80">
-                              <template slot-scope="scoped">
-                                  {{scoped.row.idFlowType === 1? '收入' : '支出'}}
-                              </template>
-                          </el-table-column>
-                          <el-table-column
-                              prop="collectionAmount"
-                              label="收款"
-                              width="100">
-                              <template slot-scope="scoped">
-                                  {{scoped.row.collectionAmount ? scoped.row.collectionAmount : '--'}}
-                              </template>
-                          </el-table-column>
-                          <el-table-column
-                              prop="remainingSum"
-                              label="余额"
-                              width="110">
-                              <template slot-scope="scoped">
-                                  {{scoped.row.remainingSum ? scoped.row.remainingSum : '--'}}
-                              </template>
-                          </el-table-column>
-                          <el-table-column
-                              prop="createTime"
-                              label="汇款日期"
-                              width="160"
-                              :formatter="formatter">
-                          </el-table-column>
-                          <el-table-column
-                          label="操作">
-                            <template slot-scope="scoped">
-                              <el-button type="text" @click="handleView(scoped.row)">查看详情</el-button>
-                            </template>
-                          </el-table-column>
+                            </el-table-column>
                         </el-table>
                       </div>
                       <div class="pagination">
@@ -380,7 +380,7 @@ export default {
       .then(res => {
         if (res.data.status === 200) {
           let tmpData = res.data.datas
-          this.tableData = tmpData.privateRemainSumList.datas
+          this.tableData = tmpData.generalAccountMpOne.datas
           this.changeToPage()
         }
       })
@@ -405,5 +405,27 @@ export default {
 .pagination {
   float: right;
   margin: 20px 10px;
+}
+.el-table .cell {
+  white-space: nowrap;
+}
+
+.el-row {
+  margin-bottom: 10px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+.bg-purpl {
+  min-height: 40px;
+  padding: 5px 10px;
+  background: #F5F7FA;
+  border: 1px solid #E4E7ED;
+}
+.el-row .el-col:nth-child(1) {
+  text-align: right;
+}
+.el-col {
+  border-radius: 4px;
 }
 </style>

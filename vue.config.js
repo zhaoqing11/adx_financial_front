@@ -40,8 +40,8 @@ module.exports = {
     proxy: {
       [process.env.VUE_APP_BASE_API]: {
          //target: 'http://120.76.142.146:8804',
-        target: 'http://www.ai-jymq.com/adx-financial',
-        // target: 'http://127.0.0.1:8807',
+        // target: 'http://www.ai-jymq.com/adx-financial',
+        target: 'http://127.0.0.1:8807',
         ngeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: '',
