@@ -106,9 +106,9 @@ export const constantRoutes = [
         meta: { title: "普通账户1", icon: "privateFlowRcord", requireAuth: true }
       },
       {
-        path: "generalAccountRecord",
-        name: "GeneralAccountRecord",
-        component: () => import("@/views/flowRecord/generalAccountRecord"),
+        path: "secondGeneralAccountRecord",
+        name: "SecondGeneralAccountRecord",
+        component: () => import("@/views/flowRecord/secondGeneralAccountRecord"),
         meta: { title: "普通账户2", icon: "privateFlowRcord", requireAuth: true }
       }
     ]
@@ -158,6 +158,18 @@ export const constantRoutes = [
         name: "PrivateDaily",
         component: () => import("@/views/daily/privateDaily"),
         meta: { title: "私账", icon: "private-daily", requireAuth: true }
+      },
+      {
+        path: "generalAccountDaily",
+        name: "GeneralAccountDaily",
+        component: () => import("@/views/daily/generalAccountDaily"),
+        meta: { title: "普通账户1", icon: "generalAccount", requireAuth: true }
+      },
+      {
+        path: "secondGeneralAccountDaily",
+        name: "SecondGeneralAccountDaily",
+        component: () => import("@/views/daily/secondGeneralAccountDaily"),
+        meta: { title: "普通账户2", icon: "generalAccount", requireAuth: true }
       }
     ]
   },

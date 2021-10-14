@@ -108,12 +108,12 @@ export default {
             id: 19,
             name: '普通账户1',
             url: '/flowRecord/generalAccountRecord',
-            icon: 'general-type'
+            icon: 'account-detail'
           }, {
             id: 20,
             name: '普通账户2',
-            url: '/flowRecord/generalAccountRecord',
-            icon: 'general-type'
+            url: '/flowRecord/secondGeneralAccountRecord',
+            icon: 'account-detail'
           }]
         }, {
           id: 5,
@@ -146,6 +146,16 @@ export default {
             name: '私账',
             url: '/daily/privateDaily',
             icon: 'private-type'
+          }, {
+            id: 21,
+            name: '普通账户1',
+            url: '/daily/generalAccountDaily',
+            icon: 'account-detail'
+          }, {
+            id: 22,
+            name: '普通账户2',
+            url: '/daily/secondGeneralAccountDaily',
+            icon: 'account-detail'
           }]
         }, {
           id: 11,
@@ -383,9 +393,9 @@ export default {
     },
     // 路由至对应页面
     routerLinkToPage(data) {
-      if (data.id == 7 || data.id == 8) {
+      if (data.id == 7 || data.id == 8 || data.id == 19 || data.id == 20) {
         this.active = 4
-      } else if (data.id == 9 || data.id == 10) {
+      } else if (data.id == 9 || data.id == 10 || data.id == 21 || data.id == 22) {
         this.active = 6
       } else if (data.id == 12 || data.id == 13) {
         this.active = 5

@@ -1,6 +1,36 @@
 import request from '@/utils/request';
 
 /**
+ * 获取每日账单列表(普通账户1)
+ *
+ * @export
+ * @param {*} 
+ * @returns
+ */
+export function getGeneralAccountDaily(data) {
+  return request({
+    url: '/daily/selectGeneralAccountDailyByPage',
+    method: 'post',
+    data
+  });
+}
+
+/**
+ * 获取每日账单列表(普通账户2)
+ *
+ * @export
+ * @param {*} 
+ * @returns
+ */
+export function getSecondGeneralAccountDaily(data) {
+  return request({
+    url: '/daily/selectSecondGeneralAccountDailyByPage',
+    method: 'post',
+    data
+  });
+}
+
+/**
  * 查询待审批账单数量
  *
  * @export
