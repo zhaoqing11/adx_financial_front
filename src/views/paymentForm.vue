@@ -62,11 +62,11 @@
                               <th scope="col">
                                 <label class="text-muted mb-0">申请金额（元）</label>
                               </th>
-                              <th scope="col" class="text-right">
+                              <th scope="col">
                                 <label class="text-muted mb-0">付款名称</label>
                               </th>
                               <th scope="col">
-                                <label class="text-muted mb-0" >付款账号</label>
+                                <label class="text-muted mb-0">付款账号</label>
                               </th>
                               <th scope="col">
                                 <label class="text-muted mb-0" >申请人</label>
@@ -106,12 +106,11 @@
                                 </div>
                               </td>
                               <td>{{index + 1}}</td>
-                              <!-- {{item.state ? item.code : '--'}} -->
                               <td>{{item.code ? item.code : '--'}}</td>
-                              <td>{{item.reasonApplication}}</td>
+                              <td id="reasonApplication" style="width: 140px; display:inline-block;">{{item.reasonApplication}}</td>
                               <td>{{item.amount}}</td>
-                              <td class="text-right">{{item.paymentName}}</td>
-                              <td>{{formatCardNum(item.paymentAccount)}}</td>
+                              <td>{{item.paymentName}}</td>
+                              <td style="width: 120px; display:inline-block;">{{formatCardNum(item.paymentAccount)}}</td>
                               <td>{{item.userName}}</td>
                               <td>{{item.idCardType === 1 ? '公账' : '私账'}}</td>
                               <td>
@@ -120,7 +119,6 @@
                                 <span id="red-cell" v-else-if="item.state == 4">不通过</span>
                               </td>
                               <td>
-                                <!-- item.approvalAmount -->
                                 <span v-if="item.state != 2">{{item.approvalAmount ? item.approvalAmount : '--'}}</span>
                                 <span v-else>
                                   <span v-if="idRole != '2'">--</span>
@@ -555,5 +553,13 @@ export default {
 }
 #selectCardType::-webkit-input-placeholder{
   color: #6c757d;
+}
+.table td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#reasonApplication {
+  cursor: text;
 }
 </style>

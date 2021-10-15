@@ -1,6 +1,36 @@
 import request from '@/utils/request';
 
 /**
+ * 根据指定日期获取收支明细
+ *
+ * @export
+ * @param {*} 
+ * @returns
+*/
+export function getGeneralDailyByDate(data) {
+  return request({
+    url: '/daily/selectGeneralDailyByDate',
+    method: 'post',
+    data
+  });
+}
+
+/**
+ * 根据指定日期获取收支明细
+ *
+ * @export
+ * @param {*} 
+ * @returns
+*/
+export function getSecondGeneralDailyByDate(data) {
+  return request({
+    url: '/daily/selectSecondGeneralDailyByDate',
+    method: 'post',
+    data
+  });
+}
+
+/**
  * 获取每日账单列表(普通账户1)
  *
  * @export

@@ -391,7 +391,7 @@
 
 <script>
 import * as API from '@/api/daily';
-import * as APPROVAL from '@/api/approvalPublicDaily';
+import * as APPROVAL from '@/api/approvalGeneralDaily';
 import * as REMITTANCE from '@/api/paymentRemittance';
 import * as COLLECTIONAPI from '@/api/collectionRecord';
 import { getUserId, getRole } from '@/utils/auth';
@@ -418,7 +418,7 @@ export default {
       remittanceDialogFormVisible: false,
       showUpdateValue: false,
       form: {
-        idPublicDaily: null,
+        idGeneralAccountDaily: null,
         idResultType: 2,
         remark: null,
         idUser: null
@@ -445,7 +445,7 @@ export default {
         ]
       },
       collectionRecordForm: {
-        idCardType: 1,
+        idCardType: 3,
         idCollectionRecord: null,
         amount: null,
         collectionDate: '',
@@ -464,8 +464,8 @@ export default {
         ]
       },
       idDaily: null,
-      idCardType: 1,
-      publicDailyForm: {},
+      idCardType: 3,
+      generalDailyForm: {},
       paymentRemittanceForm: {
         amount: null,
         serviceCharge: 0,
@@ -489,6 +489,20 @@ export default {
     this.getTableData()
   },
   methods: {
+    updateCollectionRecordState() {
+      COLLECTIONAPI.updateCollectionRecordState({
+        idCardType: this.idCardType,
+        idDaily: this.idDaily
+      }).then(res => {
+        if (res.data.status === 200) {
+          this.$message.success('修改成功')
+          this.editDialogFormVisible = false
+          this.getTableData()
+        } else {
+          this.$message.error(res.data.cause)
+        }
+      })
+    },
     // 创建汇款记录
     addPaymentRemittance(formName) {
       this.$refs[formName].validate(valid => {
@@ -508,25 +522,11 @@ export default {
               this.$message.success('操作成功')
               this.remittanceDialogFormVisible = false
               this.resetForm(formName)
-              this.getPublicDailyByDate()
+              this.getGeneralDailyByDate()
             } else {
               this.$message.error(res.data.cause)
             }
           })
-        }
-      })
-    },
-    updateCollectionRecordState() {
-      COLLECTIONAPI.updateCollectionRecordState({
-        idCardType: this.idCardType,
-        idDaily: this.idDaily
-      }).then(res => {
-        if (res.data.status === 200) {
-          this.$message.success('修改成功')
-          this.editDialogFormVisible = false
-          this.getTableData()
-        } else {
-          this.$message.error(res.data.cause)
         }
       })
     },
@@ -549,7 +549,7 @@ export default {
               this.$message.success('添加成功')
               this.showUpdateValue = false
               this.resetForm(formName)
-              this.getPublicDailyByDate()
+              this.getGeneralDailyByDate()
             } else {
               this.$message.error(res.data.cause)
             }
@@ -562,12 +562,12 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           const param = {
-            idPublicDaily: this.form.idPublicDaily,
+            idGeneralAccountDaily: this.form.idGeneralAccountDaily,
             idResultType: this.form.idResultType,
             remark: this.form.remark,
             idUser: getUserId()
           }
-          APPROVAL.approvalPublicDaily(param)
+          APPROVAL.approvalGeneralDaily(param)
           .then(res => {
             if (res.data.status === 200) {
               this.$message.success('审批成功')
@@ -582,24 +582,24 @@ export default {
       })
     },
     showEditDaily(data) {
-      this.idDaily = data.idPublicDaily
-      this.publicDailyForm = data
-      this.getPublicDailyByDate() // data
+      this.idDaily = data.idGeneralAccountDaily
+      this.generalDailyForm = data
+      this.getGeneralDailyByDate()
       this.editDialogFormVisible = true
     },
     showApprovalDaily(data) {
-      this.publicDailyForm = data
-      this.getPublicDailyByDate()
+      this.generalDailyForm = data
+      this.getGeneralDailyByDate()
       this.dialogFormVisible = true
     },
-    getPublicDailyByDate() {
-      let data = this.publicDailyForm
-      API.getPublicDailyByDate({
+    getGeneralDailyByDate() {
+      let data = this.generalDailyForm
+      API.getGeneralDailyByDate({
         date: formatDate2(data.createTime)
       }).then(res => {
         if (res.data.status === 200) {
           this.flowRecordDta = res.data.datas
-          this.form.idPublicDaily = data.idPublicDaily
+          this.form.idGeneralAccountDaily = data.idGeneralAccountDaily
         }
       })
     },
