@@ -130,6 +130,16 @@ export default {
             name: '私账',
             url: '/report/privateReport',
             icon: 'private-type'
+          }, {
+            id: 23,
+            name: '普通账户1',
+            url: '/report/generalAccountReport',
+            icon: 'account-detail'
+          }, {
+            id: 24,
+            name: '普通账户2',
+            url: '/report/secondGeneralAccountReport',
+            icon: 'account-detail'
           }]
         }, {
           id: 6,
@@ -190,6 +200,16 @@ export default {
             name: '私账',
             url: '/statistics/privateFlowRecord',
             icon: 'private-type'
+          }, {
+            id: 25,
+            name: '普通账户1',
+            url: '/statistics/generalAccount',
+            icon: 'account-detail'
+          }, {
+            id: 26,
+            name: '普通账户2',
+            url: '/statistics/secondGeneralAccount',
+            icon: 'account-detail'
           }]
         }
       ],
@@ -397,9 +417,9 @@ export default {
         this.active = 4
       } else if (data.id == 9 || data.id == 10 || data.id == 21 || data.id == 22) {
         this.active = 6
-      } else if (data.id == 12 || data.id == 13) {
+      } else if (data.id == 12 || data.id == 13 || data.id == 23 || data.id == 24) {
         this.active = 5
-      } else if (data.id == 17 || data.id == 18) {
+      } else if (data.id == 17 || data.id == 18 || data.id == 25 || data.id == 26) {
         this.active = 16
       } else {
         this.active = data.id

@@ -57,11 +57,11 @@
                       <div class="chart_card">
                         <div class="_left">
                           <h5>部门年度支出统计</h5>
-                          <PrivatePayCountChart v-if="paymentChartData.length > 0" :chart-data="paymentChartData" :color-data="colorData"/>
+                          <PayCountChart v-if="paymentChartData.length > 0" :chart-data="paymentChartData" :color-data="colorData"/>
                         </div>
                         <div class="_right">
                           <h5>月收入统计</h5>
-                          <PrivateCollectionChart v-if="collectionChartData.length > 0" :chart-data="collectionChartData" :color-data="colorData"/>
+                          <CollectionChart v-if="collectionChartData.length > 0" :chart-data="collectionChartData" :color-data="colorData"/>
                         </div>
                       </div>
                       <el-table
@@ -233,13 +233,13 @@
 
 <script>
 import * as API from '@/api/flowRecordStatistics';
-import PrivatePayCountChart from './components/PrivatePayCountChart.vue';
-import PrivateCollectionChart from './components/PrivateCollectionChart.vue';
+import PayCountChart from './components/PayCountChart.vue';
+import CollectionChart from './components/CollectionChart.vue';
 
 export default {
     components: {
-      PrivatePayCountChart,
-      PrivateCollectionChart
+      PayCountChart,
+      CollectionChart
     },
     data() {
       return {

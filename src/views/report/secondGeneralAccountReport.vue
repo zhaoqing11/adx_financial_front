@@ -164,7 +164,7 @@ export default {
         query: {
           year: data.year,
           month: data.month,
-          idCardType: 2
+          idCardType: 4
         }
       })
     },
@@ -198,7 +198,7 @@ export default {
         pageSize: this.pageSize,
         currentDate: this.currentDate
       }
-      API.getPrivateReportList(params)
+      API.getSecondGeneralReportList(params)
       .then(res => {
         if (res.data.status === 200) {
           let tmpData = res.data.datas;

@@ -133,6 +133,18 @@ export const constantRoutes = [
         meta: { title: "私账", icon: "private-report", requireAuth: true }
       },
       {
+        path: "generalAccountReport",
+        name: "GeneralAccountReport",
+        component: () => import("@/views/report/generalAccountReport"),
+        meta: { title: "普通账户1", icon: "privateFlowReport", requireAuth: true }
+      },
+      {
+        path: "secondGeneralAccountReport",
+        name: "SecondGeneralAccountReport",
+        component: () => import("@/views/report/secondGeneralAccountReport"),
+        meta: { title: "普通账户2", icon: "privateFlowReport", requireAuth: true }
+      },
+      {
         path: "reportDetail",
         name: "ReportDetail",
         component: () => import("@/views/report/reportDetail"),
@@ -218,6 +230,18 @@ export const constantRoutes = [
         name: "PrivateFlowRecord",
         component: () => import("@/views/statistics/privateFlowRecord"),
         meta: { title: "私账", icon: "private", requireAuth: true }
+      },
+      {
+        path: "generalAccount",
+        name: "GeneralAccount",
+        component: () => import("@/views/statistics/generalAccount"),
+        meta: { title: "普通账户1", icon: "privateFlow", requireAuth: true }
+      },
+      {
+        path: "secondGeneralAccount",
+        name: "SecondGeneralAccount",
+        component: () => import("@/views/statistics/secondGeneralAccount"),
+        meta: { title: "普通账户2", icon: "privateFlow", requireAuth: true }
       }
     ]
   },

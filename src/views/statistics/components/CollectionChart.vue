@@ -1,12 +1,12 @@
 <template>
-  <div id="idPrivateCollectionChart" :style="{ height: height, width: width, margin: margin }" />
+  <div id="idCollectionChart" :style="{ height: height, width: width, margin: margin }" />
 </template>
 
 <script>
 import echarts from "echarts";
 
 export default {
-  name: "PrivateCollectionChart",
+  name: "CollectionChart",
   props: {
     chartData: {
       type: Array,
@@ -72,7 +72,7 @@ export default {
         seriesArray.push(values)
       });
 
-      this.myChart = echarts.init(document.getElementById("idPrivateCollectionChart"));
+      this.myChart = echarts.init(document.getElementById("idCollectionChart"));
       this.myChart.setOption({
         tooltip: {
           trigger: "axis"

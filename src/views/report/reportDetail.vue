@@ -69,7 +69,7 @@
                                     {{scope.row.report.serviceCharge ? scope.row.report.serviceCharge : '--'}}
                                 </template>
                             </el-table-column>
-                            <el-table-column
+                            <!-- <el-table-column
                                 label="操作"
                                 width="120">
                                 <template slot-scope="scope">
@@ -77,7 +77,7 @@
                                     <i class="el-icon-delete" @click="deleteReport(scope.row.idReport)"></i>
                                   </span>
                                 </template>
-                            </el-table-column>
+                            </el-table-column> -->
                         </el-table>
                       </div>
                     </div>

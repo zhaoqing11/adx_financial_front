@@ -74,3 +74,33 @@ export function getPrivateReportList(data) {
     data
   });
 }
+
+/**
+ * 分页（条件）查询普通账户1月报
+ *
+ * @export
+ * @param {*} data
+ * @returns
+*/
+export function getGeneralReportList(data) {
+  return request({
+    url: '/report/selectGeneralReportByPage',
+    method: 'post',
+    data
+  });
+}
+
+/**
+ * 分页（条件）查询普通账户2月报
+ *
+ * @export
+ * @param {*} data
+ * @returns
+*/
+export function getSecondGeneralReportList(data) {
+  return request({
+    url: '/report/selectSecondGeneralReportByPage',
+    method: 'post',
+    data
+  });
+}

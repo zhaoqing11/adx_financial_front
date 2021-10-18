@@ -90,3 +90,65 @@ export function getCollectionRecordByMonth(data) {
     data
   });
 }
+
+
+/**
+ *  获取（普通账户1）部门支出流水
+ *
+ * @export
+ * @param {*} 
+ * @returns
+*/
+export function getGeneralRecordByDepartment(data) {
+  return request({
+    url: '/flowRecordStatistics/getGeneralRecordByDepartment',
+    method: 'post',
+    data
+  });
+}
+
+/**
+ *  获取（普通账户2）部门支出流水
+ *
+ * @export
+ * @param {*} 
+ * @returns
+*/
+export function getSecondGeneralRecordByDepartment(data) {
+  return request({
+    url: '/flowRecordStatistics/getSecondGeneralRecordByDepartment',
+    method: 'post',
+    data
+  });
+}
+
+
+/**
+ *  获取（普通账户2）部门支出明细
+ *
+ * @export
+ * @param {*} 
+ * @returns
+*/
+export function getSecondGeneralFlowRecordDetails(data) {
+  return request({
+    url: '/flowRecordStatistics/getSecondGeneralFlowRecordDetails',
+    method: 'post',
+    data
+  });
+}
+
+/**
+ * 获取（普通账户1）部门支出明细
+ *
+ * @export
+ * @param {*} 
+ * @returns
+*/
+export function getGeneralRecordDetails(data) {
+  return request({
+    url: '/flowRecordStatistics/getGeneralRecordDetails',
+    method: 'post',
+    data
+  });
+}

@@ -244,7 +244,7 @@ export default {
     data() {
       return {
         year: '2021',
-        idCardType: 1,
+        idCardType: 4,
         payAmountTotal: 0,
         serviceChargeTotal: 0,
         collectionAmountTotal: 0,
@@ -262,13 +262,13 @@ export default {
       // 初始化获取统计数据
       initData() {
         this.getDataInfo()
-        this.getFlowRecordByDepartment()
         this.getCollectionRecordByMonth()
+        this.getFlowRecordByDepartment()
         this.getPublicFlowRecordDetails()
       },
       // 获取支出流水明细列表
       getPublicFlowRecordDetails() {
-        API.getPublicFlowRecordDetails({
+        API.getSecondGeneralFlowRecordDetails({
           year: this.year
         }).then(res => {
           if (res.data.status === 200) {
@@ -336,6 +336,27 @@ export default {
           }
         })
       },
+      // 部门支出统计
+      getFlowRecordByDepartment() {
+        API.getSecondGeneralRecordByDepartment({
+          year: this.year
+        }).then(res => {
+            if (res.data.status === 200) {
+            let tmpData = res.data.datas
+            const tmpArray = []
+            tmpData.forEach(item => {
+                const tmpObj = {
+                    value: 0,
+                    name: ""
+                };
+                tmpObj.value = item.num
+                tmpObj.name = item.department
+                tmpArray.push(tmpObj)
+            })
+            this.paymentChartData = tmpArray
+            }
+        })
+      },
       // 获取年度每月收入统计
       getCollectionRecordByMonth() {
         API.getCollectionRecordByMonth({
@@ -356,27 +377,6 @@ export default {
             charData.push(data)
             this.collectionChartData = charData
           }
-        })
-      },
-      // 部门支出统计
-      getFlowRecordByDepartment() {
-        API.publicFlowRecordByDepartment({
-          year: this.year
-        }).then(res => {
-            if (res.data.status === 200) {
-            let tmpData = res.data.datas
-            const tmpArray = []
-            tmpData.forEach(item => {
-                const tmpObj = {
-                    value: 0,
-                    name: ""
-                };
-                tmpObj.value = item.num
-                tmpObj.name = item.department
-                tmpArray.push(tmpObj)
-            })
-            this.paymentChartData = tmpArray
-            }
         })
       },
       // 获取总收支数据

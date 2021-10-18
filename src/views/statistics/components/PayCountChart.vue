@@ -1,12 +1,12 @@
 <template>
-  <div id="idPublicPayCountChart" :style="{ height: height, width: width, margin: margin }" />
+  <div id="idPayCountChart" :style="{ height: height, width: width, margin: margin }" />
 </template>
 
 <script>
 import echarts from "echarts";
 
 export default {
-  name: "PublicPayCountChart",
+  name: "PayCountChart",
   props: {
     chartData: {
       type: Array,
@@ -48,7 +48,7 @@ export default {
   },
   methods: {
     initChart() {
-      this.myChart = echarts.init(document.getElementById("idPublicPayCountChart"));
+      this.myChart = echarts.init(document.getElementById("idPayCountChart"));
       this.myChart.setOption({
         tooltip: {
           trigger: "item",
