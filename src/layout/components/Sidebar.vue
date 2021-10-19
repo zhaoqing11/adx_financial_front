@@ -5,7 +5,6 @@
       <div class="iq-sidebar-logo d-flex align-items-end justify-content-between">
         <a href="index.html" class="header-logo">
           <img src="@/assets/images/logo.png" class="img-fluid rounded-normal light-logo" alt="logo">
-          <!-- <span>Datum</span>             -->
         </a>
         <div class="side-menu-bt-sidebar-1">
           <svg xmlns="http://www.w3.org/2000/svg" class="text-light wrapper-menu" width="30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -30,8 +29,8 @@
             <li class="px-3 pt-3 pb-2 ">
               <span class="text-uppercase small font-weight-bold">Application</span>
             </li>
-            <li :class="active === item.id ? 'active sidebar-layout' : 'sidebar-layout'" v-for="(item,index) in meun" :key="index">
-              <a href="javaScript:void(0);" class="svg-icon" @click="routerLinkToPage(item)">
+            <li :class="active === item.id ? 'active sidebar-layout' : 'sidebar-layout'" v-for="(item,index) in dataArray" :key="index">
+              <a href="javaScript:void(0);" class="svg-icon" @click="routerLinkToPage(item, 1)">
                 <i class="">
                   <span class="svg-container">
                     <svg-icon :icon-class="item.icon" />
@@ -39,10 +38,10 @@
                 </i>
                 <span class="ml-2">{{item.name}}</span>
               </a>
-              <ul id="app1" class="submenu collapse" data-parent="#iq-sidebar-toggle" v-if="active === item.id">                      
-                <li :class="active === childItem.id ? 'active sidebar-layout' : 'sidebar-layout'"
-                v-for="(childItem,idx) in item.childMeun" :key="idx" @click="routerLinkToPage(childItem)">
-                  <a href="javaScript:void(0);" class="svg-icon">
+              <ul id="app1" class="submenu collapse" data-parent="#iq-sidebar-toggle" v-if="active === item.idAccessApi">                      
+                <li :class="active === childItem.idAccessApi ? 'active sidebar-layout' : 'sidebar-layout'"
+                v-for="(childItem,idx) in item.children" :key="idx">
+                  <a href="javaScript:void(0);" class="svg-icon" @click="routerLinkToPage(childItem, 2)">
                     <i class="">
                       <span class="svg-container">
                         <svg-icon :icon-class="childItem.icon" />
@@ -50,6 +49,14 @@
                     </i>
                     <span class="">{{childItem.name}}</span>
                   </a>
+                  <ul id="app1" class="submenu collapse" data-parent="#iq-sidebar-toggle" v-if="childActive === childItem.parentId">                      
+                    <li :class="childActive === child3.idAccessApi ? 'active sidebar-layout' : 'sidebar-layout'"
+                    v-for="(child3,idx) in childItem.children" :key="idx">
+                      <a href="javaScript:void(0);" class="svg-icon" @click="routerLinkToPage(child3)">
+                        <span class="">{{child3.name}}</span>
+                      </a>
+                    </li>
+                  </ul>
                 </li>
               </ul>
             </li>
@@ -62,157 +69,16 @@
 </template>
 
 <script>
-import { getRole  } from "@/utils/auth";
+import * as API from '@/api/role';
+import * as AUTH from "@/utils/auth";
 
 export default {
   data() {
     return {
-      idRole: getRole(),
+      idRole: AUTH.getRole(),
       active: -1,
+      childActive: -1,
       meun: [],
-      pcMeun: [
-        {
-          id: 1,
-          name: '请款申请',
-          url: '/myPaymentForm/index',
-          icon: 'payment-form',
-          childMeun: []
-        }, {
-          id: 2,
-          name: '收款',
-          url: '/collectionRecord/index',
-          icon: 'collection-amount',
-          childMeun: []
-        }, {
-          id: 3,
-          name: '申请列表',
-          url: '/paymentForm/index',
-          icon: 'request-list',
-          childMeun: []
-        }, {
-          id: 4,
-          name: '收支明细',
-          url: '/flowRecord/publicFlowRecord',
-          icon: 'flow-record',
-          childMeun: [{
-            id: 7,
-            name: '公账',
-            url: '/flowRecord/publicFlowRecord',
-            icon: 'public-type'
-          }, {
-            id: 8,
-            name: '私账',
-            url: '/flowRecord/privateFlowRecord',
-            icon: 'private-type'
-          }, {
-            id: 19,
-            name: '普通账户1',
-            url: '/flowRecord/generalAccountRecord',
-            icon: 'account-detail'
-          }, {
-            id: 20,
-            name: '普通账户2',
-            url: '/flowRecord/secondGeneralAccountRecord',
-            icon: 'account-detail'
-          }]
-        }, {
-          id: 5,
-          name: '月报统计',
-          url: '/report/index',
-          icon: 'report',
-          childMeun: [{
-            id: 12,
-            name: '公账',
-            url: '/report/index',
-            icon: 'public-type'
-          }, {
-            id: 13,
-            name: '私账',
-            url: '/report/privateReport',
-            icon: 'private-type'
-          }, {
-            id: 23,
-            name: '普通账户1',
-            url: '/report/generalAccountReport',
-            icon: 'account-detail'
-          }, {
-            id: 24,
-            name: '普通账户2',
-            url: '/report/secondGeneralAccountReport',
-            icon: 'account-detail'
-          }]
-        }, {
-          id: 6,
-          name: '账单核对',
-          url: '/daily/publicDaily',
-          icon: 'daily',
-          childMeun: [{
-            id: 9,
-            name: '公账',
-            url: '/daily/publicDaily',
-            icon: 'public-type'
-          }, {
-            id: 10,
-            name: '私账',
-            url: '/daily/privateDaily',
-            icon: 'private-type'
-          }, {
-            id: 21,
-            name: '普通账户1',
-            url: '/daily/generalAccountDaily',
-            icon: 'account-detail'
-          }, {
-            id: 22,
-            name: '普通账户2',
-            url: '/daily/secondGeneralAccountDaily',
-            icon: 'account-detail'
-          }]
-        }, {
-          id: 11,
-          name: '账户设置',
-          url: '/setting/index',
-          icon: 'setting',
-          childMeun: []
-        }, {
-          id: 14,
-          name: '用户设置',
-          url: '/setting/user',
-          icon: 'user-setting',
-          childMeun: []
-        }, {
-          id: 15,
-          name: '部门管理',
-          url: '/setting/department',
-          icon: 'department-setting',
-          childMeun: []
-        }, {
-          id: 16,
-          name: '统计管理',
-          url: '/statistics/index',
-          icon: 'statistics',
-          childMeun: [{
-            id: 17,
-            name: '公账',
-            url: '/statistics/index',
-            icon: 'public-type'
-          }, {
-            id: 18,
-            name: '私账',
-            url: '/statistics/privateFlowRecord',
-            icon: 'private-type'
-          }, {
-            id: 25,
-            name: '普通账户1',
-            url: '/statistics/generalAccount',
-            icon: 'account-detail'
-          }, {
-            id: 26,
-            name: '普通账户2',
-            url: '/statistics/secondGeneralAccount',
-            icon: 'account-detail'
-          }]
-        }
-      ],
       mobileMeun: [
         {
           id: 1,
@@ -328,14 +194,15 @@ export default {
       ],
       windowWidth: document.documentElement.clientWidth,  //实时屏幕宽度
       windowHeight: document.documentElement.clientHeight,   //实时屏幕高度
+      dataArray: []
     };
   },
   watch: {
     '$store.getters.winWidth'(newVal) {
       if (newVal < 1024) {
-        this.meun = JSON.parse(JSON.stringify(this.mobileMeun))
+        this.dataArray = JSON.parse(JSON.stringify(this.mobileMeun))
       } else {
-        this.meun = JSON.parse(JSON.stringify(this.pcMeun))
+        this.getAuthByRole()
       }
       this.initData()
     },
@@ -358,74 +225,77 @@ export default {
       })()
     };
     if (that.windowWidth < 1024) {
-      this.meun = JSON.parse(JSON.stringify(this.mobileMeun))
+      this.dataArray = JSON.parse(JSON.stringify(this.mobileMeun))
     } else {
-      this.meun = JSON.parse(JSON.stringify(this.pcMeun))
+      this.getAuthByRole()
     }
-    this.initData()
+    this.getAuthByRole()
   },
   methods: {
-    initData() {
-      if (this.idRole === '5') {
-        let idx = [1,2,3,4,5,6,11,16]
-        idx.forEach(id => {
-          let findIdx = this.meun.findIndex(item => {
-            return item.id === id
-          })
-          this.meun.splice(findIdx, 1)
-        })
-      } else if (this.idRole === '4') {
-        let idx = [2,3,11,14,15]
-        idx.forEach(id => {
-          let findIdx = this.meun.findIndex(item => {
-            return item.id === id
-          })
-          this.meun.splice(findIdx, 1)
-        })
-      } else if (this.idRole === '3') {
-        let idx = [5,11,14,15,16]
-        idx.forEach(id => {
-          let findIdx = this.meun.findIndex(item => {
-            return item.id === id
-          })
-          this.meun.splice(findIdx, 1)
-        })
-      } else if (this.idRole === '2') {
-        let idx = [2,5,14,15,16]
-        idx.forEach(id => {
-          let findIdx = this.meun.findIndex(item => {
-            return item.id === id
-          })
-          this.meun.splice(findIdx, 1)
-        })
-      } else if (this.idRole === '1') {
-        let idx = [2,3,4,5,6,11,14,15,16]
-        idx.forEach(id => {
-          let findIdx = this.meun.findIndex(item => {
-            return item.id === id
-          })
-          this.meun.splice(findIdx, 1)
-        })
+    // 获取角色权限列表
+    getAuthByRole() {
+      let dataArray = []
+      let dataChildrenArray = []
+      let dataChildrenArray3 = []
+      const param = {
+        idRole: this.idRole
       }
+      API.getAuthByRole(param).then(res => {
+        if (res.data.status === 200) {
+          let tmpData = res.data.datas
+          AUTH.setPerimission(tmpData)
+          tmpData.forEach(ele => {
+            let temp = {
+              idAccessApi: ele.idAccessApi,
+              name: ele.name,
+              parentId: ele.parentId,
+              level: ele.level,
+              routerPath: ele.routerPath,
+              icon: ele.icon,
+              children: []
+            }
+            if (ele.level === 1) {
+              dataArray.push(temp)
+            } else if (ele.level === 2) {
+              dataChildrenArray.push(temp)
+            } else if (ele.level === 3) {
+              dataChildrenArray3.push(temp)
+            }
+          });
+          for (const i in dataChildrenArray) {
+            for (const j in dataChildrenArray3) {
+              if (dataChildrenArray[i].idAccessApi === dataChildrenArray3[j].parentId) {
+                dataChildrenArray[i].children.push(dataChildrenArray3[j])
+              }
+            }
+          }
+          for (const i in dataArray) {
+            for (const k in dataChildrenArray) {
+              if (dataArray[i].idAccessApi === dataChildrenArray[k].parentId) {
+                dataArray[i].children.push(dataChildrenArray[k])
+              }
+            }
+          }
+          this.dataArray = dataArray
+        }
+      })
     },
     closeSidebar() {
       this.$store.commit('app/SHOWSIDEBAR', false)
     },
     // 路由至对应页面
-    routerLinkToPage(data) {
-      if (data.id == 7 || data.id == 8 || data.id == 19 || data.id == 20) {
-        this.active = 4
-      } else if (data.id == 9 || data.id == 10 || data.id == 21 || data.id == 22) {
-        this.active = 6
-      } else if (data.id == 12 || data.id == 13 || data.id == 23 || data.id == 24) {
-        this.active = 5
-      } else if (data.id == 17 || data.id == 18 || data.id == 25 || data.id == 26) {
-        this.active = 16
-      } else {
-        this.active = data.id
+    routerLinkToPage(data, type) {
+      if (type === 1) {
+        if (data.parentId != 0) {
+          this.active = data.parentId
+        } else {
+          this.active = data.idAccessApi
+        }
+      } else if (type === 2) {
+        this.childActive = data.parentId
       }
       this.closeSidebar()
-      this.$router.push(data.url)
+      this.$router.push(data.routerPath)
     },
     // 返回首页
     goHome() {

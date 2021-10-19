@@ -11,11 +11,11 @@
                 </div>
                 <div class="board-content">
                   <div class="board-item" v-for="(item, index) in tableData" :key="index">
-                    <!-- <div class="card">
+                    <div class="card">
                       <div class="card-body">
                         <h5 class="item-title">{{item.name}}</h5>
                       </div>
-                    </div> -->
+                    </div>
                     <div class="board-scrollbar board-scrollbar-0">
                       <div id="draggable-item-1">
                         <div class="draggable-item todo-board-card border-color-left-blue">

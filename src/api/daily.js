@@ -1,6 +1,36 @@
 import request from '@/utils/request';
 
 /**
+ * 根据指定日期获取（公账-账户3）收支明细
+ *
+ * @export
+ * @param {*} 
+ * @returns
+*/
+export function getPubGeneralcDailyByDate(data) {
+  return request({
+    url: '/daily/selectPubGeneralDailyByDate',
+    method: 'post',
+    data
+  });
+}
+
+/**
+ * 获取每日账单列表(公账)
+ *
+ * @export
+ * @param {*} 
+ * @returns
+*/
+export function getPubGeneralDailyByPage(data) {
+  return request({
+    url: '/daily/selectPubGeneralDailyByPage',
+    method: 'post',
+    data
+  });
+}
+
+/**
  * 根据指定日期获取收支明细
  *
  * @export
