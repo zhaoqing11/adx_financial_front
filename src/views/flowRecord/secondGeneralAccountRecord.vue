@@ -390,42 +390,26 @@ export default {
 </script>
 
 <style lang="scss" >
-.el-icon-delete:before {
-  color: #8f9fbc !important;
-  font-weight: 500;
-}
-.orange-cell {
-  color: orange;
-  font-weight: bold;
-}
-.green-cell {
-  color:green;
-  font-weight: bold;
-}
 .pagination {
   float: right;
   margin: 20px 10px;
 }
-.el-table .cell {
-  white-space: nowrap;
-}
-
-.el-row {
-  margin-bottom: 10px;
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-.bg-purpl {
-  min-height: 40px;
-  padding: 5px 10px;
-  background: #F5F7FA;
-  border: 1px solid #E4E7ED;
-}
-.el-row .el-col:nth-child(1) {
+.el-col-6, .el-col-18 {
+  height: 30px;
+  width: 15%;
+  background-color: #f7faff;
+  margin-bottom: 2px;
+  line-height: 30px;
   text-align: right;
 }
-.el-col {
-  border-radius: 4px;
+.el-col-18  {
+  width: 84.5%;
+  margin-left: 2px;
+  text-align: left;
+}
+.cell div, .el-table .cell {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>

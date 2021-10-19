@@ -92,9 +92,9 @@
                               <th scope="col">
                                 <label class="text-muted mb-0" >汇款操作人</label>
                               </th>
-                              <!-- <th scope="col" class="text-right">
+                              <th scope="col" class="text-right">
                                 <span class="text-muted" >操作</span>
-                              </th> -->
+                              </th>
                             </tr>
                           </thead>
                           <tbody>
@@ -106,7 +106,7 @@
                                 </div>
                               </td>
                               <td>{{index + 1}}</td>
-                              <td>{{item.code ? item.code : '--'}}</td>
+                              <td @click="handleView(item)">{{item.code ? item.code : '--'}}</td>
                               <td id="reasonApplication" style="width: 140px; display:inline-block;">{{item.reasonApplication}}</td>
                               <td>{{item.amount}}</td>
                               <td>{{item.paymentName}}</td>
@@ -138,6 +138,7 @@
                               </td>
                               <td>{{item.serviceCharge ? item.serviceCharge : '--'}}</td>
                               <td>{{item.remittanceUser ? item.remittanceUser : '--'}}</td>
+                              <td><el-button type="text" @click="handleView(item)">查看详情</el-button></td>
                             </tr>
                           </tbody>
                         </table>
@@ -287,6 +288,71 @@
         <el-button type="primary" @click="addPaymentRemittance('paymentRemittanceForm')">确 定</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="查看详情" :visible.sync="dialogFormDetail">
+      <el-row :gutter="20">
+        <el-col :span="6"><div class="grid-content bg-purpl">申请单编号</div></el-col>
+        <el-col :span="18"><div class="grid-content bg-purpl">{{form.code}}</div></el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="6"><div class="grid-content bg-purpl">事由</div></el-col>
+        <el-col :span="18"><div class="grid-content bg-purpl">{{form.reasonApplication}}</div></el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="6"><div class="grid-content bg-purpl">申请金额</div></el-col>
+        <el-col :span="18"><div class="grid-content bg-purpl">{{form.amount}}</div></el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="6"><div class="grid-content bg-purpl">付款名称</div></el-col>
+        <el-col :span="18"><div class="grid-content bg-purpl">{{form.paymentName}}</div></el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="6"><div class="grid-content bg-purpl">付款账号</div></el-col>
+        <el-col :span="18"><div class="grid-content bg-purpl">{{form.paymentAccount}}</div></el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="6"><div class="grid-content bg-purpl">申请人</div></el-col>
+        <el-col :span="18"><div class="grid-content bg-purpl">{{form.userName}}</div></el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="6"><div class="grid-content bg-purpl">操作类型</div></el-col>
+        <el-col :span="18">
+          <div class="grid-content bg-purpl">
+            <span v-if="form.idCardType == 1">公账</span>
+            <span v-else>私账</span>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="6"><div class="grid-content bg-purpl">审批状态</div></el-col>
+        <el-col :span="18">
+          <div class="grid-content bg-purpl">
+            <span id="orange-cell" v-if="form.state == 2">待审批</span>
+            <span id="green-cell" v-else-if="form.state == 3">通过</span>
+            <span id="red-cell" v-else-if="form.state == 4">不通过</span>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="6"><div class="grid-content bg-purpl">审批金额</div></el-col>
+        <el-col :span="18"><div class="grid-content bg-purpl">{{form.approvalAmount}}</div></el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="6"><div class="grid-content bg-purpl">审批操作人</div></el-col>
+        <el-col :span="18"><div class="grid-content bg-purpl">{{form.approvalUser}}</div></el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="6"><div class="grid-content bg-purpl">汇款金额</div></el-col>
+        <el-col :span="18"><div class="grid-content bg-purpl">{{form.remittanceAmount}}</div></el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="6"><div class="grid-content bg-purpl">手续费</div></el-col>
+        <el-col :span="18"><div class="grid-content bg-purpl">{{form.serviceCharge}}</div></el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="6"><div class="grid-content bg-purpl">汇款操作人</div></el-col>
+        <el-col :span="18"><div class="grid-content bg-purpl">{{form.remittanceUser}}</div></el-col>
+      </el-row>
+    </el-dialog>
     <PreviewImage ref="previewImage" />
   </div>
 </template>
@@ -306,6 +372,7 @@ export default {
   components: { PreviewImage, Pagination },
   data() {
     return {
+      dialogFormDetail: false,
       dialogFormVisible: false,
       remittanceDialogFormVisible: false,
       idUser: getUserId(),
@@ -383,7 +450,8 @@ export default {
       fileList: [],
       
       processTable: [],
-      processName: null
+      processName: null,
+      form: {}
     }
   },
   mounted() {
@@ -391,6 +459,12 @@ export default {
     this.getTableData()
   },
   methods: {
+    // 查看详情
+    handleView(data) {
+      console.log(data)
+      this.form = data
+      this.dialogFormDetail = true
+    },
     // 预览图片
     clickTag(file, index) {
       this.$refs.previewImage.show(file, index)
@@ -561,5 +635,23 @@ export default {
 }
 #reasonApplication {
   cursor: text;
+}
+.el-col-6, .el-col-18 {
+  height: 30px;
+  width: 15%;
+  background-color: #f7faff;
+  margin-bottom: 2px;
+  line-height: 30px;
+  text-align: right;
+}
+.el-col-18  {
+  width: 84.5%;
+  margin-left: 2px;
+  text-align: left;
+}
+.cell div, .el-table .cell {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>

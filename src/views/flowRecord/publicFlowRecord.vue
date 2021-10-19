@@ -51,40 +51,35 @@
                           </el-table-column>
                           <el-table-column
                               prop="reasonApplication"
-                              label="事由"
-                              width="100">
+                              label="事由">
                               <template slot-scope="scoped">
                                 <div @click="handleView(scoped.row)">{{scoped.row.reasonApplication ? scoped.row.reasonApplication : '--'}}</div>
                               </template>
                           </el-table-column>
                           <el-table-column
                               prop="remark"
-                              label="备注"
-                              width="100">
+                              label="备注">
                               <template slot-scope="scoped">
                                   {{scoped.row.remark ? scoped.row.remark : '--'}}
                               </template>
                           </el-table-column>
                           <el-table-column
                               prop="amount"
-                              label="申请金额"
-                              width="100">
+                              label="申请金额">
                               <template slot-scope="scoped">
                                   {{scoped.row.amount ? scoped.row.amount : '--'}}
                               </template>
                           </el-table-column>
                           <el-table-column
                               prop="paymentName"
-                              label="付款名称"
-                              width="120">
+                              label="付款名称">
                               <template slot-scope="scoped">
                                   {{scoped.row.paymentName ? scoped.row.paymentName : '--'}}
                               </template>
                               </el-table-column>
                           <el-table-column
                               prop="paymentAccount"
-                              label="付款账号"
-                              width="120">
+                              label="付款账号">
                               <template slot-scope="scoped">
                                   {{scoped.row.paymentAccount ? formatCardNum(scoped.row.paymentAccount) : '--'}}
                               </template>
@@ -92,56 +87,49 @@
                           <el-table-column
                               prop="code"
                               label="申请单编号"
-                              sortable
-                              width="120">
+                              sortable>
                               <template slot-scope="scoped">
                                 <div @click="handleView(scoped.row)">{{scoped.row.code ? scoped.row.code : '--'}}</div>
                               </template>
                           </el-table-column>
                           <el-table-column
                               prop="approvalAmount"
-                              label="审批金额"
-                              width="100">
+                              label="审批金额">
                               <template slot-scope="scoped">
                                   {{scoped.row.approvalAmount ? scoped.row.approvalAmount : '--'}}
                               </template>
                           </el-table-column>
                           <el-table-column
                               prop="remittanceAmount"
-                              label="汇款金额"
-                              width="100">
+                              label="汇款金额">
                               <template slot-scope="scoped">
                                   {{scoped.row.remittanceAmount ? scoped.row.remittanceAmount : '--'}}
                               </template>
                           </el-table-column>
                           <el-table-column
                               prop="serviceCharge"
-                              label="手续费"
-                              width="80">
+                              label="手续费">
                               <template slot-scope="scoped">
                                   {{scoped.row.serviceCharge ? scoped.row.serviceCharge : '--'}}
                               </template>
                           </el-table-column>
                           <el-table-column
                               prop="idFlowType"
-                              label="操作类型"
-                              width="80">
+                              label="操作类型">
                               <template slot-scope="scoped">
                                   {{scoped.row.idFlowType === 1? '收入' : '支出'}}
                               </template>
                           </el-table-column>
                           <el-table-column
                               prop="collectionAmount"
-                              label="收款"
-                              width="100">
+                              label="收款">
                               <template slot-scope="scoped">
                                   {{scoped.row.collectionAmount ? scoped.row.collectionAmount : '--'}}
                               </template>
                           </el-table-column>
                           <el-table-column
                               prop="remainingSum"
-                              label="余额"
-                              width="110">
+                              label="余额">
                               <template slot-scope="scoped">
                                   {{scoped.row.remainingSum ? scoped.row.remainingSum : '--'}}
                               </template>
@@ -149,11 +137,11 @@
                           <el-table-column
                               prop="createTime"
                               label="汇款日期"
-                              width="160"
                               :formatter="formatter">
                           </el-table-column>
                           <el-table-column
-                          label="操作">
+                          label="操作"
+                          >
                             <template slot-scope="scoped">
                               <el-button type="text" @click="handleView(scoped.row)">查看详情</el-button>
                             </template>
@@ -389,21 +377,27 @@ export default {
 }
 </script>
 
-<style lang="scss" >
-.el-icon-delete:before {
-  color: #8f9fbc !important;
-  font-weight: 500;
-}
-.orange-cell {
-  color: orange;
-  font-weight: bold;
-}
-.green-cell {
-  color:green;
-  font-weight: bold;
-}
+<style lang="scss">
 .pagination {
   float: right;
   margin: 20px 10px;
+}
+.el-col-6, .el-col-18 {
+  height: 30px;
+  width: 15%;
+  background-color: #f7faff;
+  margin-bottom: 2px;
+  line-height: 30px;
+  text-align: right;
+}
+.el-col-18  {
+  width: 84.5%;
+  margin-left: 2px;
+  text-align: left;
+}
+.cell div, .el-table .cell {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>

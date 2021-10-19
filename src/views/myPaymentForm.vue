@@ -55,7 +55,7 @@
                                 <label class="text-muted m-0" >ID</label>
                               </th>
                               <th scope="col">
-                                <label class="text-muted mb-0" >申请单编号</label>
+                                <label class="text-muted mb-0">申请单编号</label>
                               </th>
                               <th scope="col" class="dates">
                                 <label class="text-muted mb-0" >事由</label>
@@ -92,7 +92,7 @@
                                 </div>
                               </td>
                               <td>{{index + 1}}</td>
-                              <td>{{item.code ? item.code : '--'}}</td>
+                              <td @click="clickPreview(item, 'view')">{{item.code ? item.code : '--'}}</td>
                               <td>{{item.reasonApplication}}</td>
                               <td>{{item.amount}}</td>
                               <td class="text-right">{{item.paymentName}}</td>
@@ -676,10 +676,15 @@ export default {
   color: red;
   font-weight: bold;
 }
-// .el-icon-view:hover {
-//   cursor: text;
-//   &:before {
-//     content: '查看';
-//   }
-// }
+th:nth-child(4), td:nth-child(4),
+th:nth-child(6), td:nth-child(6) {
+  width: 160px;
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+th:nth-child(6), td:nth-child(6) {
+  width: 120px;
+}
 </style>
