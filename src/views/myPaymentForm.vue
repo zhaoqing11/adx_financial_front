@@ -157,24 +157,23 @@
       <span class="promptText" v-if="isDisabled">{{promptText}}</span>
       <el-form :model="paymentForm" ref="paymentForm" :rules="rules" :disabled="disabled">
         <el-form-item label="类型" :label-width="formLabelWidth" prop="idCardType">
-          <el-select v-model="paymentForm.idCardType" placeholder="请选择" style="width:100%;" @change="changeSelectOption">
-            <span v-if="idRole != 3">
-              <el-option
-                v-show="(item.idCardType == 1 || item.idCardType == 2) && idRole != 3"
-                v-for="item in cardTypeData"
-                :key="item.idCardType"
-                :label="item.name"
-                :value="item.idCardType">
-              </el-option>
-            </span>
-            <span v-else>
+          <el-select v-model="paymentForm.idCardType" placeholder="请选择" style="width:100%;" @change="changeSelectOption(1)">
               <el-option
                 v-for="item in cardTypeData"
                 :key="item.idCardType"
                 :label="item.name"
                 :value="item.idCardType">
               </el-option>
-            </span>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="账户" :label-width="formLabelWidth" prop="idCardType" v-if="idRole === '3' && paymentForm.idCardType === 1">
+          <el-select v-model="paymentForm.idConfig" placeholder="请选择" style="width:100%;" @change="changeSelectOption(2)">
+            <el-option
+              v-for="item in pubData"
+              :key="item.idConfig"
+              :label="item.name"
+              :value="item.idConfig">
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="事由" :label-width="formLabelWidth" prop="reasonApplication">
@@ -265,10 +264,11 @@
 
 <script>
 import * as API from '@/api/paymentForm';
+import * as DAILY from '@/api/daily';
+import * as CONFIG from '@/api/config';
+import * as CTYPE from '@/api/cardType';
 import * as APPROVAL from '@/api/approval';
 import * as REMITTANCE from '@/api/paymentRemittance';
-import * as CTYPE from '@/api/cardType';
-import * as DAILY from '@/api/daily';
 import { getUserId, getRole, getToken } from '@/utils/auth';
 import Pagination from '@/components/Pagination';
 import PreviewImage from "@/components/PreviewImage"
@@ -291,6 +291,7 @@ export default {
       dialogFormVisible: false,
       paymentForm: {
         idPaymentForm: null,
+        idConfig: null,
         idApproval: null,
         idCardType: null,
         reasonApplication: null,
@@ -333,7 +334,8 @@ export default {
       fileList: [],
 
       processTable: [],
-      processName: null
+      processName: null,
+      pubData: []
     }
   },
   computed: {
@@ -351,6 +353,15 @@ export default {
     this.getTableData()
   },
   methods: {
+    getConfigById() {
+      CONFIG.selectByIdCardType({
+        idCardType: this.paymentForm.idCardType
+      }).then(res => {
+        if (res.data.status === 200) {
+          this.pubData = res.data.datas
+        }
+      })
+    },
     // 关闭窗口提示
     handleClose() {
       this.$confirm('确认关闭窗口?', '提示', {
@@ -424,12 +435,9 @@ export default {
       })
       this.fileList.splice(id, 1)
     },
-    changeSelectOption() {
-      // if (this.idDaily != null && this.idDaily != undefined && this.idDaily != '') {
-      //   return true;
-      // }
+    selectIsExitUnApprovalDaily() {
       DAILY.selectIsExitUnApprovalDaily({
-        idCardType: this.paymentForm.idCardType
+        idCardType: this.paymentForm.idConfig
       }).then(res => {
         if (res.data.status === 200) {
           if (res.data.datas >= 1) {
@@ -439,6 +447,24 @@ export default {
           }
         }
       })
+    },
+    changeSelectOption(type) {
+      if (type === 2) {
+        this.selectIsExitUnApprovalDaily()
+      } else {
+        if (this.paymentForm.idCardType == 2) {
+          this.paymentForm.idConfig = this.paymentForm.idCardType
+          this.selectIsExitUnApprovalDaily()
+        } else {
+          if (this.idRole === '3') {
+            this.paymentForm.idConfig = null
+            this.getConfigById()
+          } else {
+            this.paymentForm.idConfig = this.paymentForm.idCardType
+            this.selectIsExitUnApprovalDaily()
+          }
+        }
+      }
     },
     // 删除请款单
     deletePaymentForm(id) {
@@ -499,6 +525,7 @@ export default {
       }).then(res => {
         if (res.data.status === 200) {
           this.paymentForm = res.data.datas
+          this.getConfigById(this.paymentForm.idCardType)
           this.fileList = this.paymentForm.files != null ? JSON.parse(this.paymentForm.files) : []
         }
       })
@@ -516,6 +543,7 @@ export default {
             idPaymentForm: this.paymentForm.idPaymentForm,
             idApproval: this.paymentForm.idApproval,
             idCardType: this.paymentForm.idCardType,
+            idConfig: this.paymentForm.idConfig,
             reasonApplication: this.paymentForm.reasonApplication,
             amount: this.paymentForm.amount,
             paymentName: this.paymentForm.paymentName,
@@ -535,7 +563,6 @@ export default {
               this.$message.error(res.data.cause)
             }
           })
-
         }
       })
     },

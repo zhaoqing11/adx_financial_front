@@ -8,7 +8,7 @@
               <div class="d-flex flex-wrap align-items-center justify-content-between my-schedule mb-4">
                 <div class="d-flex align-items-center justify-content-between">
                   <h4 class="font-weight-bold">申请列表</h4>
-                </div>  
+                </div>
                 <div class="create-workform">
                   <div class="d-flex flex-wrap align-items-center justify-content-between">
                     <div class="modal-product-search d-flex">
@@ -29,7 +29,7 @@
                       <el-button type="primary" icon="el-icon-search" @click="getTableData"></el-button>
                     </div>
                   </div>
-                </div>                    
+                </div>
               </div>
               <div class="row">
                 <div class="col-lg-12">
@@ -187,6 +187,16 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="账户" :label-width="formLabelWidth" prop="idCardType" v-if="paymentForm.idCardType === 1">
+          <el-select v-model="paymentForm.idConfig" placeholder="请选择" style="width:100%;" disabled>
+            <el-option
+              v-for="item in pubData"
+              :key="item.idConfig"
+              :label="item.name"
+              :value="item.idConfig">
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="申请事由" :label-width="formLabelWidth">
           <el-input type="textarea" v-model="paymentForm.reasonApplication" autocomplete="off"></el-input>
         </el-form-item>
@@ -239,6 +249,16 @@
               :key="item.idCardType"
               :label="item.name"
               :value="item.idCardType">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="账户" :label-width="formLabelWidth" prop="idCardType" v-if="paymentForm.idCardType === 1">
+          <el-select v-model="paymentForm.idConfig" placeholder="请选择" style="width:100%;" disabled>
+            <el-option
+              v-for="item in pubData"
+              :key="item.idConfig"
+              :label="item.name"
+              :value="item.idConfig">
             </el-option>
           </el-select>
         </el-form-item>
@@ -358,10 +378,11 @@
 </template>
 
 <script>
+import * as API from '@/api/paymentForm';
 import * as DAILY from '@/api/daily';
+import * as CONFIG from '@/api/config';
 import * as APPROVAL from '@/api/approval';
 import * as CTYPE from '@/api/cardType';
-import * as API from '@/api/paymentForm';
 import * as REMITTANCE from '@/api/paymentRemittance';
 import { getUserId, getRole } from '@/utils/auth';
 import { formatDate, formatCardNum } from '@/utils/validate';
@@ -387,6 +408,7 @@ export default {
       tableData: [],
       paymentForm: {
         idCardType: null,
+        idConfig: null,
         reasonApplication: null,
         amount: null,
         paymentName: null,
@@ -451,7 +473,8 @@ export default {
       
       processTable: [],
       processName: null,
-      form: {}
+      form: {},
+      pubData: []
     }
   },
   mounted() {
@@ -459,6 +482,15 @@ export default {
     this.getTableData()
   },
   methods: {
+    getConfigById(id) {
+      CONFIG.selectByIdCardType({
+        idCardType: id
+      }).then(res => {
+        if (res.data.status === 200) {
+          this.pubData = res.data.datas
+        }
+      })
+    },
     // 查看详情
     handleView(data) {
       console.log(data)
@@ -487,6 +519,7 @@ export default {
             this.$message.warning('上日账单尚未通过审核，暂时无法汇款操作')
           } else {
             this.paymentForm = data
+            this.getConfigById(data.idCardType)
             this.fileList = data.files != null ? JSON.parse(data.files) : []
             this.paymentRemittanceForm.idPaymentForm = data.idPaymentForm
             this.remittanceDialogFormVisible = true
@@ -558,6 +591,7 @@ export default {
     },
     editPaymentForm(data) {
       this.paymentForm = data
+      this.getConfigById(data.idCardType)
       this.fileList = data.files != null ? JSON.parse(data.files) : []
       this.paymentFormApproval.idPaymentForm = data.idPaymentForm;
       this.approvalForm.idApproval = data.idApproval

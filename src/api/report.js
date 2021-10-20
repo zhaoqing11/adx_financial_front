@@ -2,6 +2,21 @@ import request from '@/utils/request';
 import { getToken } from '@/utils/auth';
 
 /**
+ * 分页（条件）查询公账账户3月报
+ *
+ * @export
+ * @param {*} data
+ * @returns
+*/
+export function getPubGeneralReportList(data) {
+  return request({
+    url: '/report/selectPubGeneralReportByPage',
+    method: 'post',
+    data
+  });
+}
+
+/**
  * 导出收支明细列表
  *
  * @export

@@ -91,7 +91,7 @@
                                 width="120">
                                 <template slot-scope="scope">
                                   <i class="el-icon-view" @click="routerLinkToReportDetail(scope.row)"></i>&nbsp;&nbsp;
-                                  <i class="el-icon-delete" @click="deleteReport(scope.row.idReport)"></i>
+                                  <i class="el-icon-delete" @click="deleteReport(scope.row.idGeneralAccountReport)"></i>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -150,7 +150,8 @@ export default {
       totalRecord: 0,
       code: '',
       tableData: [],
-      currentDate: null
+      currentDate: null,
+      idCardType: 3
     }
   },
   mounted() {
@@ -177,7 +178,8 @@ export default {
         center: true
       }).then(() => {
         API.deleteReport({
-          idReport: idReport
+          idReport: idReport,
+          idCardType: this.idCardType
         }).then(res => {
           if (res.data.status === 200) {
             this.$message.success('删除成功');

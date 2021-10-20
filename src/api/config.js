@@ -1,6 +1,19 @@
 import request from '@/utils/request';
 
 /**
+ * 根据id获取账户列表
+ * @param {*} data 
+ * @returns 
+*/
+export function selectByIdCardType(data) {
+  return request({
+    url: '/config/selectByIdCardType',
+    method: 'post',
+    data
+  })
+}
+
+/**
  * 新增账户
  * @param {*} data 
  * @returns 

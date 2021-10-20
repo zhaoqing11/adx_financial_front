@@ -91,7 +91,7 @@
                                 width="120">
                                 <template slot-scope="scope">
                                   <i class="el-icon-view" @click="routerLinkToReportDetail(scope.row)"></i>&nbsp;&nbsp;
-                                  <i class="el-icon-delete" @click="deleteReport(scope.row.idPrivateReport)"></i>
+                                  <i class="el-icon-delete" @click="deleteReport(scope.row.idPubGeneralReport)"></i>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -151,7 +151,7 @@ export default {
       code: '',
       tableData: [],
       currentDate: null,
-      idCardType: 2
+      idCardType: 5
     }
   },
   mounted() {
@@ -165,7 +165,7 @@ export default {
         query: {
           year: data.year,
           month: data.month,
-          idCardType: 2
+          idCardType: 5
         }
       })
     },
@@ -200,7 +200,7 @@ export default {
         pageSize: this.pageSize,
         currentDate: this.currentDate
       }
-      API.getPrivateReportList(params)
+      API.getPubGeneralReportList(params)
       .then(res => {
         if (res.data.status === 200) {
           let tmpData = res.data.datas;

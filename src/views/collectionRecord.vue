@@ -150,12 +150,22 @@
       <span class="promptText" v-if="isDisabled">{{promptText}}</span>
       <el-form :model="collectionRecordForm" ref="collectionRecordForm" :rules="rules">
         <el-form-item label="账目类型" :label-width="formLabelWidth" prop="idCardType">
-          <el-select v-model="collectionRecordForm.idCardType" placeholder="请选择" style="width:100%;" @change="changeSelectOption">
+          <el-select v-model="collectionRecordForm.idCardType" placeholder="请选择" style="width:100%;" @change="changeSelectOption(1)">
             <el-option
               v-for="item in cardTypeData"
               :key="item.idCardType"
               :label="item.name"
               :value="item.idCardType">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="账户" :label-width="formLabelWidth" prop="idCardType" v-if="collectionRecordForm.idCardType === 1">
+          <el-select v-model="collectionRecordForm.idConfig" placeholder="请选择" style="width:100%;" @change="changeSelectOption(2)">
+            <el-option
+              v-for="item in pubData"
+              :key="item.idConfig"
+              :label="item.name"
+              :value="item.idConfig">
             </el-option>
           </el-select>
         </el-form-item>
@@ -184,10 +194,11 @@
 </template>
 
 <script>
-import * as DAILY from '@/api/daily';
 import * as API from '@/api/collectionRecord';
+import * as DAILY from '@/api/daily';
+import * as CONFIG from '@/api/config';
 import * as CTYPE from '@/api/cardType';
-import { getUserId } from '@/utils/auth';
+import { getUserId, getRole } from '@/utils/auth';
 import { formatDate, formatCardNum } from '@/utils/validate';
 import Pagination from '@/components/Pagination';
 
@@ -195,6 +206,7 @@ export default {
   components: { Pagination },
   data() {
     return {
+      idRole: getRole(),
       idUser: getUserId(),
       showUser: false,
       title: '新增收款',
@@ -206,6 +218,7 @@ export default {
       tableData: [],
       dialogFormVisible: false,
       collectionRecordForm: {
+        idConfig: null,
         idCardType: null,
         idCollectionRecord: null,
         amount: null,
@@ -259,7 +272,8 @@ export default {
       formatCardNum: formatCardNum,
       cardTypeData: [],
       isDisabled: false,
-      promptText: '上日账单尚未通过审核，暂时无法收款操作'
+      promptText: '上日账单尚未通过审核，暂时无法收款操作',
+      pubData: []
     }
   },
   mounted() {
@@ -267,18 +281,37 @@ export default {
     this.getTableData()
   },
   methods: {
-    changeSelectOption() {
-      DAILY.selectIsExitUnApprovalDaily({
+    getConfigById() {
+      CONFIG.selectByIdCardType({
         idCardType: this.collectionRecordForm.idCardType
       }).then(res => {
         if (res.data.status === 200) {
-          if (res.data.datas >= 1) {
-            this.isDisabled = true
-          } else {
-            this.isDisabled = false
-          }
+          this.pubData = res.data.datas
         }
       })
+    },
+    changeSelectOption(type) {
+      if (type === 2) {
+        DAILY.selectIsExitUnApprovalDaily({
+          idCardType: this.collectionRecordForm.idCardType
+        }).then(res => {
+          if (res.data.status === 200) {
+            if (res.data.datas >= 1) {
+              this.isDisabled = true
+            } else {
+              this.isDisabled = false
+              this.getConfigById()
+            }
+          }
+        })
+      } else {
+        if (this.collectionRecordForm.idCardType == 2) {
+          this.collectionRecordForm.idConfig = this.collectionRecordForm.idCardType
+        } else {
+          this.collectionRecordForm.idConfig = null
+          this.getConfigById()
+        }
+      }
     },
     // 获取账目类型列表
     getCardTypeList() {
@@ -356,6 +389,7 @@ export default {
         if (valid) {
           let collectionDate = formatDate(this.collectionRecordForm.collectionDate)
           const param = {
+            idConfig: this.collectionRecordForm.idConfig,
             idCardType: this.collectionRecordForm.idCardType,
             amount: this.collectionRecordForm.amount,
             collectionDate: collectionDate,

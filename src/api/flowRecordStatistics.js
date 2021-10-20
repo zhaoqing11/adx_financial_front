@@ -1,5 +1,34 @@
 import request from '@/utils/request';
 
+/**
+ * 获取（公账账户3）部门支出明细
+ *
+ * @export
+ * @param {*} 
+ * @returns
+*/
+export function getPubGeneralRecordDetails(data) {
+  return request({
+    url: '/flowRecordStatistics/getPubGeneralRecordDetails',
+    method: 'post',
+    data
+  });
+}
+
+/**
+ *  获取（公账账户3）部门支出流水
+ *
+ * @export
+ * @param {*} 
+ * @returns
+*/
+export function getPubGeneralRecordByDepartment(data) {
+  return request({
+    url: '/flowRecordStatistics/getPubGeneralRecordByDepartment',
+    method: 'post',
+    data
+  });
+}
 
 /**
  * 
@@ -91,7 +120,6 @@ export function getCollectionRecordByMonth(data) {
   });
 }
 
-
 /**
  *  获取（普通账户1）部门支出流水
  *
@@ -152,3 +180,4 @@ export function getGeneralRecordDetails(data) {
     data
   });
 }
+
