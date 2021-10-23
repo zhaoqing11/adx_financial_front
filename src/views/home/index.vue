@@ -11,14 +11,36 @@
             <label>待汇款</label>
             <span>{{paymentRemittanceCount}}</span>
           </div>
-          <div class="card" v-if="idRole === '2' || idRole === '3'" @click="routerLinkToPublicDaily">
+          <!-- <div class="card" v-if="idRole === '2' || idRole === '3'" @click="routerLinkToPublicDaily">
             <label>{{ idRole === '2' ? '待审批公账' : '待汇款公账'}}</label>
             <span>{{countPub}}</span>
           </div>
           <div class="card" v-if="idRole === '2' || idRole === '3'" @click="routerLinkToPrivateDaily">
             <label>{{ idRole === '2' ? '待审批私账' : '待汇款私账'}} </label>
             <span>{{countPri}}</span>
+          </div> -->
+
+          <div class="card">
+            <h5>待办任务</h5>
+            <div v-if="idRole === '2' || idRole === '3'" @click="routerLinkToPublicDaily">
+              <label>{{ idRole === '2' ? '建行(0434)待审批' : '建行(0434)待汇款'}}</label>
+              <span>{{pubCount}}</span>
+            </div>
+            <div v-if="idRole === '2' || idRole === '3'" @click="routerLinkToPrivateDaily">
+              <label>{{ idRole === '2' ? '浦发(5418)待审批' : '浦发(5418)待汇款'}} </label>
+              <span>{{priCount}}</span>
+            </div>
+            <div v-if="idRole === '2' || idRole === '3'" @click="routerLinkToPrivateDaily">
+              <label>{{ idRole === '2' ? '中行(7623)待审批' : '中行(7623)待汇款'}} </label>
+              <span>{{generalNum}}</span>
+            </div>
+            <div v-if="idRole === '2' || idRole === '3'" @click="routerLinkToPrivateDaily">
+              <label>{{ idRole === '2' ? '浦发(1141)待审批' : '浦发(1141)待汇款'}} </label>
+              <span>{{pubGeneralNum}}</span>
+            </div>
+            <div><el-button>已审核</el-button></div>
           </div>
+
           <!-- <div class="card" v-if="idRole === '2'">
             <label>公账余额</label>
             <span>
@@ -61,7 +83,8 @@
 </template>
 
 <script>
-import * as API from '@/api/paymentForm';
+import * as API from '@/api/daily';
+// import * as API from '@/api/paymentForm';
 import * as CTYPE from '@/api/cardType';
 import * as DAILY from '@/api/daily';
 import * as REMAINSUM from '@/api/remainingSum';
@@ -93,8 +116,10 @@ export default {
       formLabelWidth: '80',
       cardTypeData: [],
 
-      countPub: 0,
-      countPri: 0
+      pubCount: 0,
+      priCount: 0,
+      generalNum: 0,
+      pubGeneralNum: 0
     };
   },
   created() {
@@ -182,17 +207,29 @@ export default {
     },
     // 获取待办数据
     getDataInfo() {
-      API.getDataInfo()
-      .then(res => {
+      API.getDataInfo({
+        idRole: this.idRole
+      }).then(res => {
         if (res.data.status === 200) {
           let tmpData = res.data.datas
           this.approvalPaymentCount = tmpData.approvalCount
           this.paymentRemittanceCount = tmpData.remittanceCount
-          this.publicRemainingSum = tmpData.publicRemainingSum
-          this.privateRemainingSum = tmpData.privateRemainingSum
-
+          this.pubCount = tmpData.pubNum
+          this.priCount = tmpData.priNum
+          this.generalNum = tmpData.generalNum
+          this.pubGeneralNum = tmpData.pubGeneralNum
         }
       })
+      // API.getDataInfo()
+      // .then(res => {
+      //   if (res.data.status === 200) {
+      //     let tmpData = res.data.datas
+      //     this.approvalPaymentCount = tmpData.approvalCount
+      //     this.paymentRemittanceCount = tmpData.remittanceCount
+      //     this.publicRemainingSum = tmpData.publicRemainingSum
+      //     this.privateRemainingSum = tmpData.privateRemainingSum
+      //   }
+      // })
     }
   }
 };

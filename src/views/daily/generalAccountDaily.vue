@@ -17,8 +17,7 @@
                           <el-date-picker
                             v-model="currentDate"
                             type="date"
-                            placeholder="选择日期"
-                            >
+                            placeholder="选择日期">
                           </el-date-picker>
                           <el-button type="primary" icon="el-icon-search" @click="getTableData"></el-button>
                           <p class="confirm-text">* 提示：日期格式（2021-08-01）</p>

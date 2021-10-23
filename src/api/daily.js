@@ -1,6 +1,21 @@
 import request from '@/utils/request';
 
 /**
+ * 获取首页待办任务
+ *
+ * @export
+ * @param {*} 
+ * @returns
+*/
+export function getDataInfo(data) {
+  return request({
+    url: '/daily/getDataInfo',
+    method: 'post',
+    data
+  });
+}
+
+/**
  * 根据指定日期获取（公账-账户3）收支明细
  *
  * @export
