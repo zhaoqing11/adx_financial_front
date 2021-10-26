@@ -20,27 +20,28 @@
             <span>{{countPri}}</span>
           </div> -->
 
-          <div class="card">
-            <h5>待办任务</h5>
-            <div v-if="idRole === '2' || idRole === '3'" @click="routerLinkToPublicDaily">
+          <div class="card" style="width:400px;">
+            <div class="c_nav">
+              <h5>待办任务</h5>
+              <el-button type="text" @click="sendToSMS" v-if="idRole === '2'">已审核</el-button>
+            </div>
+            <div v-if="idRole === '2' || idRole === '3'" @click="routerLinkToDaily(1)">
               <label>{{ idRole === '2' ? '建行(0434)待审批' : '建行(0434)待汇款'}}</label>
               <span>{{pubCount}}</span>
             </div>
-            <div v-if="idRole === '2' || idRole === '3'" @click="routerLinkToPrivateDaily">
+            <div v-if="idRole === '2' || idRole === '3'" @click="routerLinkToDaily(2)">
               <label>{{ idRole === '2' ? '浦发(5418)待审批' : '浦发(5418)待汇款'}} </label>
               <span>{{priCount}}</span>
             </div>
-            <div v-if="idRole === '2' || idRole === '3'" @click="routerLinkToPrivateDaily">
+            <div v-if="idRole === '2' || idRole === '3'" @click="routerLinkToDaily(3)">
               <label>{{ idRole === '2' ? '中行(7623)待审批' : '中行(7623)待汇款'}} </label>
               <span>{{generalNum}}</span>
             </div>
-            <div v-if="idRole === '2' || idRole === '3'" @click="routerLinkToPrivateDaily">
+            <div v-if="idRole === '2' || idRole === '3'" @click="routerLinkToDaily(4)">
               <label>{{ idRole === '2' ? '浦发(1141)待审批' : '浦发(1141)待汇款'}} </label>
               <span>{{pubGeneralNum}}</span>
             </div>
-            <div><el-button>已审核</el-button></div>
           </div>
-
           <!-- <div class="card" v-if="idRole === '2'">
             <label>公账余额</label>
             <span>
@@ -130,22 +131,39 @@ export default {
     this.selectDailyByState()
   },
   methods: {
-    // 路由至（公账）账单审批页
-    routerLinkToPublicDaily() {
-      let width = this.$store.getters.winWidth
-      if (width < 1024) {
-        this.$router.push('/mobile/publicDaily')
-      } else {
-        this.$router.push('/daily/publicDaily')
-      }
+    // 发送短信
+    sendToSMS() {
+      this.$confirm('是否确认已审核所有数据，并发送短信至指定用户?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        API.sendMessage().then(res => {
+          if (res.data.status === 200) {
+            this.$message.success('发送成功');
+          } else {
+            this.$message.error(res.data.datas);
+          }
+        })
+      }).catch(() => {
+        this.$message.info('已取消');
+      })
     },
-    // 路由至（私账）账单审批页
-    routerLinkToPrivateDaily() {
-      let width = this.$store.getters.winWidth
-      if (width < 1024) {
-        this.$router.push('/mobile/privateDaily')
-      } else {
-        this.$router.push('/daily/privateDaily')
+    // 路由至审批页
+    routerLinkToDaily(type) {
+      switch(type) {
+        case 1:
+          this.$router.push('/daily/publicDaily')
+          break
+        case 2:
+          this.$router.push('/daily/privateDaily');
+          break
+        case 3:
+          this.$router.push('/daily/generalAccountDaily');
+          break
+        case 4:
+          this.$router.push('/daily/pubGeneralDaily');
+          break
       }
     },
     // 获取待审批账单数量
@@ -176,12 +194,12 @@ export default {
     },
     // 路由至请款审批页
     routerLinkToApprocalPayment() {
-      let width = this.$store.getters.winWidth
-      if (width < 1024) {
-        this.$router.push('/mobile/paymentForm')
-      } else {
+      // let width = this.$store.getters.winWidth
+      // if (width < 1024) {
+      //   this.$router.push('/mobile/paymentForm')
+      // } else {
         this.$router.push('/paymentForm/index')
-      }
+      // }
     },
     // 创建每日余额
     addRemainingSum(formName) {
@@ -220,16 +238,6 @@ export default {
           this.pubGeneralNum = tmpData.pubGeneralNum
         }
       })
-      // API.getDataInfo()
-      // .then(res => {
-      //   if (res.data.status === 200) {
-      //     let tmpData = res.data.datas
-      //     this.approvalPaymentCount = tmpData.approvalCount
-      //     this.paymentRemittanceCount = tmpData.remittanceCount
-      //     this.publicRemainingSum = tmpData.publicRemainingSum
-      //     this.privateRemainingSum = tmpData.privateRemainingSum
-      //   }
-      // })
     }
   }
 };
@@ -250,5 +258,20 @@ export default {
 span {
   font-size: 26px;
   font-weight: bold;
+}
+.c_nav {
+  border-bottom: 1px solid #f7f7f7;
+}
+h5 {
+  display: inline-block;
+  position: relative;
+  margin-bottom: 10px;
+}
+.el-button {
+  text-align: right;
+  position: absolute;
+  right: 10px;
+  margin-top: -12px;
+  font-size: 18px;
 }
 </style>

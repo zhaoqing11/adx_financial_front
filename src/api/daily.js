@@ -1,5 +1,20 @@
 import request from '@/utils/request';
 
+
+/**
+ * 发送短信通知
+ *
+ * @export
+ * @param {*} 
+ * @returns
+*/
+export function sendMessage() {
+  return request({
+    url: '/daily/sendMessage',
+    method: 'post'
+  });
+}
+
 /**
  * 获取首页待办任务
  *
