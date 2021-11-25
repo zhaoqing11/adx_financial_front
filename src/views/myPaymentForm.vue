@@ -158,15 +158,16 @@
       <el-form :model="paymentForm" ref="paymentForm" :rules="rules" :disabled="disabled">
         <el-form-item label="类型" :label-width="formLabelWidth" prop="idCardType">
           <el-select v-model="paymentForm.idCardType" placeholder="请选择" style="width:100%;" @change="changeSelectOption(1)">
-              <el-option
-                v-for="item in cardTypeData"
-                :key="item.idCardType"
-                :label="item.name"
-                :value="item.idCardType">
-              </el-option>
+            <el-option
+              v-for="item in cardTypeData"
+              :key="item.idCardType"
+              :label="item.name"
+              :value="item.idCardType">
+            </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="账户" :label-width="formLabelWidth" prop="idCardType" v-if="idRole === '3' && paymentForm.idCardType === 1">
+        <el-form-item label="账户" :label-width="formLabelWidth" prop="idCardType" v-if="(idRole === '3' && paymentForm.idCardType === 1) 
+        || (paymentForm.idCardType === 1 && (idDepartment === '3' || idDepartment === '6'))">
           <el-select v-model="paymentForm.idConfig" placeholder="请选择" style="width:100%;" @change="changeSelectOption(2)">
             <el-option
               v-for="item in pubData"
@@ -269,7 +270,7 @@ import * as CONFIG from '@/api/config';
 import * as CTYPE from '@/api/cardType';
 import * as APPROVAL from '@/api/approval';
 import * as REMITTANCE from '@/api/paymentRemittance';
-import { getUserId, getRole, getToken } from '@/utils/auth';
+import { getUserId, getRole, getToken, getDepartmentId } from '@/utils/auth';
 import Pagination from '@/components/Pagination';
 import PreviewImage from "@/components/PreviewImage"
 import { formatCardNum } from '@/utils/validate';
@@ -281,6 +282,7 @@ export default {
       title: '',
       idRole: getRole(),
       idUser: getUserId(),
+      idDepartment: getDepartmentId(),
       showUser: false,
       pageNum: 1,
       pageSize: 10,
@@ -456,7 +458,9 @@ export default {
           this.paymentForm.idConfig = this.paymentForm.idCardType
           this.selectIsExitUnApprovalDaily()
         } else {
-          if (this.idRole === '3') {
+          if (this.idRole === '3' 
+          || this.idDepartment === '3' 
+          || this.idDepartment === '6') {
             this.paymentForm.idConfig = null
             this.getConfigById()
           } else {

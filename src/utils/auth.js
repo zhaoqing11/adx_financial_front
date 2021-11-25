@@ -87,6 +87,18 @@ export function getPerimission() {
   }
 }
 
+export function setDepartmentId(departmentId) {
+  return Cookies.set('departmentId', departmentId, 0)
+}
+
+export function getDepartmentId() {
+  return Cookies.get('departmentId');
+}
+
+export function removeDepartmentId() {
+  return Cookies.remove('departmentId');
+}
+
 /**
  * 检查当前用户角色是否拥有指定Key权限
  *

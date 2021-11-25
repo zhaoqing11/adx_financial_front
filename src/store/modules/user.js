@@ -43,6 +43,7 @@ const user = {
             AUTH.setUserId(tmpData.idUser);
             AUTH.setToken(tmpData.accessToken);
             AUTH.setRealName(tmpData.realName);
+            AUTH.setDepartmentId(tmpData.idDepartment);
             
             resolve(res);
             // const param = {

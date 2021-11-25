@@ -72,7 +72,7 @@
                                 <label class="text-muted mb-0" >申请人</label>
                               </th>
                               <th scope="col">
-                                <label class="text-muted mb-0" >账目类型</label>
+                                <label class="text-muted mb-0" >账户类型</label>
                               </th>
                               <th scope="col">
                                 <label class="text-muted mb-0" >审批状态</label>
@@ -112,7 +112,11 @@
                               <td>{{item.paymentName}}</td>
                               <td style="width: 120px; display:inline-block;">{{formatCardNum(item.paymentAccount)}}</td>
                               <td>{{item.userName}}</td>
-                              <td>{{item.idCardType === 1 ? '公账' : '私账'}}</td>
+                              <td>
+                                <div v-for="(itm,index) in configData" :key="index">
+                                  <span v-if="item.idConfig === itm.idConfig">{{itm.code}}</span>
+                                </div>
+                              </td>
                               <td>
                                 <span id="orange-cell" v-if="item.state == 2">待审批</span>
                                 <span id="green-cell" v-else-if="item.state == 3">通过</span>
@@ -474,14 +478,24 @@ export default {
       processTable: [],
       processName: null,
       form: {},
-      pubData: []
+      pubData: [],
+      configData: []
     }
   },
   mounted() {
     this.getCardTypeList()
     this.getTableData()
+    this.getConfigList()
   },
   methods: {
+    // 获取账户配置列表
+    getConfigList() {
+      CONFIG.selectAll().then(res => {
+        if (res.data.status === 200) {
+          this.configData = res.data.datas;
+        }
+      })
+    },
     getConfigById(id) {
       CONFIG.selectByIdCardType({
         idCardType: id

@@ -66,7 +66,7 @@
                                 <label class="text-muted m-0" >ID</label>
                               </th>
                               <th scope="col">
-                                <label class="text-muted mb-0">账目类型</label>
+                                <label class="text-muted mb-0">账户类型</label>
                               </th>
                               <th scope="col">
                                 <label class="text-muted mb-0">收款金额（元）</label>
@@ -94,7 +94,11 @@
                                 </div>                                    
                               </td>
                               <td>{{index + 1}}</td>
-                              <td>{{item.idCardType === 1 ? '公账' : '私账'}}</td>
+                              <td>
+                                <div v-for="(itm,index) in configData" :key="index">
+                                  <span v-if="item.idConfig === itm.idConfig">{{itm.code}}</span>
+                                </div>
+                              </td>
                               <td>{{item.amount}}</td>
                               <td class="text-right">{{item.collectionDate}}</td>
                               <td>{{item.remark}}</td>
@@ -273,14 +277,24 @@ export default {
       cardTypeData: [],
       isDisabled: false,
       promptText: '上日账单尚未通过审核，暂时无法收款操作',
-      pubData: []
+      pubData: [],
+      configData: []
     }
   },
   mounted() {
     this.getCardTypeList()
     this.getTableData()
+    this.getConfigList()
   },
   methods: {
+    // 获取账户配置列表
+    getConfigList() {
+      CONFIG.selectAll().then(res => {
+        if (res.data.status === 200) {
+          this.configData = res.data.datas
+        }
+      })
+    },
     getConfigById() {
       CONFIG.selectByIdCardType({
         idCardType: this.collectionRecordForm.idCardType
