@@ -404,7 +404,7 @@ export default {
           let collectionDate = formatDate(this.collectionRecordForm.collectionDate)
           const param = {
             idConfig: this.collectionRecordForm.idConfig,
-            idCardType: this.collectionRecordForm.idCardType,
+            idCardType: this.collectionRecordForm.idConfig,
             amount: this.collectionRecordForm.amount,
             collectionDate: collectionDate,
             remark: this.collectionRecordForm.remark,
