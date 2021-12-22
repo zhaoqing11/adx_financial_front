@@ -168,7 +168,7 @@
             <el-option
               v-for="item in pubData"
               :key="item.idConfig"
-              :label="item.name"
+              :label="item.code"
               :value="item.idConfig">
             </el-option>
           </el-select>
